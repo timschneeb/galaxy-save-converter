@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using System.IO;
+using System.Collections.Generic;
 
 namespace Galaxy2.SaveData.Chunks.Sysconf
 {
@@ -51,6 +52,58 @@ namespace Galaxy2.SaveData.Chunks.Sysconf
 
             reader.BaseStream.Position = dataStartPos + dataSize;
             return sysConfig;
+        }
+
+        public void WriteTo(BinaryWriter writer)
+        {
+            using var ms = new MemoryStream();
+            using var fw = new BinaryWriter(ms);
+            var attrs = new List<(ushort key, ushort offset)>();
+
+            void AddU8(string name, byte v)
+            {
+                var key = HashKey.Compute(name);
+                var offset = (ushort)ms.Position;
+                attrs.Add((key, offset));
+                fw.Write(v);
+            }
+
+            void AddI64(string name, long v)
+            {
+                var key = HashKey.Compute(name);
+                var offset = (ushort)ms.Position;
+                attrs.Add((key, offset));
+                fw.WriteInt64Be(v);
+            }
+
+            void AddU32(string name, uint v)
+            {
+                var key = HashKey.Compute(name);
+                var offset = (ushort)ms.Position;
+                attrs.Add((key, offset));
+                fw.WriteUInt32Be(v);
+            }
+
+            void AddU16(string name, ushort v)
+            {
+                var key = HashKey.Compute(name);
+                var offset = (ushort)ms.Position;
+                attrs.Add((key, offset));
+                fw.WriteUInt16Be(v);
+            }
+
+            AddU8("mIsEncouragePal60", IsEncouragePal60 ? (byte)1 : (byte)0);
+            AddI64("mTimeSent", TimeSent);
+            AddU32("mSentBytes", SentBytes);
+            AddU16("mBankStarPieceNum", BankStarPieceNum);
+            AddU16("mBankStarPieceMax", BankStarPieceMax);
+            AddU8("mGiftedPlayerLeft", GiftedPlayerLeft);
+            AddU16("mGiftedFileNameHash", GiftedFileNameHash);
+
+            fw.Flush();
+            var dataSize = (ushort)ms.Length;
+            writer.WriteBinaryDataContentHeader(attrs, dataSize);
+            writer.Write(ms.ToArray());
         }
     }
 }

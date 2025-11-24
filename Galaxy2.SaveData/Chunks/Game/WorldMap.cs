@@ -19,5 +19,11 @@ namespace Galaxy2.SaveData.Chunks.Game
                 WorldNo = reader.ReadByte()
             };
         }
+
+        public void WriteTo(BinaryWriter writer)
+        {
+            writer.Write(StarCheckPointFlag);
+            writer.Write(WorldNo);
+        }
     }
 }

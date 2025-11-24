@@ -4,6 +4,7 @@ using Galaxy2.SaveData.Chunks.Game;
 using Galaxy2.SaveData.Chunks.Config;
 using Galaxy2.SaveData.Chunks.Sysconf;
 using Galaxy2.SaveData.String;
+using System.IO;
 
 namespace Galaxy2.SaveData.Save
 {
@@ -150,6 +151,152 @@ namespace Galaxy2.SaveData.Save
 
                 r.BaseStream.Position = start + size;
                 return chunk;
+            }
+        }
+
+        public void WriteTo(BinaryWriter writer, string name)
+        {
+            if (writer == null) throw new ArgumentNullException(nameof(writer));
+            // write version
+            writer.Write((byte)2);
+
+            // determine chunks to write
+            if (name.StartsWith("user"))
+            {
+                var chunks = GameData ?? new List<GameDataChunk>();
+                writer.Write((byte)chunks.Count);
+                writer.Write(new byte[2]); // reserved
+
+                foreach (var c in chunks)
+                {
+                    using var ms = new MemoryStream();
+                    using var bw = new BinaryWriter(ms);
+
+                    // TODO: calculate hashes
+                    if (c is PlayerStatusChunk p)
+                    {
+                        p.PlayerStatus.WriteTo(bw);
+                        var body = ms.ToArray();
+                        writer.WriteChunkHeader(0x504C4159, 0, body.Length);
+                        writer.Write(body);
+                    }
+                    else if (c is EventFlagChunk ef)
+                    {
+                        ef.EventFlag.WriteTo(bw);
+                        var body = ms.ToArray();
+                        writer.WriteChunkHeader(0x464C4731, 0, body.Length);
+                        writer.Write(body);
+                    }
+                    else if (c is TicoFatChunk tf)
+                    {
+                        tf.TicoFat.WriteTo(bw);
+                        var body = ms.ToArray();
+                        writer.WriteChunkHeader(0x53544631, 0, body.Length);
+                        writer.Write(body);
+                    }
+                    else if (c is EventValueChunk ev)
+                    {
+                        ev.EventValue.WriteTo(bw);
+                        var body = ms.ToArray();
+                        writer.WriteChunkHeader(0x564C4531, 0, body.Length);
+                        writer.Write(body);
+                    }
+                    else if (c is GalaxyChunk g)
+                    {
+                        // Galaxy uses different reading (no dataSize passed). We'll write via its own writer when available.
+                        // For now, attempt to write its inner content into ms if WriteTo exists.
+                        // Try dynamic invocation
+                        var galaxy = g.Galaxy;
+                        // TODO Galaxy.WriteTo not implemented; skip writing
+                    }
+                    else if (c is WorldMapChunk wm)
+                    {
+                        wm.WorldMap.WriteTo(bw);
+                        var body = ms.ToArray();
+                        writer.WriteChunkHeader(0x5353574D, 0, body.Length);
+                        writer.Write(body);
+                    }
+                }
+
+                // pad to user file fixed size
+                var startPos = writer.BaseStream.Position - (1 + 1 + 2); // position at start of user file
+                var endTarget = startPos + 0xF80;
+                var cur = writer.BaseStream.Position;
+                if (cur < endTarget)
+                {
+                    var pad = (int)(endTarget - cur);
+                    writer.Write(new byte[pad]);
+                }
+            }
+            else if (name.StartsWith("config"))
+            {
+                var chunks = ConfigData ?? new List<ConfigDataChunk>();
+                writer.Write((byte)chunks.Count);
+                writer.Write(new byte[2]);
+
+                foreach (var c in chunks)
+                {
+                    using var ms = new MemoryStream();
+                    using var bw = new BinaryWriter(ms);
+
+                    // TODO: calculate hashes
+                    if (c is CreateChunk cr)
+                    {
+                        bw.Write((sbyte)(cr.Create.IsCreated ? 1 : 0));
+                        var body = ms.ToArray();
+                        writer.WriteChunkHeader(0x434F4E46, 0, body.Length);
+                        writer.Write(body);
+                    }
+                    else if (c is MiiChunk mc)
+                    {
+                        mc.Mii.WriteTo(bw);
+                        var body = ms.ToArray();
+                        writer.WriteChunkHeader(0x4D494920, 0, body.Length);
+                        writer.Write(body);
+                    }
+                    else if (c is MiscChunk misc)
+                    {
+                        bw.WriteInt64Be(misc.Misc.LastModified);
+                        var body = ms.ToArray();
+                        writer.WriteChunkHeader(0x4D495343, 0, body.Length);
+                        writer.Write(body);
+                    }
+                }
+
+                var startPos = writer.BaseStream.Position - (1 + 1 + 2);
+                var endTarget = startPos + 0x60;
+                var cur = writer.BaseStream.Position;
+                if (cur < endTarget)
+                {
+                    var pad = (int)(endTarget - cur);
+                    writer.Write(new byte[pad]);
+                }
+            }
+            else if (name == "sysconf")
+            {
+                var chunks = SysConfigData ?? new List<SysConfigData>();
+                writer.Write((byte)chunks.Count);
+                writer.Write(new byte[2]);
+
+                // TODO: calculate hashes
+                foreach (var c in chunks)
+                {
+                    using var ms = new MemoryStream();
+                    using var bw = new BinaryWriter(ms);
+                    c.WriteTo(bw);
+                    var body = ms.ToArray();
+                    writer.WriteChunkHeader(0x53595343, 0, body.Length);
+                    writer.Write(body);
+                }
+
+                var startPos = writer.BaseStream.Position - (1 + 1 + 2);
+                var endTarget = startPos + 0x80;
+                var cur = writer.BaseStream.Position;
+                if (cur < endTarget)
+                {
+                    var pad = (int)(endTarget - cur);
+                    writer.Write(new byte[pad]);
+                }
             }
         }
     }

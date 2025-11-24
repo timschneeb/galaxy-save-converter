@@ -24,5 +24,15 @@ namespace Galaxy2.SaveData.Chunks.Game
                 ticoFat.CoinGalaxyName[i] = reader.ReadUInt16Be();
             return ticoFat;
         }
+
+        public void WriteTo(BinaryWriter writer)
+        {
+            if (writer == null) throw new ArgumentNullException(nameof(writer));
+            for (var i = 0; i < 8; i++)
+                for (var j = 0; j < 6; j++)
+                    writer.WriteUInt16Be(StarPieceNum[i,j]);
+            for (var i = 0; i < 16; i++)
+                writer.WriteUInt16Be(CoinGalaxyName[i]);
+        }
     }
 }

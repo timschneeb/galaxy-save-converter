@@ -39,11 +39,56 @@ namespace Galaxy2.SaveData.Chunks.Game
             reader.BaseStream.Position = dataStartPos + dataSize;
             return status;
         }
+
+        public void WriteTo(BinaryWriter writer)
+        {
+            if (writer == null) throw new ArgumentNullException(nameof(writer));
+
+            // We'll build the fields area into a memory stream to compute offsets
+            using var ms = new MemoryStream();
+            using var fw = new BinaryWriter(ms);
+
+            var attrs = new List<(ushort key, ushort offset)>();
+
+            // helper to add a byte field
+            void AddU8(string name, byte v)
+            {
+                var key = HashKey.Compute(name);
+                var offset = (ushort)ms.Position;
+                attrs.Add((key, offset));
+                fw.Write(v);
+            }
+
+            void AddU16(string name, ushort v)
+            {
+                var key = HashKey.Compute(name);
+                var offset = (ushort)ms.Position;
+                attrs.Add((key, offset));
+                fw.WriteUInt16Be(v);
+            }
+
+            AddU8("mPlayerLeft", PlayerLeft);
+            AddU16("mStockedStarPieceNum", StockedStarPieceNum);
+            AddU16("mStockedCoinNum", StockedCoinNum);
+            AddU16("mLast1upCoinNum", Last1upCoinNum);
+            AddU8("mFlag", Flag.Value);
+
+            fw.Flush();
+
+            var dataSize = (ushort)ms.Length;
+
+            // write header and fields to the target writer
+            writer.WriteBinaryDataContentHeader(attrs, dataSize);
+            writer.Write(ms.ToArray());
+        }
     }
 
     public struct SaveDataStoragePlayerStatusFlag(byte value)
     {
         private byte _value = value;
+
+        [JsonIgnore]
+        public byte Value => _value;
 
         [JsonPropertyName("player_luigi")]
         public bool PlayerLuigi

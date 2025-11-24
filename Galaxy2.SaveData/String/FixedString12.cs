@@ -1,10 +1,11 @@
 using System.Text;
 using System.Text.Json.Serialization;
+using System.IO;
 
 namespace Galaxy2.SaveData.String
 {
     [JsonConverter(typeof(FixedString12JsonConverter))]
-    public readonly struct FixedString12
+    public struct FixedString12
     {
         private const int Size = 12;
         private readonly byte[] _buffer;
@@ -29,6 +30,12 @@ namespace Galaxy2.SaveData.String
                 length = Size;
             }
             return Encoding.UTF8.GetString(_buffer, 0, length);
+        }
+
+        public void WriteTo(BinaryWriter writer)
+        {
+            if (writer == null) throw new ArgumentNullException(nameof(writer));
+            writer.Write(_buffer);
         }
     }
 }

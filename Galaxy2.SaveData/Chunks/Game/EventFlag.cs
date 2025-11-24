@@ -21,6 +21,14 @@ namespace Galaxy2.SaveData.Chunks.Game
             }
             return eventFlag;
         }
+
+        public void WriteTo(BinaryWriter writer)
+        {
+            foreach (var f in EventFlags)
+            {
+                writer.WriteUInt16Be(f.InnerValue);
+            }
+        }
     }
 
     public struct GameEventFlag
@@ -40,6 +48,9 @@ namespace Galaxy2.SaveData.Chunks.Game
         {
             _inner = inner;
         }
+        
+        [JsonIgnore]
+        public ushort InnerValue => _inner;
 
         [JsonPropertyName("key")]
         public ushort Key

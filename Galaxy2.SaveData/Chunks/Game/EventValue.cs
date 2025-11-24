@@ -18,6 +18,15 @@ namespace Galaxy2.SaveData.Chunks.Game
                 ev.EventValues.Add(new GameEventValue { Key = reader.ReadUInt16Be(), Value = reader.ReadUInt16Be() });
             return ev;
         }
+
+        public void WriteTo(BinaryWriter writer)
+        {
+            foreach (var v in EventValues)
+            {
+                writer.WriteUInt16Be(v.Key);
+                writer.WriteUInt16Be(v.Value);
+            }
+        }
     }
 
     public struct GameEventValue

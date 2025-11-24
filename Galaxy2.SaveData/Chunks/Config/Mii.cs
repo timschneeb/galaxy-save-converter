@@ -22,6 +22,13 @@ namespace Galaxy2.SaveData.Chunks.Config
             reader.BaseStream.Position = start + dataSize;
             return mii;
         }
+
+        public void WriteTo(BinaryWriter writer)
+        {
+            writer.Write(Flag);
+            writer.Write(MiiId);
+            writer.Write((byte)IconId);
+        }
     }
     
     public enum ConfigDataMiiIcon : byte
