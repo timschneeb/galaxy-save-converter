@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using System.IO;
 
 namespace Galaxy2.SaveData.Chunks.Game
 {
@@ -9,5 +10,14 @@ namespace Galaxy2.SaveData.Chunks.Game
         public byte[] StarCheckPointFlag { get; set; } = new byte[WorldCapacity];
         [JsonPropertyName("world_no")]
         public byte WorldNo { get; set; } = 1;
+
+        public static SaveDataStorageWorldMap ReadFrom(BinaryReader reader, int dataSize)
+        {
+            return new SaveDataStorageWorldMap
+            {
+                StarCheckPointFlag = reader.ReadBytes(8),
+                WorldNo = reader.ReadByte()
+            };
+        }
     }
 }

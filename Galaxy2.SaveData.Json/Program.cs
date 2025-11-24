@@ -21,7 +21,7 @@ namespace Galaxy2.SaveData.Json
             var inputFile = args[0];
             var outputFile = args[1];
 
-            var saveData = BinaryData.ReadLeFile(inputFile);
+            var saveData = SaveDataFile.ReadLeFile(inputFile);
 
             // Serialize the existing saveData structures directly. The storage classes are
             // annotated (or exposed via Json-friendly accessors) so they produce the same JSON shape.
@@ -30,13 +30,15 @@ namespace Galaxy2.SaveData.Json
             var options = new JsonSerializerOptions
             {
                 WriteIndented = true,
-                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+                Converters =
+                {
+                    new JsonStringEnumConverter(),
+                    new UShort2DArrayJsonConverter(),
+                    new String.FixedString12JsonConverter(),
+                    new ByteArrayAsNumberArrayJsonConverter()
+                }
             };
-
-            options.Converters.Add(new JsonStringEnumConverter());
-            options.Converters.Add(new UShort2DArrayJsonConverter());
-            options.Converters.Add(new String.FixedString12JsonConverter());
-            options.Converters.Add(new ByteArrayAsNumberArrayJsonConverter());
 
             var json = JsonSerializer.Serialize(rootObj, options);
             File.WriteAllText(outputFile, json);

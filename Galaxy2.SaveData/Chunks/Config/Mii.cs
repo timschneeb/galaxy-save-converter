@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using System.IO;
 
 namespace Galaxy2.SaveData.Chunks.Config
 {
@@ -7,9 +8,20 @@ namespace Galaxy2.SaveData.Chunks.Config
         [JsonPropertyName("flag")]
         public byte Flag { get; set; }
         [JsonPropertyName("mii_id")]
-        public byte[] MiiId { get; set; } = [0, 0, 0, 0, 0, 0, 0, 0];
+        public byte[] MiiId { get; set; } = new byte[8];
         [JsonPropertyName("icon_id")]
         public ConfigDataMiiIcon IconId { get; set; }
+
+        public static ConfigDataMii ReadFrom(BinaryReader reader, int dataSize)
+        {
+            var mii = new ConfigDataMii();
+            var start = reader.BaseStream.Position;
+            mii.Flag = reader.ReadByte();
+            mii.MiiId = reader.ReadBytes(8);
+            mii.IconId = (ConfigDataMiiIcon)reader.ReadByte();
+            reader.BaseStream.Position = start + dataSize;
+            return mii;
+        }
     }
     
     public enum ConfigDataMiiIcon : byte
