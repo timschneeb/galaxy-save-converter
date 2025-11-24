@@ -11,40 +11,38 @@ namespace Galaxy2.SaveData
     {
         public static SaveDataFile ReadLeFile(string path)
         {
-            using (var reader = new BinaryReader(new FileStream(path, FileMode.Open)))
+            using var reader = new BinaryReader(new FileStream(path, FileMode.Open));
+            Console.WriteLine($"Reading header at position: {reader.BaseStream.Position}");
+            var header = new SaveDataFileHeader
             {
-                Console.WriteLine($"Reading header at position: {reader.BaseStream.Position}");
-                var header = new SaveDataFileHeader
-                {
-                    Checksum = ReadUInt32BigEndian(reader),
-                    Version = ReadUInt32BigEndian(reader),
-                    UserFileInfoNum = ReadUInt32BigEndian(reader),
-                    FileSize = ReadUInt32BigEndian(reader)
-                };
-                Console.WriteLine($"Header: Checksum={header.Checksum}, Version={header.Version}, UserFileInfoNum={header.UserFileInfoNum}, FileSize={header.FileSize}");
+                Checksum = ReadUInt32BigEndian(reader),
+                Version = ReadUInt32BigEndian(reader),
+                UserFileInfoNum = ReadUInt32BigEndian(reader),
+                FileSize = ReadUInt32BigEndian(reader)
+            };
+            Console.WriteLine($"Header: Checksum={header.Checksum}, Version={header.Version}, UserFileInfoNum={header.UserFileInfoNum}, FileSize={header.FileSize}");
 
-                var userFileInfo = new List<SaveDataUserFileInfo>();
-                var userFileOffsets = new List<uint>();
-                for (int i = 0; i < header.UserFileInfoNum; i++)
-                {
-                    Console.WriteLine($"Reading UserFileInfo {i} at position: {reader.BaseStream.Position}");
-                    var name = new FixedString12(reader);
-                    var offset = ReadUInt32BigEndian(reader);
-                    userFileInfo.Add(new SaveDataUserFileInfo { Name = name });
-                    userFileOffsets.Add(offset);
-                    Console.WriteLine($"  Name: {name}, Offset: {offset}");
-                }
-
-                for (int i = 0; i < header.UserFileInfoNum; i++)
-                {
-                    if (userFileOffsets[i] == 0) continue;
-                    Console.WriteLine($"Seeking to UserFile {userFileInfo[i].Name} at offset: {userFileOffsets[i]}");
-                    reader.BaseStream.Seek(userFileOffsets[i], SeekOrigin.Begin);
-                    userFileInfo[i].UserFile = ReadSaveDataUserFile(reader, userFileInfo[i].Name!.ToString()!);
-                }
-
-                return new SaveDataFile { Header = header, UserFileInfo = userFileInfo };
+            var userFileInfo = new List<SaveDataUserFileInfo>();
+            var userFileOffsets = new List<uint>();
+            for (var i = 0; i < header.UserFileInfoNum; i++)
+            {
+                Console.WriteLine($"Reading UserFileInfo {i} at position: {reader.BaseStream.Position}");
+                var name = new FixedString12(reader);
+                var offset = ReadUInt32BigEndian(reader);
+                userFileInfo.Add(new SaveDataUserFileInfo { Name = name });
+                userFileOffsets.Add(offset);
+                Console.WriteLine($"  Name: {name}, Offset: {offset}");
             }
+
+            for (var i = 0; i < header.UserFileInfoNum; i++)
+            {
+                if (userFileOffsets[i] == 0) continue;
+                Console.WriteLine($"Seeking to UserFile {userFileInfo[i].Name} at offset: {userFileOffsets[i]}");
+                reader.BaseStream.Seek(userFileOffsets[i], SeekOrigin.Begin);
+                userFileInfo[i].UserFile = ReadSaveDataUserFile(reader, userFileInfo[i].Name!.ToString()!);
+            }
+
+            return new SaveDataFile { Header = header, UserFileInfo = userFileInfo };
         }
 
         private static SaveDataUserFile ReadSaveDataUserFile(BinaryReader reader, string name)
@@ -56,14 +54,14 @@ namespace Galaxy2.SaveData
             Console.WriteLine($"  Version: {version}, ChunkNum: {chunkNum}");
 
             var userFile = new SaveDataUserFile();
-            long startOfUserFile = reader.BaseStream.Position - 4; // Position before reading version, chunkNum, reserved bytes
+            var startOfUserFile = reader.BaseStream.Position - 4; // Position before reading version, chunkNum, reserved bytes
 
-            int bufferSize = 0;
+            var bufferSize = 0;
             if (name.StartsWith("user"))
             {
                 bufferSize = 0xF80; // For GameDataChunk, 4096 bytes
                 var chunks = new List<GameDataChunk>();
-                for (int i = 0; i < chunkNum; i++)
+                for (var i = 0; i < chunkNum; i++)
                 {
                     var chunk = ReadGameDataChunk(reader);
                     if (chunk != null)
@@ -77,7 +75,7 @@ namespace Galaxy2.SaveData
             {
                 bufferSize = 0x60; // For ConfigDataChunk, 96 bytes
                 var chunks = new List<ConfigDataChunk>();
-                for (int i = 0; i < chunkNum; i++)
+                for (var i = 0; i < chunkNum; i++)
                 {
                     var chunk = ReadConfigDataChunk(reader);
                      if (chunk != null)
@@ -91,7 +89,7 @@ namespace Galaxy2.SaveData
             {
                 bufferSize = 0x80; // For SysConfigDataChunk, 128 bytes
                 var chunks = new List<SysConfigData>();
-                for (int i = 0; i < chunkNum; i++)
+                for (var i = 0; i < chunkNum; i++)
                 {
                     var chunk = ReadSysConfigDataChunk(reader);
                      if (chunk != null)
@@ -181,7 +179,7 @@ namespace Galaxy2.SaveData
             Console.WriteLine($"    AttributeNum: {attributeNum}, HeaderDataSize: {headerDataSize}");
 
             var attributes = new Dictionary<ushort, ushort>();
-            for (int i = 0; i < attributeNum; i++)
+            for (var i = 0; i < attributeNum; i++)
             {
                 var key = ReadUInt16BigEndian(reader);
                 var offset = ReadUInt16BigEndian(reader);
@@ -229,7 +227,7 @@ namespace Galaxy2.SaveData
             var eventFlag = new SaveDataStorageEventFlag();
             var count = dataSize / 2;
             eventFlag.EventFlags = [];
-            for (int i = 0; i < count; i++)
+            for (var i = 0; i < count; i++)
             {
                 eventFlag.EventFlags.Add(new GameEventFlag(ReadUInt16BigEndian(reader)));
             }
@@ -241,14 +239,14 @@ namespace Galaxy2.SaveData
         {
             Console.WriteLine($"  Reading TicoFat at position: {reader.BaseStream.Position}");
             var ticoFat = new SaveDataStorageTicoFat();
-            for (int i = 0; i < 8; i++)
+            for (var i = 0; i < 8; i++)
             {
-                for (int j = 0; j < 6; j++)
+                for (var j = 0; j < 6; j++)
                 {
                     ticoFat.StarPieceNum[i, j] = ReadUInt16BigEndian(reader);
                 }
             }
-            for (int i = 0; i < 16; i++)
+            for (var i = 0; i < 16; i++)
             {
                 ticoFat.CoinGalaxyName[i] = ReadUInt16BigEndian(reader);
             }
@@ -262,7 +260,7 @@ namespace Galaxy2.SaveData
             var eventValue = new SaveDataStorageEventValue();
             var count = dataSize / 4;
             eventValue.EventValues = [];
-            for (int i = 0; i < count; i++)
+            for (var i = 0; i < count; i++)
             {
                 eventValue.EventValues.Add(new GameEventValue
                 {
@@ -282,15 +280,14 @@ namespace Galaxy2.SaveData
             galaxy.Galaxy = [];
             Console.WriteLine($"    GalaxyNum: {galaxyNum}");
 
-            // Read the two BinaryDataContentHeaderSerializer blocks for stage and scenario
             var stageSerializer = ReadBinaryDataContentHeaderSerializer(reader, "Stage header serializer");
             var scenarioSerializer = ReadBinaryDataContentHeaderSerializer(reader, "Scenario header serializer");
 
             // stageSerializer.dataSize tells us how many bytes each stage header (the field data block) occupies
-            int stageHeaderSize = stageSerializer.dataSize; // use per-stage data_size (T::data_size)
+            var stageHeaderSize = stageSerializer.dataSize; // use per-stage data_size (T::data_size)
 
             // Read one stage header then its scenarios, repeating galaxyNum times.
-            for (int i = 0; i < galaxyNum; i++)
+            for (var i = 0; i < galaxyNum; i++)
             {
                 var headerRaw = reader.ReadBytes(stageHeaderSize);
                 // Helper to read bytes from headerRaw safely
@@ -307,11 +304,11 @@ namespace Galaxy2.SaveData
                 }
 
                 // Map keys to offsets from the serializer attributes
-                ushort keyGalaxyName = (ushort)(Binary.HashCode.FromString("mGalaxyName").Value & 0xFFFF);
-                ushort keyDataSize = (ushort)(Binary.HashCode.FromString("mDataSize").Value & 0xFFFF);
-                ushort keyScenarioNum = (ushort)(Binary.HashCode.FromString("mScenarioNum").Value & 0xFFFF);
-                ushort keyGalaxyState = (ushort)(Binary.HashCode.FromString("mGalaxyState").Value & 0xFFFF);
-                ushort keyFlag = (ushort)(Binary.HashCode.FromString("mFlag").Value & 0xFFFF);
+                var keyGalaxyName = (ushort)(Binary.HashCode.FromString("mGalaxyName").Value & 0xFFFF);
+                var keyDataSize = (ushort)(Binary.HashCode.FromString("mDataSize").Value & 0xFFFF);
+                var keyScenarioNum = (ushort)(Binary.HashCode.FromString("mScenarioNum").Value & 0xFFFF);
+                var keyGalaxyState = (ushort)(Binary.HashCode.FromString("mGalaxyState").Value & 0xFFFF);
+                var keyFlag = (ushort)(Binary.HashCode.FromString("mFlag").Value & 0xFFFF);
 
                 int offGalaxyName = -1, offDataSize = -1, offScenarioNum = -1, offGalaxyState = -1, offFlag = -1;
                 foreach (var a in stageSerializer.attributes)
@@ -331,10 +328,12 @@ namespace Galaxy2.SaveData
 
                 Console.WriteLine($"    Parsed Header[{i}] from serializer: name=0x{name:X}, data_size={ds}, scenario_num={scnum}, galaxy_state={gstate}, flag={gflag}");
 
-                var stage = new SaveDataStorageGalaxyStage();
-                stage.GalaxyName = name;
-                stage.FixedHeaderSize = ds;
-                stage.ScenarioNum = scnum;
+                var stage = new SaveDataStorageGalaxyStage
+                {
+                    GalaxyName = name,
+                    FixedHeaderSize = ds,
+                    ScenarioNum = scnum
+                };
                 if (gstate > 2)
                 {
                     throw new InvalidDataException($"Invalid GalaxyState value {gstate} for stage {i}");
@@ -344,7 +343,7 @@ namespace Galaxy2.SaveData
 
                 Console.WriteLine($"  Reading GalaxyStage body {i} at position: {reader.BaseStream.Position}");
                 stage.Scenario = [];
-                for (int j = 0; j < stage.ScenarioNum; j++)
+                for (var j = 0; j < stage.ScenarioNum; j++)
                 {
                     stage.Scenario.Add(ReadGalaxyScenario(reader));
                 }
@@ -363,7 +362,7 @@ namespace Galaxy2.SaveData
             var dataSize = ReadUInt16BigEndian(reader);
             Console.WriteLine($"    Read {label}: attribute_num={attributeNum}, data_size={dataSize}");
             var attrs = new List<(ushort key, int offset)>();
-            for (int i = 0; i < attributeNum; i++)
+            for (var i = 0; i < attributeNum; i++)
             {
                 var key = ReadUInt16BigEndian(reader);
                 var offset = ReadUInt16BigEndian(reader);
@@ -376,9 +375,11 @@ namespace Galaxy2.SaveData
         private static SaveDataStorageWorldMap ReadWorldMap(BinaryReader reader, int dataSize)
         {
             Console.WriteLine($"  Reading WorldMap at position: {reader.BaseStream.Position}");
-            var worldMap = new SaveDataStorageWorldMap();
-            worldMap.StarCheckPointFlag = reader.ReadBytes(8);
-            worldMap.WorldNo = reader.ReadByte();
+            var worldMap = new SaveDataStorageWorldMap
+            {
+                StarCheckPointFlag = reader.ReadBytes(8),
+                WorldNo = reader.ReadByte()
+            };
             Console.WriteLine($"    StarCheckPointFlag: {BitConverter.ToString(worldMap.StarCheckPointFlag)}, WorldNo: {worldMap.WorldNo}");
             return worldMap;
         }
@@ -410,8 +411,10 @@ namespace Galaxy2.SaveData
                     break;
                 case 0x4D495343: // MISC
                     Console.WriteLine("  Chunk Type: MISC");
-                    var miscData = new ConfigDataMisc();
-                    miscData.LastModified = ReadInt64BigEndian(reader);
+                    var miscData = new ConfigDataMisc
+                    {
+                        LastModified = ReadInt64BigEndian(reader)
+                    };
                     chunk = new MiscChunk { Misc = miscData! };
                     break;
                 default:
@@ -479,7 +482,7 @@ namespace Galaxy2.SaveData
             Console.WriteLine($"    AttributeNum: {attributeNum}, HeaderDataSize: {headerDataSize}");
 
             var attributes = new Dictionary<ushort, ushort>();
-            for (int i = 0; i < attributeNum; i++)
+            for (var i = 0; i < attributeNum; i++)
             {
                 var key = ReadUInt16BigEndian(reader);
                 var offset = ReadUInt16BigEndian(reader);
@@ -534,10 +537,12 @@ namespace Galaxy2.SaveData
         private static SaveDataStorageGalaxyScenario ReadGalaxyScenario(BinaryReader reader)
         {
             Console.WriteLine($"  Reading GalaxyScenario at position: {reader.BaseStream.Position}");
-            var scenario = new SaveDataStorageGalaxyScenario();
-            scenario.MissNum = reader.ReadByte();
-            scenario.BestTime = ReadUInt32BigEndian(reader);
-            scenario.Flag = new SaveDataStorageGalaxyScenarioFlag(reader.ReadByte());
+            var scenario = new SaveDataStorageGalaxyScenario
+            {
+                MissNum = reader.ReadByte(),
+                BestTime = ReadUInt32BigEndian(reader),
+                Flag = new SaveDataStorageGalaxyScenarioFlag(reader.ReadByte())
+            };
             Console.WriteLine($"    MissNum: {scenario.MissNum}, BestTime: {scenario.BestTime}, Flag: {scenario.Flag}");
             return scenario;
         }
