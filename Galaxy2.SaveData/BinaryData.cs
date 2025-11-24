@@ -1,4 +1,6 @@
-// Add this using directive
+using System;
+using System.IO;
+using System.Collections.Generic;
 using Galaxy2.SaveData.Save;
 using Galaxy2.SaveData.String;
 using Galaxy2.SaveData.Chunks.Game;
@@ -12,32 +14,27 @@ namespace Galaxy2.SaveData
         public static SaveDataFile ReadLeFile(string path)
         {
             using var reader = new BinaryReader(new FileStream(path, FileMode.Open));
-            Console.WriteLine($"Reading header at position: {reader.BaseStream.Position}");
             var header = new SaveDataFileHeader
             {
-                Checksum = ReadUInt32BigEndian(reader),
-                Version = ReadUInt32BigEndian(reader),
-                UserFileInfoNum = ReadUInt32BigEndian(reader),
-                FileSize = ReadUInt32BigEndian(reader)
+                Checksum = reader.ReadUInt32Be(),
+                Version = reader.ReadUInt32Be(),
+                UserFileInfoNum = reader.ReadUInt32Be(),
+                FileSize = reader.ReadUInt32Be()
             };
-            Console.WriteLine($"Header: Checksum={header.Checksum}, Version={header.Version}, UserFileInfoNum={header.UserFileInfoNum}, FileSize={header.FileSize}");
 
             var userFileInfo = new List<SaveDataUserFileInfo>();
             var userFileOffsets = new List<uint>();
             for (var i = 0; i < header.UserFileInfoNum; i++)
             {
-                Console.WriteLine($"Reading UserFileInfo {i} at position: {reader.BaseStream.Position}");
                 var name = new FixedString12(reader);
-                var offset = ReadUInt32BigEndian(reader);
+                var offset = reader.ReadUInt32Be();
                 userFileInfo.Add(new SaveDataUserFileInfo { Name = name });
                 userFileOffsets.Add(offset);
-                Console.WriteLine($"  Name: {name}, Offset: {offset}");
             }
 
             for (var i = 0; i < header.UserFileInfoNum; i++)
             {
                 if (userFileOffsets[i] == 0) continue;
-                Console.WriteLine($"Seeking to UserFile {userFileInfo[i].Name} at offset: {userFileOffsets[i]}");
                 reader.BaseStream.Seek(userFileOffsets[i], SeekOrigin.Begin);
                 userFileInfo[i].UserFile = ReadSaveDataUserFile(reader, userFileInfo[i].Name!.ToString()!);
             }
@@ -47,268 +44,210 @@ namespace Galaxy2.SaveData
 
         private static SaveDataUserFile ReadSaveDataUserFile(BinaryReader reader, string name)
         {
-            Console.WriteLine($"Reading SaveDataUserFile for {name} at position: {reader.BaseStream.Position}");
             var version = reader.ReadByte();
+            if (version != 2)
+                throw new InvalidDataException($"Unsupported SaveDataUserFile version: {version}");
+
             var chunkNum = reader.ReadByte();
-            reader.ReadBytes(2); // Skip reserved bytes
-            Console.WriteLine($"  Version: {version}, ChunkNum: {chunkNum}");
+            reader.ReadBytes(2); // reserved
 
             var userFile = new SaveDataUserFile();
-            var startOfUserFile = reader.BaseStream.Position - 4; // Position before reading version, chunkNum, reserved bytes
+            var startOfUserFile = reader.BaseStream.Position - 4;
 
-            var bufferSize = 0;
             if (name.StartsWith("user"))
             {
-                bufferSize = 0xF80; // For GameDataChunk, 4096 bytes
                 var chunks = new List<GameDataChunk>();
                 for (var i = 0; i < chunkNum; i++)
                 {
                     var chunk = ReadGameDataChunk(reader);
-                    if (chunk != null)
-                    {
-                        chunks.Add(chunk);
-                    }
+                    if (chunk != null) chunks.Add(chunk);
                 }
                 userFile.GameData = chunks;
+                reader.BaseStream.Position = startOfUserFile + 0xF80;
             }
             else if (name.StartsWith("config"))
             {
-                bufferSize = 0x60; // For ConfigDataChunk, 96 bytes
                 var chunks = new List<ConfigDataChunk>();
                 for (var i = 0; i < chunkNum; i++)
                 {
                     var chunk = ReadConfigDataChunk(reader);
-                     if (chunk != null)
-                    {
-                        chunks.Add(chunk);
-                    }
+                    if (chunk != null) chunks.Add(chunk);
                 }
                 userFile.ConfigData = chunks;
+                reader.BaseStream.Position = startOfUserFile + 0x60;
             }
             else if (name == "sysconf")
             {
-                bufferSize = 0x80; // For SysConfigDataChunk, 128 bytes
                 var chunks = new List<SysConfigData>();
                 for (var i = 0; i < chunkNum; i++)
                 {
                     var chunk = ReadSysConfigDataChunk(reader);
-                     if (chunk != null)
-                    {
-                        chunks.Add(chunk);
-                    }
+                    if (chunk != null) chunks.Add(chunk);
                 }
                 userFile.SysConfigData = chunks;
+                reader.BaseStream.Position = startOfUserFile + 0x80;
             }
-
-            // Skip padding to align with T::BUFFER_SIZE - size_of::<u32>() in Rust
-            // The 4 bytes are for version, chunkNum, and reserved
-            reader.BaseStream.Position = startOfUserFile + bufferSize; // Seek to the end of the padded block
 
             return userFile;
         }
 
         private static GameDataChunk? ReadGameDataChunk(BinaryReader reader)
         {
-            var chunkStartPos = reader.BaseStream.Position; // Capture starting position
+            var (magic, _, size, inner, start) = reader.ReadChunkHeader();
+            GameDataChunk? result = null;
 
-            var magicBytes = reader.ReadBytes(4);
-            Console.WriteLine($"  Raw Magic Bytes: {BitConverter.ToString(magicBytes)}");
-            var magic = ToUInt32BigEndian(magicBytes);
-
-            var hashBytes = reader.ReadBytes(4);
-            Console.WriteLine($"  Raw Hash Bytes: {BitConverter.ToString(hashBytes)}");
-            var hash = ToUInt32BigEndian(hashBytes);
-
-            var sizeBytes = reader.ReadBytes(4);
-            Console.WriteLine($"  Raw Size Bytes: {BitConverter.ToString(sizeBytes)}");
-            var size = ToUInt32BigEndian(sizeBytes);
-            var innerDataSize = (int)(size - 12); // Size of the data *after* the header
-
-            Console.WriteLine($"  Magic: 0x{magic:X}, Hash: 0x{hash:X}, Size: {size}, InnerDataSize: {innerDataSize}");
-            
-            GameDataChunk? chunk = null; // Make nullable
-            
             switch (magic)
             {
                 case 0x504C4159: // PLAY
-                    Console.WriteLine("  Chunk Type: PLAY");
-                    chunk = new PlayerStatusChunk { PlayerStatus = ReadPlayerStatus(reader, innerDataSize)! };
+                    result = new PlayerStatusChunk { PlayerStatus = ReadPlayerStatus(reader, inner) };
                     break;
                 case 0x464C4731: // FLG1
-                    Console.WriteLine("  Chunk Type: FLG1");
-                    chunk = new EventFlagChunk { EventFlag = ReadEventFlag(reader, innerDataSize)! };
+                    result = new EventFlagChunk { EventFlag = ReadEventFlag(reader, inner) };
                     break;
                 case 0x53544631: // STF1
-                    Console.WriteLine("  Chunk Type: STF1");
-                    chunk = new TicoFatChunk { TicoFat = ReadTicoFat(reader, innerDataSize)! };
+                    result = new TicoFatChunk { TicoFat = ReadTicoFat(reader, inner) };
                     break;
                 case 0x564C4531: // VLE1
-                    Console.WriteLine("  Chunk Type: VLE1");
-                    chunk = new EventValueChunk { EventValue = ReadEventValue(reader, innerDataSize)! };
+                    result = new EventValueChunk { EventValue = ReadEventValue(reader, inner) };
                     break;
                 case 0x47414C41: // GALA
-                    Console.WriteLine("  Chunk Type: GALA");
-                    chunk = new GalaxyChunk { Galaxy = ReadGalaxy(reader, innerDataSize)! };
+                    result = new GalaxyChunk { Galaxy = ReadGalaxy(reader) };
                     break;
                 case 0x5353574D: // SSWM
-                    Console.WriteLine("  Chunk Type: SSWM");
-                    chunk = new WorldMapChunk { WorldMap = ReadWorldMap(reader, innerDataSize)! };
+                    result = new WorldMapChunk { WorldMap = ReadWorldMap(reader) };
                     break;
                 default:
-                    Console.WriteLine($"  Unknown Chunk Type: 0x{magic:X}. Skipping {innerDataSize} bytes.");
-                    // If unknown, just skip the inner data.
-                    reader.BaseStream.Seek(innerDataSize, SeekOrigin.Current);
+                    // unknown chunk -> skip inner
+                    reader.BaseStream.Seek(inner, SeekOrigin.Current);
                     break;
             }
-            
-            // After reading the chunk's content, ensure the stream is at chunkStartPos + size (total size)
-            reader.BaseStream.Position = chunkStartPos + size;
 
+            // ensure end of chunk
+            reader.BaseStream.Position = start + size;
+            return result;
+        }
+
+        private static ConfigDataChunk? ReadConfigDataChunk(BinaryReader reader)
+        {
+            var (magic, _, size, inner, start) = reader.ReadChunkHeader();
+            ConfigDataChunk? chunk = null;
+            switch (magic)
+            {
+                case 0x434F4E46: // CONF
+                    chunk = new CreateChunk { Create = new ConfigDataCreate { IsCreated = reader.ReadSByte() != 0 } };
+                    break;
+                case 0x4D494920: // MII
+                    chunk = new MiiChunk { Mii = ReadMii(reader) };
+                    break;
+                case 0x4D495343: // MISC
+                    var misc = new ConfigDataMisc { LastModified = reader.ReadInt64Be() };
+                    chunk = new MiscChunk { Misc = misc };
+                    break;
+                default:
+                    reader.BaseStream.Seek(inner, SeekOrigin.Current);
+                    break;
+            }
+
+            reader.BaseStream.Position = start + size;
             return chunk;
         }
 
-
-        private static SaveDataStoragePlayerStatus ReadPlayerStatus(BinaryReader reader, int dataSize)
+        private static SysConfigData? ReadSysConfigDataChunk(BinaryReader reader)
         {
-            Console.WriteLine($"  Reading PlayerStatus at position: {reader.BaseStream.Position}");
-            var status = new SaveDataStoragePlayerStatus();
-            var dataStartPos = reader.BaseStream.Position;
-
-            var attributeNum = ReadUInt16BigEndian(reader);
-            var headerDataSize = ReadUInt16BigEndian(reader);
-            Console.WriteLine($"    AttributeNum: {attributeNum}, HeaderDataSize: {headerDataSize}");
-
-            var attributes = new Dictionary<ushort, ushort>();
-            for (var i = 0; i < attributeNum; i++)
+            var (magic, _, size, inner, start) = reader.ReadChunkHeader();
+            SysConfigData? chunk = null;
+            if (magic == 0x53595343) // SYSC
             {
-                var key = ReadUInt16BigEndian(reader);
-                var offset = ReadUInt16BigEndian(reader);
-                attributes.Add(key, offset);
-                Console.WriteLine($"    Attribute {i}: Key=0x{key:X}, Offset={offset}");
+                chunk = ReadSysConfig(reader, inner);
+            }
+            else
+            {
+                reader.BaseStream.Seek(inner, SeekOrigin.Current);
             }
 
-            var fieldsDataStartPos = reader.BaseStream.Position;
-            Console.WriteLine($"    Fields data starts at: {fieldsDataStartPos}");
+            reader.BaseStream.Position = start + size;
+            return chunk;
+        }
 
-            var playerLeftOffset = attributes[(ushort)(Binary.HashCode.FromString("mPlayerLeft").Value & 0xFFFF)];
-            reader.BaseStream.Position = fieldsDataStartPos + playerLeftOffset;
-            status.PlayerLeft = reader.ReadByte();
-            Console.WriteLine($"      mPlayerLeft: {status.PlayerLeft} (Offset: {playerLeftOffset})");
+        // --- specific chunk parsers ---
+        private static SaveDataStoragePlayerStatus ReadPlayerStatus(BinaryReader reader, int dataSize)
+        {
+            var status = new SaveDataStoragePlayerStatus();
+            var start = reader.BaseStream.Position;
 
-            var stockedStarPieceNumOffset = attributes[(ushort)(Binary.HashCode.FromString("mStockedStarPieceNum").Value & 0xFFFF)];
-            reader.BaseStream.Position = fieldsDataStartPos + stockedStarPieceNumOffset;
-            status.StockedStarPieceNum = ReadUInt16BigEndian(reader);
-            Console.WriteLine($"      mStockedStarPieceNum: {status.StockedStarPieceNum} (Offset: {stockedStarPieceNumOffset})");
+            var (attributes, _) = reader.ReadAttributesAsDictionary();
+            var fieldsStart = reader.BaseStream.Position;
 
-            var stockedCoinNumOffset = attributes[(ushort)(Binary.HashCode.FromString("mStockedCoinNum").Value & 0xFFFF)];
-            reader.BaseStream.Position = fieldsDataStartPos + stockedCoinNumOffset;
-            status.StockedCoinNum = ReadUInt16BigEndian(reader);
-            Console.WriteLine($"      mStockedCoinNum: {status.StockedCoinNum} (Offset: {stockedCoinNumOffset})");
+            if (reader.TryReadU8(fieldsStart, attributes, "mPlayerLeft", out var playerLeft))
+                status.PlayerLeft = playerLeft;
+            if (reader.TryReadU16(fieldsStart, attributes, "mStockedStarPieceNum", out var sspn))
+                status.StockedStarPieceNum = sspn;
+            if (reader.TryReadU16(fieldsStart, attributes, "mStockedCoinNum", out var scn))
+                status.StockedCoinNum = scn;
+            if (reader.TryReadU16(fieldsStart, attributes, "mLast1upCoinNum", out var l1Up))
+                status.Last1upCoinNum = l1Up;
+            if (reader.TryReadU8(fieldsStart, attributes, "mFlag", out var flag))
+                status.Flag = new SaveDataStoragePlayerStatusFlag(flag);
 
-            var last1upCoinNumOffset = attributes[(ushort)(Binary.HashCode.FromString("mLast1upCoinNum").Value & 0xFFFF)];
-            reader.BaseStream.Position = fieldsDataStartPos + last1upCoinNumOffset;
-            status.Last1upCoinNum = ReadUInt16BigEndian(reader);
-            Console.WriteLine($"      mLast1upCoinNum: {status.Last1upCoinNum} (Offset: {last1upCoinNumOffset})");
-
-            var flagOffset = attributes[(ushort)(Binary.HashCode.FromString("mFlag").Value & 0xFFFF)];
-            reader.BaseStream.Position = fieldsDataStartPos + flagOffset;
-            status.Flag = new SaveDataStoragePlayerStatusFlag(reader.ReadByte());
-            Console.WriteLine($"      mFlag: {status.Flag} (Offset: {flagOffset})"); 
-            
-            // Ensure the reader's position is exactly dataSize bytes from dataStartPos
-            reader.BaseStream.Position = dataStartPos + dataSize;
-
+            reader.BaseStream.Position = start + dataSize;
             return status;
         }
 
         private static SaveDataStorageEventFlag ReadEventFlag(BinaryReader reader, int dataSize)
         {
-            Console.WriteLine($"  Reading EventFlag at position: {reader.BaseStream.Position}");
             var eventFlag = new SaveDataStorageEventFlag();
             var count = dataSize / 2;
-            eventFlag.EventFlags = [];
+            eventFlag.EventFlags = new List<GameEventFlag>(count);
             for (var i = 0; i < count; i++)
-            {
-                eventFlag.EventFlags.Add(new GameEventFlag(ReadUInt16BigEndian(reader)));
-            }
-            Console.WriteLine($"    Read {count} EventFlags.");
+                eventFlag.EventFlags.Add(new GameEventFlag(reader.ReadUInt16Be()));
             return eventFlag;
         }
 
         private static SaveDataStorageTicoFat ReadTicoFat(BinaryReader reader, int dataSize)
         {
-            Console.WriteLine($"  Reading TicoFat at position: {reader.BaseStream.Position}");
-            var ticoFat = new SaveDataStorageTicoFat();
+            var tico = new SaveDataStorageTicoFat();
             for (var i = 0; i < 8; i++)
-            {
                 for (var j = 0; j < 6; j++)
-                {
-                    ticoFat.StarPieceNum[i, j] = ReadUInt16BigEndian(reader);
-                }
-            }
+                    tico.StarPieceNum[i, j] = reader.ReadUInt16Be();
             for (var i = 0; i < 16; i++)
-            {
-                ticoFat.CoinGalaxyName[i] = ReadUInt16BigEndian(reader);
-            }
-            Console.WriteLine("    Read TicoFat data.");
-            return ticoFat;
+                tico.CoinGalaxyName[i] = reader.ReadUInt16Be();
+            return tico;
         }
 
         private static SaveDataStorageEventValue ReadEventValue(BinaryReader reader, int dataSize)
         {
-            Console.WriteLine($"  Reading EventValue at position: {reader.BaseStream.Position}");
-            var eventValue = new SaveDataStorageEventValue();
+            var ev = new SaveDataStorageEventValue();
             var count = dataSize / 4;
-            eventValue.EventValues = [];
+            ev.EventValues = new List<GameEventValue>(count);
             for (var i = 0; i < count; i++)
-            {
-                eventValue.EventValues.Add(new GameEventValue
-                {
-                    Key = ReadUInt16BigEndian(reader),
-                    Value = ReadUInt16BigEndian(reader)
-                });
-            }
-            Console.WriteLine($"    Read {count} EventValues.");
-            return eventValue;
+                ev.EventValues.Add(new GameEventValue { Key = reader.ReadUInt16Be(), Value = reader.ReadUInt16Be() });
+            return ev;
         }
 
-        private static SaveDataStorageGalaxy ReadGalaxy(BinaryReader reader, int dataSize)
+        private static SaveDataStorageGalaxy ReadGalaxy(BinaryReader reader)
         {
-            Console.WriteLine($"  Reading Galaxy at position: {reader.BaseStream.Position}");
             var galaxy = new SaveDataStorageGalaxy();
-            var galaxyNum = ReadUInt16BigEndian(reader);
-            galaxy.Galaxy = [];
-            Console.WriteLine($"    GalaxyNum: {galaxyNum}");
+            var galaxyNum = reader.ReadUInt16Be();
+            galaxy.Galaxy = new List<SaveDataStorageGalaxyStage>(galaxyNum);
 
-            var stageSerializer = ReadBinaryDataContentHeaderSerializer(reader, "Stage header serializer");
-            var scenarioSerializer = ReadBinaryDataContentHeaderSerializer(reader, "Scenario header serializer");
+            var stageSerializer = reader.ReadBinaryDataContentHeaderSerializer();
+            _ = reader.ReadBinaryDataContentHeaderSerializer(); // scenario serializer (discard)
 
-            // stageSerializer.dataSize tells us how many bytes each stage header (the field data block) occupies
-            var stageHeaderSize = stageSerializer.dataSize; // use per-stage data_size (T::data_size)
+            var stageHeaderSize = stageSerializer.dataSize;
 
-            // Read one stage header then its scenarios, repeating galaxyNum times.
             for (var i = 0; i < galaxyNum; i++)
             {
                 var headerRaw = reader.ReadBytes(stageHeaderSize);
-                // Helper to read bytes from headerRaw safely
-                ushort ReadU16FromHeader(int off)
-                {
-                    if (off + 1 >= headerRaw.Length) return 0;
-                    var b = new byte[] { headerRaw[off], headerRaw[off + 1] };
-                    return ToUInt16BigEndian(b);
-                }
-                byte ReadU8FromHeader(int off)
-                {
-                    if (off >= headerRaw.Length) return 0;
-                    return headerRaw[off];
-                }
 
-                // Map keys to offsets from the serializer attributes
-                var keyGalaxyName = (ushort)(Binary.HashCode.FromString("mGalaxyName").Value & 0xFFFF);
-                var keyDataSize = (ushort)(Binary.HashCode.FromString("mDataSize").Value & 0xFFFF);
-                var keyScenarioNum = (ushort)(Binary.HashCode.FromString("mScenarioNum").Value & 0xFFFF);
-                var keyGalaxyState = (ushort)(Binary.HashCode.FromString("mGalaxyState").Value & 0xFFFF);
-                var keyFlag = (ushort)(Binary.HashCode.FromString("mFlag").Value & 0xFFFF);
+                // small local readers for headerRaw
+                ushort ReadU16At(int off) => (off < 0 || off + 1 >= headerRaw.Length) ? (ushort)0 : (ushort)((headerRaw[off] << 8) | headerRaw[off + 1]);
+                byte ReadU8At(int off) => (off < 0 || off >= headerRaw.Length) ? (byte)0 : headerRaw[off];
+
+                var keyGalaxyName = ComputeKey("mGalaxyName");
+                var keyDataSize = ComputeKey("mDataSize");
+                var keyScenarioNum = ComputeKey("mScenarioNum");
+                var keyGalaxyState = ComputeKey("mGalaxyState");
+                var keyFlag = ComputeKey("mFlag");
 
                 int offGalaxyName = -1, offDataSize = -1, offScenarioNum = -1, offGalaxyState = -1, offFlag = -1;
                 foreach (var a in stageSerializer.attributes)
@@ -320,276 +259,82 @@ namespace Galaxy2.SaveData
                     else if (a.key == keyFlag) offFlag = a.offset;
                 }
 
-                var name = offGalaxyName >= 0 ? ReadU16FromHeader(offGalaxyName) : (ushort)0;
-                var ds = offDataSize >= 0 ? ReadU16FromHeader(offDataSize) : (ushort)0;
-                var scnum = offScenarioNum >= 0 ? ReadU8FromHeader(offScenarioNum) : (byte)0;
-                var gstate = offGalaxyState >= 0 ? ReadU8FromHeader(offGalaxyState) : (byte)0;
-                var gflag = offFlag >= 0 ? ReadU8FromHeader(offFlag) : (byte)0;
-
-                Console.WriteLine($"    Parsed Header[{i}] from serializer: name=0x{name:X}, data_size={ds}, scenario_num={scnum}, galaxy_state={gstate}, flag={gflag}");
+                var name = offGalaxyName >= 0 ? ReadU16At(offGalaxyName) : (ushort)0;
+                var ds = offDataSize >= 0 ? ReadU16At(offDataSize) : (ushort)0;
+                var scnum = offScenarioNum >= 0 ? ReadU8At(offScenarioNum) : (byte)0;
+                var gstate = offGalaxyState >= 0 ? ReadU8At(offGalaxyState) : (byte)0;
+                var gflag = offFlag >= 0 ? ReadU8At(offFlag) : (byte)0;
 
                 var stage = new SaveDataStorageGalaxyStage
                 {
                     GalaxyName = name,
                     FixedHeaderSize = ds,
-                    ScenarioNum = scnum
+                    ScenarioNum = scnum,
+                    GalaxyState = (SaveDataStorageGalaxyState)gstate,
+                    Flag = new SaveDataStorageGalaxyFlag(gflag)
                 };
-                if (gstate > 2)
-                {
-                    throw new InvalidDataException($"Invalid GalaxyState value {gstate} for stage {i}");
-                }
-                stage.GalaxyState = (SaveDataStorageGalaxyState)gstate;
-                stage.Flag = new SaveDataStorageGalaxyFlag(gflag);
 
-                Console.WriteLine($"  Reading GalaxyStage body {i} at position: {reader.BaseStream.Position}");
-                stage.Scenario = [];
+                if (gstate > 2) throw new InvalidDataException($"Invalid GalaxyState value {gstate} for stage {i}");
+
+                stage.Scenario = new List<SaveDataStorageGalaxyScenario>(stage.ScenarioNum);
                 for (var j = 0; j < stage.ScenarioNum; j++)
-                {
                     stage.Scenario.Add(ReadGalaxyScenario(reader));
-                }
 
                 galaxy.Galaxy.Add(stage);
             }
 
-            Console.WriteLine("    Read Galaxy stages.");
             return galaxy;
         }
 
-        // Read and return a BinaryDataContentHeaderSerializer<T> structure from the stream.
-        private static (ushort attributeNum, int dataSize, List<(ushort key, int offset)> attributes) ReadBinaryDataContentHeaderSerializer(BinaryReader reader, string label)
+        private static SaveDataStorageGalaxyScenario ReadGalaxyScenario(BinaryReader reader)
         {
-            var attributeNum = ReadUInt16BigEndian(reader);
-            var dataSize = ReadUInt16BigEndian(reader);
-            Console.WriteLine($"    Read {label}: attribute_num={attributeNum}, data_size={dataSize}");
-            var attrs = new List<(ushort key, int offset)>();
-            for (var i = 0; i < attributeNum; i++)
+            return new SaveDataStorageGalaxyScenario
             {
-                var key = ReadUInt16BigEndian(reader);
-                var offset = ReadUInt16BigEndian(reader);
-                attrs.Add((key, offset));
-                Console.WriteLine($"      Attribute {i}: key=0x{key:X}, offset={offset}");
-            }
-            return (attributeNum, dataSize, attrs);
-        }
-
-        private static SaveDataStorageWorldMap ReadWorldMap(BinaryReader reader, int dataSize)
-        {
-            Console.WriteLine($"  Reading WorldMap at position: {reader.BaseStream.Position}");
-            var worldMap = new SaveDataStorageWorldMap
-            {
-                StarCheckPointFlag = reader.ReadBytes(8),
-                WorldNo = reader.ReadByte()
+                MissNum = reader.ReadByte(),
+                BestTime = reader.ReadUInt32Be(),
+                Flag = new SaveDataStorageGalaxyScenarioFlag(reader.ReadByte())
             };
-            Console.WriteLine($"    StarCheckPointFlag: {BitConverter.ToString(worldMap.StarCheckPointFlag)}, WorldNo: {worldMap.WorldNo}");
-            return worldMap;
-        }
-
-
-        private static ConfigDataChunk? ReadConfigDataChunk(BinaryReader reader)
-        {
-            var chunkStartPos = reader.BaseStream.Position;
-            var magicBytes = reader.ReadBytes(4);
-            Console.WriteLine($"  Raw Magic Bytes: {BitConverter.ToString(magicBytes)}");
-            var magic = ToUInt32BigEndian(magicBytes);
-
-            var hash = ReadUInt32BigEndian(reader);
-            var size = ReadUInt32BigEndian(reader);
-            var innerDataSize = (int)(size - 12);
-            Console.WriteLine($"  Magic: 0x{magic:X}, Hash: 0x{hash:X}, Size: {size}, InnerDataSize: {innerDataSize}");
-
-            ConfigDataChunk? chunk = null;
-            
-            switch (magic)
-            {
-                case 0x434F4E46: // CONF
-                    Console.WriteLine("  Chunk Type: CONF");
-                    chunk = new CreateChunk { Create = new ConfigDataCreate { IsCreated = reader.ReadSByte() != 0 }! };
-                    break;
-                case 0x4D494920: // MII
-                    Console.WriteLine("  Chunk Type: MII");
-                    chunk = new MiiChunk { Mii = ReadMii(reader)! };
-                    break;
-                case 0x4D495343: // MISC
-                    Console.WriteLine("  Chunk Type: MISC");
-                    var miscData = new ConfigDataMisc
-                    {
-                        LastModified = ReadInt64BigEndian(reader)
-                    };
-                    chunk = new MiscChunk { Misc = miscData! };
-                    break;
-                default:
-                    Console.WriteLine($"  Unknown Chunk Type: 0x{magic:X}. Skipping {innerDataSize} bytes.");
-                    reader.BaseStream.Seek(innerDataSize, SeekOrigin.Current);
-                    break;
-            }
-
-            reader.BaseStream.Position = chunkStartPos + size;
-
-            return chunk;
         }
 
         private static ConfigDataMii ReadMii(BinaryReader reader)
         {
-            Console.WriteLine($"  Reading Mii at position: {reader.BaseStream.Position}");
-            var mii = new ConfigDataMii
+            return new ConfigDataMii
             {
                 Flag = reader.ReadByte(),
                 MiiId = reader.ReadBytes(8),
                 IconId = (ConfigDataMiiIcon)reader.ReadByte()
             };
-            Console.WriteLine($"    Flag: {mii.Flag}, MiiId: {BitConverter.ToString(mii.MiiId)}, IconId: {mii.IconId}");
-            return mii;
-        }
-
-        private static SysConfigData? ReadSysConfigDataChunk(BinaryReader reader)
-        {
-            var chunkStartPos = reader.BaseStream.Position;
-            var magicBytes = reader.ReadBytes(4);
-            Console.WriteLine($"  Raw Magic Bytes: {BitConverter.ToString(magicBytes)}");
-            var magic = ToUInt32BigEndian(magicBytes);
-
-            var hash = ReadUInt32BigEndian(reader);
-            var size = ReadUInt32BigEndian(reader);
-            var innerDataSize = (int)(size - 12);
-            Console.WriteLine($"  Magic: 0x{magic:X}, Hash: 0x{hash:X}, Size: {size}, InnerDataSize: {innerDataSize}");
-
-            SysConfigData? chunk = null;
-            switch (magic)
-            {
-                case 0x53595343: // SYSC
-                    Console.WriteLine("  Chunk Type: SYSC");
-                    chunk = ReadSysConfig(reader, innerDataSize);
-                    break;
-                default:
-                    Console.WriteLine($"  Unknown Chunk Type: 0x{magic:X}. Skipping {innerDataSize} bytes.");
-                    reader.BaseStream.Seek(innerDataSize, SeekOrigin.Current);
-                    break;
-            }
-
-            reader.BaseStream.Position = chunkStartPos + size;
-
-            return chunk;
         }
 
         private static SysConfigData ReadSysConfig(BinaryReader reader, int dataSize)
         {
-            Console.WriteLine($"  Reading SysConfig at position: {reader.BaseStream.Position}");
-            var sysConfig = new SysConfigData();
-            var dataStartPos = reader.BaseStream.Position;
+            var sys = new SysConfigData();
+            var start = reader.BaseStream.Position;
 
-            var attributeNum = ReadUInt16BigEndian(reader);
-            var headerDataSize = ReadUInt16BigEndian(reader);
-            Console.WriteLine($"    AttributeNum: {attributeNum}, HeaderDataSize: {headerDataSize}");
+            var (attributes, _) = reader.ReadAttributesAsDictionary();
+            var fieldsStart = reader.BaseStream.Position;
 
-            var attributes = new Dictionary<ushort, ushort>();
-            for (var i = 0; i < attributeNum; i++)
-            {
-                var key = ReadUInt16BigEndian(reader);
-                var offset = ReadUInt16BigEndian(reader);
-                attributes.Add(key, offset);
-                Console.WriteLine($"    Attribute {i}: Key=0x{key:X}, Offset={offset}");
-            }
+            if (reader.TryReadU8(fieldsStart, attributes, "mIsEncouragePal60", out var pal)) sys.IsEncouragePal60 = pal != 0;
+            if (reader.TryReadI64(fieldsStart, attributes, "mTimeSent", out var ts)) sys.TimeSent = ts;
+            if (reader.TryReadU32(fieldsStart, attributes, "mSentBytes", out var sb)) sys.SentBytes = sb;
+            if (reader.TryReadU16(fieldsStart, attributes, "mBankStarPieceNum", out var bn)) sys.BankStarPieceNum = bn;
+            if (reader.TryReadU16(fieldsStart, attributes, "mBankStarPieceMax", out var bm)) sys.BankStarPieceMax = bm;
+            if (reader.TryReadU8(fieldsStart, attributes, "mGiftedPlayerLeft", out var gl)) sys.GiftedPlayerLeft = gl;
+            if (reader.TryReadU16(fieldsStart, attributes, "mGiftedFileNameHash", out var gfnh)) sys.GiftedFileNameHash = gfnh;
 
-            var fieldsDataStartPos = reader.BaseStream.Position;
-            Console.WriteLine($"    Fields data starts at: {fieldsDataStartPos}");
-
-            var isEncouragePal60Offset = attributes[(ushort)(Binary.HashCode.FromString("mIsEncouragePal60").Value & 0xFFFF)];
-            reader.BaseStream.Position = fieldsDataStartPos + isEncouragePal60Offset;
-            sysConfig.IsEncouragePal60 = reader.ReadByte() != 0;
-            Console.WriteLine($"      mIsEncouragePal60: {sysConfig.IsEncouragePal60} (Offset: {isEncouragePal60Offset})");
-
-            var timeSentOffset = attributes[(ushort)(Binary.HashCode.FromString("mTimeSent").Value & 0xFFFF)];
-            reader.BaseStream.Position = fieldsDataStartPos + timeSentOffset;
-            sysConfig.TimeSent = ReadInt64BigEndian(reader);
-            Console.WriteLine($"      mTimeSent: {sysConfig.TimeSent} (Offset: {timeSentOffset})");
-
-            var sentBytesOffset = attributes[(ushort)(Binary.HashCode.FromString("mSentBytes").Value & 0xFFFF)];
-            reader.BaseStream.Position = fieldsDataStartPos + sentBytesOffset;
-            sysConfig.SentBytes = ReadUInt32BigEndian(reader);
-            Console.WriteLine($"      mSentBytes: {sysConfig.SentBytes} (Offset: {sentBytesOffset})");
-
-            var bankStarPieceNumOffset = attributes[(ushort)(Binary.HashCode.FromString("mBankStarPieceNum").Value & 0xFFFF)];
-            reader.BaseStream.Position = fieldsDataStartPos + bankStarPieceNumOffset;
-            sysConfig.BankStarPieceNum = ReadUInt16BigEndian(reader);
-            Console.WriteLine($"      mBankStarPieceNum: {sysConfig.BankStarPieceNum} (Offset: {bankStarPieceNumOffset})");
-
-            var bankStarPieceMaxOffset = attributes[(ushort)(Binary.HashCode.FromString("mBankStarPieceMax").Value & 0xFFFF)];
-            reader.BaseStream.Position = fieldsDataStartPos + bankStarPieceMaxOffset;
-            sysConfig.BankStarPieceMax = ReadUInt16BigEndian(reader);
-            Console.WriteLine($"      mBankStarPieceMax: {sysConfig.BankStarPieceMax} (Offset: {bankStarPieceMaxOffset})");
-
-            var giftedPlayerLeftOffset = attributes[(ushort)(Binary.HashCode.FromString("mGiftedPlayerLeft").Value & 0xFFFF)];
-            reader.BaseStream.Position = fieldsDataStartPos + giftedPlayerLeftOffset;
-            sysConfig.GiftedPlayerLeft = reader.ReadByte();
-            Console.WriteLine($"      mGiftedPlayerLeft: {sysConfig.GiftedPlayerLeft} (Offset: {giftedPlayerLeftOffset})");
-
-            var giftedFileNameHashOffset = attributes[(ushort)(Binary.HashCode.FromString("mGiftedFileNameHash").Value & 0xFFFF)];
-            reader.BaseStream.Position = fieldsDataStartPos + giftedFileNameHashOffset;
-            sysConfig.GiftedFileNameHash = ReadUInt16BigEndian(reader);
-            Console.WriteLine($"      mGiftedFileNameHash: {sysConfig.GiftedFileNameHash} (Offset: {giftedFileNameHashOffset})");
-
-            // Ensure the reader's position is exactly dataSize bytes from dataStartPos
-            reader.BaseStream.Position = dataStartPos + dataSize;
-
-            return sysConfig;
+            reader.BaseStream.Position = start + dataSize;
+            return sys;
         }
 
-        private static SaveDataStorageGalaxyScenario ReadGalaxyScenario(BinaryReader reader)
+        private static SaveDataStorageWorldMap ReadWorldMap(BinaryReader reader)
         {
-            Console.WriteLine($"  Reading GalaxyScenario at position: {reader.BaseStream.Position}");
-            var scenario = new SaveDataStorageGalaxyScenario
+            return new SaveDataStorageWorldMap
             {
-                MissNum = reader.ReadByte(),
-                BestTime = ReadUInt32BigEndian(reader),
-                Flag = new SaveDataStorageGalaxyScenarioFlag(reader.ReadByte())
+                StarCheckPointFlag = reader.ReadBytes(8),
+                WorldNo = reader.ReadByte()
             };
-            Console.WriteLine($"    MissNum: {scenario.MissNum}, BestTime: {scenario.BestTime}, Flag: {scenario.Flag}");
-            return scenario;
         }
 
-        private static ushort ReadUInt16BigEndian(BinaryReader reader)
-        {
-            var bytes = reader.ReadBytes(2);
-            return ToUInt16BigEndian(bytes);
-        }
-
-        private static uint ReadUInt32BigEndian(BinaryReader reader)
-        {
-            var bytes = reader.ReadBytes(4);
-            return ToUInt32BigEndian(bytes);
-        }
-        
-        private static long ReadInt64BigEndian(BinaryReader reader)
-        {
-            var bytes = reader.ReadBytes(8);
-            return ToInt64BigEndian(bytes);
-        }
-
-        private static ushort ToUInt16BigEndian(byte[] bytes)
-        {
-            if (BitConverter.IsLittleEndian)
-            {
-                Array.Reverse(bytes);
-            }
-            return BitConverter.ToUInt16(bytes, 0);
-        }
-
-        private static uint ToUInt32BigEndian(byte[] bytes)
-        {
-            if (BitConverter.IsLittleEndian)
-            {
-                Array.Reverse(bytes);
-            }
-            return BitConverter.ToUInt32(bytes, 0);
-        }
-
-        private static long ToInt64BigEndian(byte[] bytes)
-        {
-            if (BitConverter.IsLittleEndian)
-            {
-                Array.Reverse(bytes);
-            }
-            return BitConverter.ToInt64(bytes, 0);
-        }
+        private static ushort ComputeKey(string name) => (ushort)(Binary.HashCode.FromString(name).Value & 0xFFFF);
     }
 }
