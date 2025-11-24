@@ -3,9 +3,9 @@ using Galaxy2.SaveData.Chunks.Game;
 
 namespace Galaxy2.SaveData.Json
 {
-    class Program
+    public class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             if (args.Length != 2)
             {
@@ -179,7 +179,7 @@ namespace Galaxy2.SaveData.Json
                             {
                                 var m = new Dictionary<string, object?>();
                                 var miInner = new Dictionary<string, object?>();
-                                miInner["flag"] = mi.Data.Flag;
+                                miInner["flag"] = mi.Data.Flag.Value;
                                 // mii_id as list of ints
                                 var idList = new List<int>();
                                 foreach (var b in mi.Data.MiiId.Id) idList.Add(b);

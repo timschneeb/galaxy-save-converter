@@ -11,12 +11,12 @@ namespace Galaxy2.SaveData.Chunks.Config
 
     public struct ConfigDataMiiFlag(byte value)
     {
-        private byte _value = value;
+        public byte Value { get; private set; } = value;
 
         public bool Unk2
         {
-            get => (_value & 0b10) != 0;
-            set => _value = (byte)(value ? (_value | 0b10) : (_value & ~0b10));
+            get => (Value & 0b10) != 0;
+            set => Value = (byte)(value ? (Value | 0b10) : (Value & ~0b10));
         }
     }
 

@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Galaxy2.SaveData", "Galaxy2
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Galaxy2.SaveData.Json", "Galaxy2.SaveData.Json\Galaxy2.SaveData.Json.csproj", "{0068E77A-2E9A-4D98-9C56-63AFB9E18F4A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Galaxy2.SaveData.Tests", "Galaxy2.SaveData.Tests\Galaxy2.SaveData.Tests.csproj", "{485FD57F-AD53-4E1E-9056-6EC373666A1E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{0068E77A-2E9A-4D98-9C56-63AFB9E18F4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0068E77A-2E9A-4D98-9C56-63AFB9E18F4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0068E77A-2E9A-4D98-9C56-63AFB9E18F4A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{485FD57F-AD53-4E1E-9056-6EC373666A1E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{485FD57F-AD53-4E1E-9056-6EC373666A1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{485FD57F-AD53-4E1E-9056-6EC373666A1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{485FD57F-AD53-4E1E-9056-6EC373666A1E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
