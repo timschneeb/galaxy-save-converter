@@ -71,6 +71,8 @@ namespace Galaxy2.SaveData.Tests
             }
 
             Assert.True(diffs.Count == 0, "Round-tripped JSON does not match original JSON. See test output for details.");
+            
+            Assert.True(File.ReadAllBytes(origBin).SequenceEqual(File.ReadAllBytes(tmpBin)), "Round-tripped binary file does not match original binary file.");
         }
 
         private static void TryDelete(string path)

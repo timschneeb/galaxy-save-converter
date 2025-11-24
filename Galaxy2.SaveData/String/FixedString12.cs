@@ -34,7 +34,6 @@ namespace Galaxy2.SaveData.String
 
         public void WriteTo(BinaryWriter writer)
         {
-            if (writer == null) throw new ArgumentNullException(nameof(writer));
             writer.Write(_buffer);
         }
     }

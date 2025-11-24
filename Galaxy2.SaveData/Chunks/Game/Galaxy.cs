@@ -70,6 +70,79 @@ namespace Galaxy2.SaveData.Chunks.Game
 
             return galaxy;
         }
+
+        public void WriteTo(BinaryWriter writer)
+        {
+            if (writer == null) throw new ArgumentNullException(nameof(writer));
+
+            // write number of galaxy stages
+            writer.WriteUInt16Be((ushort)(Galaxy?.Count ?? 0));
+
+            // Build stage header serializer attributes. Layout mirrors the reader expectations.
+            var stageAttrs = new List<(ushort key, ushort offset)>
+            {
+                (HashKey.Compute("mGalaxyName"), 0),
+                (HashKey.Compute("mDataSize"), 2),
+                (HashKey.Compute("mScenarioNum"), 4),
+                (HashKey.Compute("mGalaxyState"), 5),
+                (HashKey.Compute("mFlag"), 6),
+            };
+            const ushort stageHeaderSize = 7;
+            writer.WriteBinaryDataContentHeader(stageAttrs, stageHeaderSize);
+
+            // Build scenario header serializer attributes
+            var scenarioAttrs = new List<(ushort key, ushort offset)>
+            {
+                (HashKey.Compute("mMissNum"), 0),
+                (HashKey.Compute("mBestTime"), 1),
+                (HashKey.Compute("mFlag"), 5),
+            };
+            const ushort scenarioHeaderSize = 6;
+            writer.WriteBinaryDataContentHeader(scenarioAttrs, scenarioHeaderSize);
+
+            // write each stage: fixed header block then scenario entries
+            if (Galaxy != null)
+            {
+                foreach (var s in Galaxy)
+                {
+                    var headerRaw = new byte[stageHeaderSize];
+
+                    // mGalaxyName (u16 BE) at offset 0
+                    headerRaw[0] = (byte)(s.GalaxyName >> 8);
+                    headerRaw[1] = (byte)(s.GalaxyName & 0xFF);
+
+                    // mDataSize (u16 BE) at offset 2. If unset, default to scenarioHeaderSize
+                    var ds = s.FixedHeaderSize != 0 ? s.FixedHeaderSize : scenarioHeaderSize;
+                    headerRaw[2] = (byte)(ds >> 8);
+                    headerRaw[3] = (byte)(ds & 0xFF);
+
+                    // mScenarioNum (u8) at offset 4
+                    headerRaw[4] = s.ScenarioNum;
+
+                    // mGalaxyState (u8) at offset 5
+                    headerRaw[5] = (byte)s.GalaxyState;
+
+                    // mFlag (u8) at offset 6 -- compute from boolean properties
+                    byte flagByte = 0;
+                    try
+                    {
+                        if (s.Flag.TicoCoin) flagByte |= 0b1;
+                        if (s.Flag.Comet) flagByte |= 0b10;
+                    }
+                    catch { }
+                    headerRaw[6] = flagByte;
+
+                    writer.Write(headerRaw);
+
+                    // write scenario entries
+                    if (s.Scenario != null)
+                    {
+                        foreach (var sc in s.Scenario)
+                            sc.WriteTo(writer);
+                    }
+                }
+            }
+        }
     }
 
     public class SaveDataStorageGalaxyStage
@@ -86,32 +159,6 @@ namespace Galaxy2.SaveData.Chunks.Game
         public SaveDataStorageGalaxyFlag Flag { get; set; }
         [JsonPropertyName("scenario")]
         public List<SaveDataStorageGalaxyScenario> Scenario { get; set; } = new List<SaveDataStorageGalaxyScenario>();
-    }
-
-    public enum SaveDataStorageGalaxyState : byte
-    {
-        Closed = 0,
-        New = 1,
-        Opened = 2,
-    }
-
-    public struct SaveDataStorageGalaxyFlag(byte value)
-    {
-        private byte _value = value;
-
-        [JsonPropertyName("tico_coin")]
-        public bool TicoCoin
-        {
-            get => (_value & 0b1) != 0;
-            set => _value = (byte)(value ? (_value | 0b1) : (_value & ~0b1));
-        }
-        
-        [JsonPropertyName("comet")]
-        public bool Comet
-        {
-            get => (_value & 0b10) != 0;
-            set => _value = (byte)(value ? (_value | 0b10) : (_value & ~0b10));
-        }
     }
 
     public class SaveDataStorageGalaxyScenario
@@ -131,6 +178,25 @@ namespace Galaxy2.SaveData.Chunks.Game
                 BestTime = reader.ReadUInt32Be(),
                 Flag = new SaveDataStorageGalaxyScenarioFlag(reader.ReadByte())
             };
+        }
+
+        public void WriteTo(BinaryWriter writer)
+        {
+            if (writer == null) throw new ArgumentNullException(nameof(writer));
+            writer.Write(MissNum);
+            writer.WriteUInt32Be(BestTime);
+
+            byte f = 0;
+            try
+            {
+                if (Flag.PowerStar) f |= 0b1;
+                if (Flag.BronzeStar) f |= 0b10;
+                if (Flag.AlreadyVisited) f |= 0b100;
+                if (Flag.GhostLuigi) f |= 0b1000;
+                if (Flag.IntrusivelyLuigi) f |= 0b10000;
+            }
+            catch { }
+            writer.Write(f);
         }
     }
     
@@ -171,6 +237,32 @@ namespace Galaxy2.SaveData.Chunks.Game
         {
             get => (_value & 0b10000) != 0;
             set => _value = (byte)(value ? (_value | 0b10000) : (_value & ~0b10000));
+        }
+    }
+
+    public enum SaveDataStorageGalaxyState : byte
+    {
+        Closed = 0,
+        New = 1,
+        Opened = 2,
+    }
+
+    public struct SaveDataStorageGalaxyFlag(byte value)
+    {
+        private byte _value = value;
+
+        [JsonPropertyName("tico_coin")]
+        public bool TicoCoin
+        {
+            get => (_value & 0b1) != 0;
+            set => _value = (byte)(value ? (_value | 0b1) : (_value & ~0b1));
+        }
+        
+        [JsonPropertyName("comet")]
+        public bool Comet
+        {
+            get => (_value & 0b10) != 0;
+            set => _value = (byte)(value ? (_value | 0b10) : (_value & ~0b10));
         }
     }
 }

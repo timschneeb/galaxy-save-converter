@@ -156,10 +156,11 @@ namespace Galaxy2.SaveData.Save
 
         public void WriteTo(BinaryWriter writer, string name)
         {
-            if (writer == null) throw new ArgumentNullException(nameof(writer));
+            var startPos = writer.BaseStream.Position;
+            
             // write version
             writer.Write((byte)2);
-
+            
             // determine chunks to write
             if (name.StartsWith("user"))
             {
@@ -203,11 +204,10 @@ namespace Galaxy2.SaveData.Save
                     }
                     else if (c is GalaxyChunk g)
                     {
-                        // Galaxy uses different reading (no dataSize passed). We'll write via its own writer when available.
-                        // For now, attempt to write its inner content into ms if WriteTo exists.
-                        // Try dynamic invocation
-                        var galaxy = g.Galaxy;
-                        // TODO Galaxy.WriteTo not implemented; skip writing
+                        g.Galaxy.WriteTo(bw);
+                        var body = ms.ToArray();
+                        writer.WriteChunkHeader(0x47414C41, 0, body.Length);
+                        writer.Write(body);
                     }
                     else if (c is WorldMapChunk wm)
                     {
@@ -219,7 +219,6 @@ namespace Galaxy2.SaveData.Save
                 }
 
                 // pad to user file fixed size
-                var startPos = writer.BaseStream.Position - (1 + 1 + 2); // position at start of user file
                 var endTarget = startPos + 0xF80;
                 var cur = writer.BaseStream.Position;
                 if (cur < endTarget)
@@ -263,7 +262,6 @@ namespace Galaxy2.SaveData.Save
                     }
                 }
 
-                var startPos = writer.BaseStream.Position - (1 + 1 + 2);
                 var endTarget = startPos + 0x60;
                 var cur = writer.BaseStream.Position;
                 if (cur < endTarget)
@@ -289,7 +287,6 @@ namespace Galaxy2.SaveData.Save
                     writer.Write(body);
                 }
 
-                var startPos = writer.BaseStream.Position - (1 + 1 + 2);
                 var endTarget = startPos + 0x80;
                 var cur = writer.BaseStream.Position;
                 if (cur < endTarget)
