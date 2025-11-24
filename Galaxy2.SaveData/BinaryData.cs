@@ -117,7 +117,7 @@ namespace Galaxy2.SaveData
                     result = new WorldMapChunk { WorldMap = ReadWorldMap(reader) };
                     break;
                 default:
-                    // unknown chunk -> skip inner
+                    Console.Error.WriteLine($"Unknown GameData chunk magic: 0x{magic:X8} at 0x{start:X} (size={size}), skipping");
                     reader.BaseStream.Seek(inner, SeekOrigin.Current);
                     break;
             }
@@ -144,6 +144,7 @@ namespace Galaxy2.SaveData
                     chunk = new MiscChunk { Misc = misc };
                     break;
                 default:
+                    Console.Error.WriteLine($"Unknown ConfigData chunk magic: 0x{magic:X8} at 0x{start:X} (size={size}), skipping");
                     reader.BaseStream.Seek(inner, SeekOrigin.Current);
                     break;
             }
@@ -162,6 +163,7 @@ namespace Galaxy2.SaveData
             }
             else
             {
+                Console.Error.WriteLine($"Unknown SysConfigData chunk magic: 0x{magic:X8} at 0x{start:X} (size={size}), skipping");
                 reader.BaseStream.Seek(inner, SeekOrigin.Current);
             }
 
