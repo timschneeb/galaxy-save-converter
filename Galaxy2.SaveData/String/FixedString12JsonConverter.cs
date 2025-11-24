@@ -1,20 +1,32 @@
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Galaxy2.SaveData.String
 {
     public class FixedString12JsonConverter : JsonConverter<FixedString12>
     {
-        public override FixedString12 ReadJson(JsonReader reader, Type objectType, FixedString12 existingValue, bool hasExistingValue, JsonSerializer serializer)
+        public override FixedString12 Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            var s = JToken.Load(reader).ToString();
-            return new FixedString12(s);
+            if (reader.TokenType == JsonTokenType.Null)
+                return new FixedString12(string.Empty);
+
+            if (reader.TokenType == JsonTokenType.String)
+            {
+                var s = reader.GetString() ?? string.Empty;
+                return new FixedString12(s);
+            }
+
+            // For numbers, booleans, objects, arrays: capture raw JSON text for the value
+            using (var doc = JsonDocument.ParseValue(ref reader))
+            {
+                var raw = doc.RootElement.GetRawText();
+                return new FixedString12(raw);
+            }
         }
 
-        public override void WriteJson(JsonWriter writer, FixedString12 value, JsonSerializer serializer)
+        public override void Write(Utf8JsonWriter writer, FixedString12 value, JsonSerializerOptions options)
         {
-            writer.WriteValue(value.ToString());
+            writer.WriteStringValue(value.ToString());
         }
     }
 }
-

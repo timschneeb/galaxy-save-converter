@@ -2,7 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Newtonsoft.Json.Linq;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -26,8 +27,8 @@ namespace Galaxy2.SaveData.Tests
             var referenceJson = File.ReadAllText("TestData/GameData_Reference.json");
             var generatedJson = File.ReadAllText("GameData.json");
 
-            var referenceToken = JToken.Parse(referenceJson);
-            var generatedToken = JToken.Parse(generatedJson);
+            var referenceToken = JsonNode.Parse(referenceJson);
+            var generatedToken = JsonNode.Parse(generatedJson);
 
             var normRef = SortProperties(referenceToken);
             var normGen = SortProperties(generatedToken);
@@ -63,29 +64,29 @@ namespace Galaxy2.SaveData.Tests
         }
 
         // Recursively sort object properties so that ordering differences don't affect comparison
-        private static JToken SortProperties(JToken token)
+        private static JsonNode? SortProperties(JsonNode? token)
         {
-            if (token is JObject obj)
+            if (token is JsonObject obj)
             {
-                var properties = obj.Properties()
-                    .OrderBy(p => p.Name, StringComparer.Ordinal)
-                    .Select(p => new JProperty(p.Name, SortProperties(p.Value)));
-                return new JObject(properties);
+                var properties = obj
+                    .OrderBy(kv => kv.Key, StringComparer.Ordinal)
+                    .ToDictionary(kv => kv.Key, kv => SortProperties(kv.Value));
+                return JsonNode.Parse(JsonSerializer.Serialize(properties));
             }
 
-            if (token is JArray arr)
+            if (token is JsonArray arr)
             {
-                var newArr = new JArray();
+                var newArr = new JsonArray();
                 foreach (var item in arr)
                     newArr.Add(SortProperties(item));
                 return newArr;
             }
 
-            return token.DeepClone();
+            return token?.DeepClone();
         }
 
-        // Find differences between two JTokens and append human-readable messages to diffs
-        private static void FindDifferences(JToken expected, JToken actual, string path, IList<string> diffs, int maxDiffs = 200)
+        // Find differences between two JsonNodes and append human-readable messages to diffs
+        private static void FindDifferences(JsonNode? expected, JsonNode? actual, string path, IList<string> diffs, int maxDiffs = 200)
         {
             if (diffs.Count >= maxDiffs)
                 return;
@@ -95,20 +96,20 @@ namespace Galaxy2.SaveData.Tests
 
             if (expected == null || actual == null)
             {
-                diffs.Add($"{path}: expected {(expected == null ? "<missing>" : expected.ToString())} but got {(actual == null ? "<missing>" : actual.ToString())}");
+                diffs.Add($"{path}: expected {(expected == null ? "<missing>" : expected.ToJsonString())} but got {(actual == null ? "<missing>" : actual.ToJsonString())}");
                 return;
             }
 
             // Treat integer and float both as numbers
-            bool expectedIsNumber = expected.Type == JTokenType.Integer || expected.Type == JTokenType.Float;
-            bool actualIsNumber = actual.Type == JTokenType.Integer || actual.Type == JTokenType.Float;
+            bool expectedIsNumber = expected is JsonValue ev1 && (ev1.TryGetValue(out int _) || ev1.TryGetValue(out double _));
+            bool actualIsNumber = actual is JsonValue ev2 && (ev2.TryGetValue(out int _) || ev2.TryGetValue(out double _));
 
             if (expectedIsNumber && actualIsNumber)
             {
                 try
                 {
-                    var e = Convert.ToDouble(((JValue)expected).Value);
-                    var a = Convert.ToDouble(((JValue)actual).Value);
+                    var e = Convert.ToDouble(expected.GetValue<double>());
+                    var a = Convert.ToDouble(actual.GetValue<double>());
                     var diff = Math.Abs(e - a);
                     var rel = diff / Math.Max(1.0, Math.Abs(e));
                     if (!(diff <= 1e-9 || rel <= 1e-12))
@@ -116,24 +117,23 @@ namespace Galaxy2.SaveData.Tests
                 }
                 catch
                 {
-                    // Fallback to string compare
-                    if (expected.ToString() != actual.ToString())
+                    if (expected.ToJsonString() != actual.ToJsonString())
                         diffs.Add($"{path}: value mismatch expected='{expected}' actual='{actual}'");
                 }
 
                 return;
             }
 
-            if (expected.Type != actual.Type)
+            if (expected.GetValueKind() != actual.GetValueKind())
             {
-                diffs.Add($"{path}: type mismatch expected={expected.Type} actual={actual.Type}");
+                diffs.Add($"{path}: type mismatch expected={expected.GetValueKind()} actual={actual.GetValueKind()}");
                 // continue to try deeper comparison where possible
             }
 
-            if (expected is JObject expObj && actual is JObject actObj)
+            if (expected is JsonObject expObj && actual is JsonObject actObj)
             {
-                var expProps = new HashSet<string>(expObj.Properties().Select(p => p.Name));
-                var actProps = new HashSet<string>(actObj.Properties().Select(p => p.Name));
+                var expProps = new HashSet<string>(expObj.Select(p => p.Key));
+                var actProps = new HashSet<string>(actObj.Select(p => p.Key));
 
                 foreach (var prop in expProps.Except(actProps))
                 {
@@ -156,7 +156,7 @@ namespace Galaxy2.SaveData.Tests
                 return;
             }
 
-            if (expected is JArray expArr && actual is JArray actArr)
+            if (expected is JsonArray expArr && actual is JsonArray actArr)
             {
                 if (expArr.Count != actArr.Count)
                 {
@@ -173,26 +173,62 @@ namespace Galaxy2.SaveData.Tests
                 return;
             }
 
-            // Fallback for JValue and any other token kinds
-            if (expected is JValue expVal && actual is JValue actVal)
+            // Fallback for JsonValue and any other token kinds
+            if (expected is JsonValue expVal && actual is JsonValue actVal)
             {
-                var ev = expVal.Value;
-                var av = actVal.Value;
-                if (ev == null && av == null) return;
-                if (ev == null || av == null)
+                var kind = expVal.GetValueKind();
+                var akind = actVal.GetValueKind();
+
+                if (kind != akind)
                 {
-                    diffs.Add($"{path}: expected={(ev == null ? "null" : ev.ToString())} actual={(av == null ? "null" : av.ToString())}");
+                    // Try to normalize boolean/string differences: compare textual JSON if kinds differ
+                    if (expVal.ToJsonString() == actVal.ToJsonString()) return;
+                    diffs.Add($"{path}: type mismatch value kinds expected={kind} actual={akind}");
                     return;
                 }
 
-                if (!ev.Equals(av))
-                    diffs.Add($"{path}: value mismatch expected='{ev}' actual='{av}'");
-
-                return;
+                switch (kind)
+                {
+                    case JsonValueKind.Number:
+                        try
+                        {
+                            var eNum = expVal.GetValue<double>();
+                            var aNum = actVal.GetValue<double>();
+                            var diff = Math.Abs(eNum - aNum);
+                            var rel = diff / Math.Max(1.0, Math.Abs(eNum));
+                            if (!(diff <= 1e-9 || rel <= 1e-12))
+                                diffs.Add($"{path}: numeric mismatch expected={eNum} actual={aNum} (absDiff={diff})");
+                        }
+                        catch
+                        {
+                            if (expVal.ToJsonString() != actVal.ToJsonString())
+                                diffs.Add($"{path}: value mismatch expected='{expVal}' actual='{actVal}'");
+                        }
+                        return;
+                    case JsonValueKind.String:
+                        var es = expVal.GetValue<string?>();
+                        var asv = actVal.GetValue<string?>();
+                        if (es != asv)
+                            diffs.Add($"{path}: value mismatch expected='{es}' actual='{asv}'");
+                        return;
+                    case JsonValueKind.True:
+                    case JsonValueKind.False:
+                        var eb = expVal.GetValue<bool>();
+                        var ab = actVal.GetValue<bool>();
+                        if (eb != ab)
+                            diffs.Add($"{path}: value mismatch expected='{eb}' actual='{ab}'");
+                        return;
+                    case JsonValueKind.Null:
+                        return;
+                    default:
+                        if (expVal.ToJsonString() != actVal.ToJsonString())
+                            diffs.Add($"{path}: value mismatch expected='{expVal}' actual='{actVal}'");
+                        return;
+                }
             }
 
             // If types are same but not handled above, compare string representations
-            if (expected.ToString() != actual.ToString())
+            if (expected.ToJsonString() != actual.ToJsonString())
                 diffs.Add($"{path}: mismatch expected='{expected}' actual='{actual}'");
         }
     }

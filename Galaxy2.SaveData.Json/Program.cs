@@ -1,4 +1,5 @@
-using Newtonsoft.Json;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Galaxy2.SaveData.Chunks.Game;
 
 namespace Galaxy2.SaveData.Json
@@ -229,13 +230,13 @@ namespace Galaxy2.SaveData.Json
 
             root["user_file_info"] = userFileInfoList;
 
-            var settings = new JsonSerializerSettings
+            var options = new JsonSerializerOptions
             {
-                Formatting = Formatting.Indented,
+                WriteIndented = true,
                 // Keep default naming since keys are already snake_case where required
             };
 
-            var json = JsonConvert.SerializeObject(root, settings);
+            var json = JsonSerializer.Serialize(root, options);
             File.WriteAllText(outputFile, json);
             Console.WriteLine($"Successfully converted {inputFile} to {outputFile}");
         }

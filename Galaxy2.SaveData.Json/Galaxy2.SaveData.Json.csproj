@@ -4,10 +4,6 @@
     <ProjectReference Include="..\Galaxy2.SaveData\Galaxy2.SaveData.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-  </ItemGroup>
-
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net9.0</TargetFramework>
