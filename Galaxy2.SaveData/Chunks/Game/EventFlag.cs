@@ -1,8 +1,12 @@
+using System.Collections.Generic;
+using System.Text.Json.Serialization;
+
 namespace Galaxy2.SaveData.Chunks.Game
 {
     public class SaveDataStorageEventFlag
     {
-        public List<GameEventFlag> EventFlags { get; set; } = [];
+        [JsonPropertyName("event_flag")]
+        public List<GameEventFlag> EventFlags { get; set; } = new List<GameEventFlag>();
     }
 
     public struct GameEventFlag
@@ -23,7 +27,24 @@ namespace Galaxy2.SaveData.Chunks.Game
             _inner = inner;
         }
 
-        public ushort Key => (ushort)(_inner & KeyMask);
-        public bool Value => (_inner & ValueMask) != 0;
+        [JsonPropertyName("key")]
+        public ushort Key
+        {
+            get => (ushort)(_inner & KeyMask);
+            set => _inner = (ushort)((_inner & ValueMask) | (value & KeyMask));
+        }
+
+        [JsonPropertyName("value")]
+        public bool Value
+        {
+            get => (_inner & ValueMask) != 0;
+            set
+            {
+                if (value)
+                    _inner = (ushort)(_inner | ValueMask);
+                else
+                    _inner = (ushort)(_inner & KeyMask);
+            }
+        }
     }
 }

@@ -1,25 +1,17 @@
-using Galaxy2.SaveData.Face;
+using System.Text.Json.Serialization;
 
 namespace Galaxy2.SaveData.Chunks.Config
 {
     public class ConfigDataMii
     {
-        public ConfigDataMiiFlag Flag { get; set; }
-        public RFLCreateID MiiId { get; set; }
+        [JsonPropertyName("flag")]
+        public byte Flag { get; set; }
+        [JsonPropertyName("mii_id")]
+        public byte[] MiiId { get; set; } = [0, 0, 0, 0, 0, 0, 0, 0];
+        [JsonPropertyName("icon_id")]
         public ConfigDataMiiIcon IconId { get; set; }
     }
-
-    public struct ConfigDataMiiFlag(byte value)
-    {
-        public byte Value { get; private set; } = value;
-
-        public bool Unk2
-        {
-            get => (Value & 0b10) != 0;
-            set => Value = (byte)(value ? (Value | 0b10) : (Value & ~0b10));
-        }
-    }
-
+    
     public enum ConfigDataMiiIcon : byte
     {
         Mii = 0,

@@ -22,7 +22,7 @@ namespace Galaxy2.SaveData.Tests
         public void GeneratedJson_ShouldMatch_Reference()
         {
             // Run the JSON generator which should produce GameData.json
-            Json.Program.Main(new[] { "TestData/GameData_Input.bin", "GameData.json" });
+            Json.Program.Main(["TestData/GameData_Input.bin", "GameData.json"]);
 
             var referenceJson = File.ReadAllText("TestData/GameData_Reference.json");
             var generatedJson = File.ReadAllText("GameData.json");

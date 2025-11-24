@@ -5,6 +5,7 @@
       "user_file": {
         "GameData": [
           {
+            "$type": "PlayerStatusChunk",
             "PlayerStatus": {
               "player_left": 5,
               "stocked_star_piece_num": 77,
@@ -16,6 +17,7 @@
             }
           },
           {
+            "$type": "EventFlagChunk",
             "EventFlag": {
               "event_flag": [
                 {
@@ -258,6 +260,7 @@
             }
           },
           {
+            "$type": "TicoFatChunk",
             "TicoFat": {
               "star_piece_num": [
                 [
@@ -346,6 +349,7 @@
             }
           },
           {
+            "$type": "EventValueChunk",
             "EventValue": {
               "event_value": [
                 {
@@ -496,6 +500,7 @@
             }
           },
           {
+            "$type": "GalaxyChunk",
             "Galaxy": {
               "galaxy": [
                 {
@@ -3752,6 +3757,7 @@
             }
           },
           {
+            "$type": "WorldMapChunk",
             "WorldMap": {
               "star_check_point_flag": [
                 0,
@@ -3774,11 +3780,13 @@
       "user_file": {
         "ConfigData": [
           {
+            "$type": "CreateChunk",
             "Create": {
               "is_created": true
             }
           },
           {
+            "$type": "MiiChunk",
             "Mii": {
               "flag": 0,
               "mii_id": [
@@ -3795,6 +3803,7 @@
             }
           },
           {
+            "$type": "MiscChunk",
             "Misc": {
               "last_modified": 98723734659286972
             }
@@ -3807,6 +3816,7 @@
       "user_file": {
         "GameData": [
           {
+            "$type": "PlayerStatusChunk",
             "PlayerStatus": {
               "player_left": 6,
               "stocked_star_piece_num": 2139,
@@ -3818,6 +3828,7 @@
             }
           },
           {
+            "$type": "EventFlagChunk",
             "EventFlag": {
               "event_flag": [
                 {
@@ -4060,6 +4071,7 @@
             }
           },
           {
+            "$type": "TicoFatChunk",
             "TicoFat": {
               "star_piece_num": [
                 [
@@ -4148,6 +4160,7 @@
             }
           },
           {
+            "$type": "EventValueChunk",
             "EventValue": {
               "event_value": [
                 {
@@ -4298,6 +4311,7 @@
             }
           },
           {
+            "$type": "GalaxyChunk",
             "Galaxy": {
               "galaxy": [
                 {
@@ -7554,6 +7568,7 @@
             }
           },
           {
+            "$type": "WorldMapChunk",
             "WorldMap": {
               "star_check_point_flag": [
                 3,
@@ -7576,11 +7591,13 @@
       "user_file": {
         "ConfigData": [
           {
+            "$type": "CreateChunk",
             "Create": {
               "is_created": true
             }
           },
           {
+            "$type": "MiiChunk",
             "Mii": {
               "flag": 2,
               "mii_id": [
@@ -7597,6 +7614,7 @@
             }
           },
           {
+            "$type": "MiscChunk",
             "Misc": {
               "last_modified": 229005778424854029
             }
@@ -7609,6 +7627,7 @@
       "user_file": {
         "GameData": [
           {
+            "$type": "PlayerStatusChunk",
             "PlayerStatus": {
               "player_left": 9,
               "stocked_star_piece_num": 178,
@@ -7620,6 +7639,7 @@
             }
           },
           {
+            "$type": "EventFlagChunk",
             "EventFlag": {
               "event_flag": [
                 {
@@ -7862,6 +7882,7 @@
             }
           },
           {
+            "$type": "TicoFatChunk",
             "TicoFat": {
               "star_piece_num": [
                 [
@@ -7950,6 +7971,7 @@
             }
           },
           {
+            "$type": "EventValueChunk",
             "EventValue": {
               "event_value": [
                 {
@@ -8100,6 +8122,7 @@
             }
           },
           {
+            "$type": "GalaxyChunk",
             "Galaxy": {
               "galaxy": [
                 {
@@ -11356,6 +11379,7 @@
             }
           },
           {
+            "$type": "WorldMapChunk",
             "WorldMap": {
               "star_check_point_flag": [
                 3,
@@ -11378,11 +11402,13 @@
       "user_file": {
         "ConfigData": [
           {
+            "$type": "CreateChunk",
             "Create": {
               "is_created": true
             }
           },
           {
+            "$type": "MiiChunk",
             "Mii": {
               "flag": 0,
               "mii_id": [
@@ -11399,6 +11425,7 @@
             }
           },
           {
+            "$type": "MiscChunk",
             "Misc": {
               "last_modified": 31381062361106755
             }
@@ -11411,15 +11438,13 @@
       "user_file": {
         "SysConfigData": [
           {
-            "SysConfig": {
-              "is_encourage_pal60": false,
-              "time_sent": 26051922710872622,
-              "sent_bytes": 183047,
-              "bank_star_piece_num": 346,
-              "bank_star_piece_max": 1795,
-              "gifted_player_left": 5,
-              "gifted_file_name_hash": 36294
-            }
+            "is_encourage_pal60": false,
+            "time_sent": 26051922710872622,
+            "sent_bytes": 183047,
+            "bank_star_piece_num": 346,
+            "bank_star_piece_max": 1795,
+            "gifted_player_left": 5,
+            "gifted_file_name_hash": 36294
           }
         ]
       }

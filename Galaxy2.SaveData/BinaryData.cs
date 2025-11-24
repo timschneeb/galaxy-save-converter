@@ -1,11 +1,9 @@
 // Add this using directive
 using Galaxy2.SaveData.Save;
 using Galaxy2.SaveData.String;
-using Galaxy2.SaveData.Ptr;
 using Galaxy2.SaveData.Chunks.Game;
 using Galaxy2.SaveData.Chunks.Config;
 using Galaxy2.SaveData.Chunks.Sysconf;
-using Galaxy2.SaveData.Time;
 
 namespace Galaxy2.SaveData
 {
@@ -32,7 +30,7 @@ namespace Galaxy2.SaveData
                     Console.WriteLine($"Reading UserFileInfo {i} at position: {reader.BaseStream.Position}");
                     var name = new FixedString12(reader);
                     var offset = ReadUInt32BigEndian(reader);
-                    userFileInfo.Add(new SaveDataUserFileInfo { Name = name, UserFile = new Ptr32<SaveDataUserFile>(null) });
+                    userFileInfo.Add(new SaveDataUserFileInfo { Name = name });
                     userFileOffsets.Add(offset);
                     Console.WriteLine($"  Name: {name}, Offset: {offset}");
                 }
@@ -42,7 +40,7 @@ namespace Galaxy2.SaveData
                     if (userFileOffsets[i] == 0) continue;
                     Console.WriteLine($"Seeking to UserFile {userFileInfo[i].Name} at offset: {userFileOffsets[i]}");
                     reader.BaseStream.Seek(userFileOffsets[i], SeekOrigin.Begin);
-                    userFileInfo[i].UserFile!.Value = ReadSaveDataUserFile(reader, userFileInfo[i].Name!.ToString()!);
+                    userFileInfo[i].UserFile = ReadSaveDataUserFile(reader, userFileInfo[i].Name!.ToString()!);
                 }
 
                 return new SaveDataFile { Header = header, UserFileInfo = userFileInfo };
@@ -73,7 +71,7 @@ namespace Galaxy2.SaveData
                         chunks.Add(chunk);
                     }
                 }
-                userFile.Data = chunks;
+                userFile.GameData = chunks;
             }
             else if (name.StartsWith("config"))
             {
@@ -87,12 +85,12 @@ namespace Galaxy2.SaveData
                         chunks.Add(chunk);
                     }
                 }
-                userFile.Data = chunks;
+                userFile.ConfigData = chunks;
             }
             else if (name == "sysconf")
             {
                 bufferSize = 0x80; // For SysConfigDataChunk, 128 bytes
-                var chunks = new List<SysConfigDataChunk>();
+                var chunks = new List<SysConfigData>();
                 for (int i = 0; i < chunkNum; i++)
                 {
                     var chunk = ReadSysConfigDataChunk(reader);
@@ -101,7 +99,7 @@ namespace Galaxy2.SaveData
                         chunks.Add(chunk);
                     }
                 }
-                userFile.Data = chunks;
+                userFile.SysConfigData = chunks;
             }
 
             // Skip padding to align with T::BUFFER_SIZE - size_of::<u32>() in Rust
@@ -136,27 +134,27 @@ namespace Galaxy2.SaveData
             {
                 case 0x504C4159: // PLAY
                     Console.WriteLine("  Chunk Type: PLAY");
-                    chunk = new PlayerStatusChunk { Data = ReadPlayerStatus(reader, innerDataSize)! };
+                    chunk = new PlayerStatusChunk { PlayerStatus = ReadPlayerStatus(reader, innerDataSize)! };
                     break;
                 case 0x464C4731: // FLG1
                     Console.WriteLine("  Chunk Type: FLG1");
-                    chunk = new EventFlagChunk { Data = ReadEventFlag(reader, innerDataSize)! };
+                    chunk = new EventFlagChunk { EventFlag = ReadEventFlag(reader, innerDataSize)! };
                     break;
                 case 0x53544631: // STF1
                     Console.WriteLine("  Chunk Type: STF1");
-                    chunk = new TicoFatChunk { Data = ReadTicoFat(reader, innerDataSize)! };
+                    chunk = new TicoFatChunk { TicoFat = ReadTicoFat(reader, innerDataSize)! };
                     break;
                 case 0x564C4531: // VLE1
                     Console.WriteLine("  Chunk Type: VLE1");
-                    chunk = new EventValueChunk { Data = ReadEventValue(reader, innerDataSize)! };
+                    chunk = new EventValueChunk { EventValue = ReadEventValue(reader, innerDataSize)! };
                     break;
                 case 0x47414C41: // GALA
                     Console.WriteLine("  Chunk Type: GALA");
-                    chunk = new GalaxyChunk { Data = ReadGalaxy(reader, innerDataSize)! };
+                    chunk = new GalaxyChunk { Galaxy = ReadGalaxy(reader, innerDataSize)! };
                     break;
                 case 0x5353574D: // SSWM
                     Console.WriteLine("  Chunk Type: SSWM");
-                    chunk = new WorldMapChunk { Data = ReadWorldMap(reader, innerDataSize)! };
+                    chunk = new WorldMapChunk { WorldMap = ReadWorldMap(reader, innerDataSize)! };
                     break;
                 default:
                     Console.WriteLine($"  Unknown Chunk Type: 0x{magic:X}. Skipping {innerDataSize} bytes.");
@@ -230,7 +228,7 @@ namespace Galaxy2.SaveData
             Console.WriteLine($"  Reading EventFlag at position: {reader.BaseStream.Position}");
             var eventFlag = new SaveDataStorageEventFlag();
             var count = dataSize / 2;
-            eventFlag.EventFlags = new List<GameEventFlag>();
+            eventFlag.EventFlags = [];
             for (int i = 0; i < count; i++)
             {
                 eventFlag.EventFlags.Add(new GameEventFlag(ReadUInt16BigEndian(reader)));
@@ -263,7 +261,7 @@ namespace Galaxy2.SaveData
             Console.WriteLine($"  Reading EventValue at position: {reader.BaseStream.Position}");
             var eventValue = new SaveDataStorageEventValue();
             var count = dataSize / 4;
-            eventValue.EventValues = new List<GameEventValue>();
+            eventValue.EventValues = [];
             for (int i = 0; i < count; i++)
             {
                 eventValue.EventValues.Add(new GameEventValue
@@ -281,7 +279,7 @@ namespace Galaxy2.SaveData
             Console.WriteLine($"  Reading Galaxy at position: {reader.BaseStream.Position}");
             var galaxy = new SaveDataStorageGalaxy();
             var galaxyNum = ReadUInt16BigEndian(reader);
-            galaxy.Galaxy = new List<SaveDataStorageGalaxyStage>();
+            galaxy.Galaxy = [];
             Console.WriteLine($"    GalaxyNum: {galaxyNum}");
 
             // Read the two BinaryDataContentHeaderSerializer blocks for stage and scenario
@@ -345,7 +343,7 @@ namespace Galaxy2.SaveData
                 stage.Flag = new SaveDataStorageGalaxyFlag(gflag);
 
                 Console.WriteLine($"  Reading GalaxyStage body {i} at position: {reader.BaseStream.Position}");
-                stage.Scenario = new List<SaveDataStorageGalaxyScenario>();
+                stage.Scenario = [];
                 for (int j = 0; j < stage.ScenarioNum; j++)
                 {
                     stage.Scenario.Add(ReadGalaxyScenario(reader));
@@ -404,17 +402,17 @@ namespace Galaxy2.SaveData
             {
                 case 0x434F4E46: // CONF
                     Console.WriteLine("  Chunk Type: CONF");
-                    chunk = new CreateChunk { Data = new ConfigDataCreate { IsCreated = reader.ReadSByte() != 0 }! };
+                    chunk = new CreateChunk { Create = new ConfigDataCreate { IsCreated = reader.ReadSByte() != 0 }! };
                     break;
                 case 0x4D494920: // MII
                     Console.WriteLine("  Chunk Type: MII");
-                    chunk = new MiiChunk { Data = ReadMii(reader)! };
+                    chunk = new MiiChunk { Mii = ReadMii(reader)! };
                     break;
                 case 0x4D495343: // MISC
                     Console.WriteLine("  Chunk Type: MISC");
                     var miscData = new ConfigDataMisc();
-                    miscData.LastModified = new OSTime(ReadInt64BigEndian(reader));
-                    chunk = new MiscChunk { Data = miscData! };
+                    miscData.LastModified = ReadInt64BigEndian(reader);
+                    chunk = new MiscChunk { Misc = miscData! };
                     break;
                 default:
                     Console.WriteLine($"  Unknown Chunk Type: 0x{magic:X}. Skipping {innerDataSize} bytes.");
@@ -430,15 +428,17 @@ namespace Galaxy2.SaveData
         private static ConfigDataMii ReadMii(BinaryReader reader)
         {
             Console.WriteLine($"  Reading Mii at position: {reader.BaseStream.Position}");
-            var mii = new ConfigDataMii();
-            mii.Flag = new ConfigDataMiiFlag(reader.ReadByte());
-            mii.MiiId = new Face.RFLCreateID { Id = reader.ReadBytes(8) };
-            mii.IconId = (ConfigDataMiiIcon)reader.ReadByte();
-            Console.WriteLine($"    Flag: {mii.Flag}, MiiId: {BitConverter.ToString(mii.MiiId.Id)}, IconId: {mii.IconId}"); // Access _value directly
+            var mii = new ConfigDataMii
+            {
+                Flag = reader.ReadByte(),
+                MiiId = reader.ReadBytes(8),
+                IconId = (ConfigDataMiiIcon)reader.ReadByte()
+            };
+            Console.WriteLine($"    Flag: {mii.Flag}, MiiId: {BitConverter.ToString(mii.MiiId)}, IconId: {mii.IconId}");
             return mii;
         }
 
-        private static SysConfigDataChunk? ReadSysConfigDataChunk(BinaryReader reader)
+        private static SysConfigData? ReadSysConfigDataChunk(BinaryReader reader)
         {
             var chunkStartPos = reader.BaseStream.Position;
             var magicBytes = reader.ReadBytes(4);
@@ -450,12 +450,12 @@ namespace Galaxy2.SaveData
             var innerDataSize = (int)(size - 12);
             Console.WriteLine($"  Magic: 0x{magic:X}, Hash: 0x{hash:X}, Size: {size}, InnerDataSize: {innerDataSize}");
 
-            SysConfigDataChunk? chunk = null;
+            SysConfigData? chunk = null;
             switch (magic)
             {
                 case 0x53595343: // SYSC
                     Console.WriteLine("  Chunk Type: SYSC");
-                    chunk = new SysConfigChunk { Data = ReadSysConfig(reader, innerDataSize)! };
+                    chunk = ReadSysConfig(reader, innerDataSize);
                     break;
                 default:
                     Console.WriteLine($"  Unknown Chunk Type: 0x{magic:X}. Skipping {innerDataSize} bytes.");
@@ -497,8 +497,8 @@ namespace Galaxy2.SaveData
 
             var timeSentOffset = attributes[(ushort)(Binary.HashCode.FromString("mTimeSent").Value & 0xFFFF)];
             reader.BaseStream.Position = fieldsDataStartPos + timeSentOffset;
-            sysConfig.TimeSent = new OSTime(ReadInt64BigEndian(reader));
-            Console.WriteLine($"      mTimeSent: {sysConfig.TimeSent.Value} (Offset: {timeSentOffset})");
+            sysConfig.TimeSent = ReadInt64BigEndian(reader);
+            Console.WriteLine($"      mTimeSent: {sysConfig.TimeSent} (Offset: {timeSentOffset})");
 
             var sentBytesOffset = attributes[(ushort)(Binary.HashCode.FromString("mSentBytes").Value & 0xFFFF)];
             reader.BaseStream.Position = fieldsDataStartPos + sentBytesOffset;

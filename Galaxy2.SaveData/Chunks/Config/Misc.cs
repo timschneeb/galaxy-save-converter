@@ -1,9 +1,10 @@
-using Galaxy2.SaveData.Time;
+using System.Text.Json.Serialization;
 
 namespace Galaxy2.SaveData.Chunks.Config
 {
     public class ConfigDataMisc
     {
-        public OSTime LastModified { get; set; }
+        [JsonPropertyName("last_modified")]
+        public long LastModified { get; set; }
     }
 }
