@@ -16,6 +16,7 @@ namespace Galaxy2.SaveData.Chunks.Game
             galaxy.Galaxy = new List<SaveDataStorageGalaxyStage>(galaxyNum);
 
             var stageSerializer = reader.ReadBinaryDataContentHeaderSerializer();
+            // TODO: dont forget to write when serializing though
             _ = reader.ReadBinaryDataContentHeaderSerializer(); // discard scenario serializer
 
             var stageHeaderSize = stageSerializer.dataSize;

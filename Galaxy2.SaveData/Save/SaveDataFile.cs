@@ -20,7 +20,7 @@ namespace Galaxy2.SaveData.Save
             var userFileOffsets = new List<uint>();
             for (var i = 0; i < header.UserFileInfoNum; i++)
             {
-                var name = new Galaxy2.SaveData.String.FixedString12(reader);
+                var name = new String.FixedString12(reader);
                 var offset = reader.ReadUInt32Be();
                 userFileInfo.Add(new SaveDataUserFileInfo { Name = name });
                 userFileOffsets.Add(offset);

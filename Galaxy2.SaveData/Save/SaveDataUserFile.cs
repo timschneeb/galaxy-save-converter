@@ -17,7 +17,6 @@ namespace Galaxy2.SaveData.Save
 
     public class SaveDataUserFile
     {
-        // Explicit buckets matching the original DTO shape
         [JsonPropertyName("GameData")]
         public List<GameDataChunk>? GameData { get; set; }
 
@@ -26,10 +25,6 @@ namespace Galaxy2.SaveData.Save
 
         [JsonPropertyName("SysConfigData")]
         public List<SysConfigData>? SysConfigData { get; set; }
-
-        // If we couldn't interpret the data, keep a raw placeholder
-        [JsonPropertyName("UserFileRaw")]
-        public object? UserFileRaw { get; set; }
 
         public static SaveDataUserFile ReadFrom(BinaryReader reader, string name)
         {
@@ -45,7 +40,7 @@ namespace Galaxy2.SaveData.Save
 
             if (name.StartsWith("user"))
             {
-                var chunks = new List<Galaxy2.SaveData.Chunks.Game.GameDataChunk>();
+                var chunks = new List<GameDataChunk>();
                 for (var i = 0; i < chunkNum; i++)
                 {
                     var chunk = ReadGameChunk(reader);
@@ -56,7 +51,7 @@ namespace Galaxy2.SaveData.Save
             }
             else if (name.StartsWith("config"))
             {
-                var chunks = new List<Galaxy2.SaveData.Chunks.Config.ConfigDataChunk>();
+                var chunks = new List<ConfigDataChunk>();
                 for (var i = 0; i < chunkNum; i++)
                 {
                     var chunk = ReadConfigChunk(reader);
@@ -67,7 +62,7 @@ namespace Galaxy2.SaveData.Save
             }
             else if (name == "sysconf")
             {
-                var chunks = new List<Galaxy2.SaveData.Chunks.Sysconf.SysConfigData>();
+                var chunks = new List<SysConfigData>();
                 for (var i = 0; i < chunkNum; i++)
                 {
                     var chunk = ReadSysConfigChunk(reader);
@@ -79,29 +74,29 @@ namespace Galaxy2.SaveData.Save
 
             return userFile;
 
-            static Galaxy2.SaveData.Chunks.Game.GameDataChunk? ReadGameChunk(BinaryReader r)
+            static GameDataChunk? ReadGameChunk(BinaryReader r)
             {
-                var (magic, _, size, inner, start) = r.ReadChunkHeader();
-                Galaxy2.SaveData.Chunks.Game.GameDataChunk? result = null;
+                var (magic, hash, size, inner, start) = r.ReadChunkHeader();
+                GameDataChunk? result = null;
                 switch (magic)
                 {
                     case 0x504C4159: // PLAY
-                        result = new Galaxy2.SaveData.Chunks.Game.PlayerStatusChunk { PlayerStatus = Galaxy2.SaveData.Chunks.Game.SaveDataStoragePlayerStatus.ReadFrom(r, inner) };
+                        result = new PlayerStatusChunk { PlayerStatus = SaveDataStoragePlayerStatus.ReadFrom(r, inner) };
                         break;
                     case 0x464C4731: // FLG1
-                        result = new Galaxy2.SaveData.Chunks.Game.EventFlagChunk { EventFlag = Galaxy2.SaveData.Chunks.Game.SaveDataStorageEventFlag.ReadFrom(r, inner) };
+                        result = new EventFlagChunk { EventFlag = SaveDataStorageEventFlag.ReadFrom(r, inner) };
                         break;
                     case 0x53544631: // STF1
-                        result = new Galaxy2.SaveData.Chunks.Game.TicoFatChunk { TicoFat = Galaxy2.SaveData.Chunks.Game.SaveDataStorageTicoFat.ReadFrom(r, inner) };
+                        result = new TicoFatChunk { TicoFat = SaveDataStorageTicoFat.ReadFrom(r, inner) };
                         break;
                     case 0x564C4531: // VLE1
-                        result = new Galaxy2.SaveData.Chunks.Game.EventValueChunk { EventValue = Galaxy2.SaveData.Chunks.Game.SaveDataStorageEventValue.ReadFrom(r, inner) };
+                        result = new EventValueChunk { EventValue = SaveDataStorageEventValue.ReadFrom(r, inner) };
                         break;
                     case 0x47414C41: // GALA
-                        result = new Galaxy2.SaveData.Chunks.Game.GalaxyChunk { Galaxy = Galaxy2.SaveData.Chunks.Game.SaveDataStorageGalaxy.ReadFrom(r) };
+                        result = new GalaxyChunk { Galaxy = SaveDataStorageGalaxy.ReadFrom(r) };
                         break;
                     case 0x5353574D: // SSWM
-                        result = new Galaxy2.SaveData.Chunks.Game.WorldMapChunk { WorldMap = Galaxy2.SaveData.Chunks.Game.SaveDataStorageWorldMap.ReadFrom(r, inner) };
+                        result = new WorldMapChunk { WorldMap = SaveDataStorageWorldMap.ReadFrom(r, inner) };
                         break;
                     default:
                         Console.Error.WriteLine($"Unknown GameData chunk magic: 0x{magic:X8} at 0x{start:X} (size={size}), skipping");
@@ -113,21 +108,21 @@ namespace Galaxy2.SaveData.Save
                 return result;
             }
 
-            static Galaxy2.SaveData.Chunks.Config.ConfigDataChunk? ReadConfigChunk(BinaryReader r)
+            static ConfigDataChunk? ReadConfigChunk(BinaryReader r)
             {
-                var (magic, _, size, inner, start) = r.ReadChunkHeader();
-                Galaxy2.SaveData.Chunks.Config.ConfigDataChunk? chunk = null;
+                var (magic, hash, size, inner, start) = r.ReadChunkHeader();
+                ConfigDataChunk? chunk = null;
                 switch (magic)
                 {
                     case 0x434F4E46: // CONF
-                        chunk = new Galaxy2.SaveData.Chunks.Config.CreateChunk { Create = new Galaxy2.SaveData.Chunks.Config.ConfigDataCreate { IsCreated = r.ReadSByte() != 0 } };
+                        chunk = new CreateChunk { Create = new ConfigDataCreate { IsCreated = r.ReadSByte() != 0 } };
                         break;
                     case 0x4D494920: // MII
-                        chunk = new Galaxy2.SaveData.Chunks.Config.MiiChunk { Mii = Galaxy2.SaveData.Chunks.Config.ConfigDataMii.ReadFrom(r, inner) };
+                        chunk = new MiiChunk { Mii = ConfigDataMii.ReadFrom(r, inner) };
                         break;
                     case 0x4D495343: // MISC
-                        var misc = new Galaxy2.SaveData.Chunks.Config.ConfigDataMisc { LastModified = r.ReadInt64Be() };
-                        chunk = new Galaxy2.SaveData.Chunks.Config.MiscChunk { Misc = misc };
+                        var misc = new ConfigDataMisc { LastModified = r.ReadInt64Be() };
+                        chunk = new MiscChunk { Misc = misc };
                         break;
                     default:
                         Console.Error.WriteLine($"Unknown ConfigData chunk magic: 0x{magic:X8} at 0x{start:X} (size={size}), skipping");
@@ -139,10 +134,10 @@ namespace Galaxy2.SaveData.Save
                 return chunk;
             }
 
-            static Galaxy2.SaveData.Chunks.Sysconf.SysConfigData? ReadSysConfigChunk(BinaryReader r)
+            static SysConfigData? ReadSysConfigChunk(BinaryReader r)
             {
-                var (magic, _, size, inner, start) = r.ReadChunkHeader();
-                Galaxy2.SaveData.Chunks.Sysconf.SysConfigData? chunk = null;
+                var (magic, hash, size, inner, start) = r.ReadChunkHeader();
+                SysConfigData? chunk = null;
                 if (magic == 0x53595343) // SYSC
                 {
                     chunk = Galaxy2.SaveData.Chunks.Sysconf.SysConfigData.ReadFrom(r, inner);

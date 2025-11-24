@@ -22,7 +22,7 @@ namespace Galaxy2.SaveData.Chunks.Game
             var status = new SaveDataStoragePlayerStatus();
             var dataStartPos = reader.BaseStream.Position;
 
-            var (attributes, _) = reader.ReadAttributesAsDictionary();
+            var (attributes, headerDataSize) = reader.ReadAttributesAsDictionary();
             var fieldsDataStartPos = reader.BaseStream.Position;
 
             if (reader.TryReadU8(fieldsDataStartPos, attributes, "mPlayerLeft", out var playerLeft))
