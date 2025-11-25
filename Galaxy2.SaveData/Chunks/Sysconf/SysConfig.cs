@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using System.IO;
 using System.Collections.Generic;
+using Galaxy2.SaveData.String;
 
 namespace Galaxy2.SaveData.Chunks.Sysconf
 {

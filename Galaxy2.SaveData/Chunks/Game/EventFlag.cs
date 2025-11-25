@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json.Serialization;
+using Galaxy2.SaveData.String;
 
 namespace Galaxy2.SaveData.Chunks.Game
 {
@@ -39,7 +40,7 @@ namespace Galaxy2.SaveData.Chunks.Game
 
         private ushort _inner;
 
-        public GameEventFlag(Binary.HashCode key, bool value)
+        public GameEventFlag(HashKey key, bool value)
         {
             _inner = (ushort)(((ushort)key.Value & KeyMask) | (value ? ValueMask : (ushort)0));
         }

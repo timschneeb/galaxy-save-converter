@@ -190,7 +190,7 @@ namespace Galaxy2.SaveData.Save
                         ef.EventFlag.WriteTo(bw);
                         var body = ms.ToArray();
                         // Hash = HashCode::from("2bytes/flag")
-                        var flgHash = Binary.HashCode.FromString("2bytes/flag").Value;
+                        var flgHash = HashKey.FromString("2bytes/flag").Value;
                         writer.WriteChunkHeader(0x464C4731, flgHash, body.Length);
                         writer.Write(body);
                     }
@@ -199,7 +199,7 @@ namespace Galaxy2.SaveData.Save
                         tf.TicoFat.WriteTo(bw);
                         var body = ms.ToArray();
                         // Hash = HashCode::from("SaveDataStorageTicoFat").into_raw().wrapping_add(0x120)
-                        var baseHash = Binary.HashCode.FromString("SaveDataStorageTicoFat").Value;
+                        var baseHash = HashKey.FromString("SaveDataStorageTicoFat").Value;
                         uint tfHash = unchecked(baseHash + 0x120u);
                         writer.WriteChunkHeader(0x53544631, tfHash, body.Length);
                         writer.Write(body);
@@ -228,7 +228,7 @@ namespace Galaxy2.SaveData.Save
                         wm.WorldMap.WriteTo(bw);
                         var body = ms.ToArray();
                         // Hash = HashCode::from("SaveDataStorageWorldMap").into_raw().wrapping_mul(9)
-                        var wmBase = Binary.HashCode.FromString("SaveDataStorageWorldMap").Value;
+                        var wmBase = HashKey.FromString("SaveDataStorageWorldMap").Value;
                         uint wmHash = unchecked(wmBase * 9u);
                         writer.WriteChunkHeader(0x5353574D, wmHash, body.Length);
                         writer.Write(body);

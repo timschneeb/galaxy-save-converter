@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
+using Galaxy2.SaveData.String;
 
 namespace Galaxy2.SaveData
 {
@@ -57,7 +58,7 @@ namespace Galaxy2.SaveData
             return (dict, dataSize);
         }
 
-        private static ushort ComputeKey(string name) => (ushort)(Binary.HashCode.FromString(name).Value & 0xFFFF);
+        private static ushort ComputeKey(string name) => (ushort)(HashKey.FromString(name).Value & 0xFFFF);
 
         public static bool TryReadU8(this BinaryReader reader, long fieldsStart, Dictionary<ushort,int> attrs, string keyName, out byte value)
         {
