@@ -1,6 +1,4 @@
 using System.Text.Json.Serialization;
-using System.IO;
-using System.Collections.Generic;
 using Galaxy2.SaveData.String;
 
 namespace Galaxy2.SaveData.Chunks.Game
@@ -8,7 +6,7 @@ namespace Galaxy2.SaveData.Chunks.Game
     public class SaveDataStorageGalaxy
     {
         [JsonPropertyName("galaxy")]
-        public List<SaveDataStorageGalaxyStage> Galaxy { get; set; } = new List<SaveDataStorageGalaxyStage>();
+        public List<SaveDataStorageGalaxyStage> Galaxy { get; set; } = [];
 
         public static SaveDataStorageGalaxy ReadFrom(BinaryReader reader)
         {
@@ -25,9 +23,6 @@ namespace Galaxy2.SaveData.Chunks.Game
             for (var i = 0; i < galaxyNum; i++)
             {
                 var headerRaw = reader.ReadBytes(stageHeaderSize);
-
-                ushort ReadU16At(int off) => (off < 0 || off + 1 >= headerRaw.Length) ? (ushort)0 : (ushort)((headerRaw[off] << 8) | headerRaw[off + 1]);
-                byte ReadU8At(int off) => (off < 0 || off >= headerRaw.Length) ? (byte)0 : headerRaw[off];
 
                 var keyGalaxyName = HashKey.Compute("mGalaxyName");
                 var keyDataSize = HashKey.Compute("mDataSize");
@@ -67,6 +62,10 @@ namespace Galaxy2.SaveData.Chunks.Game
                     stage.Scenario.Add(SaveDataStorageGalaxyScenario.ReadFrom(reader));
 
                 galaxy.Galaxy.Add(stage);
+                continue;
+
+                byte ReadU8At(int off) => (off < 0 || off >= headerRaw.Length) ? (byte)0 : headerRaw[off];
+                ushort ReadU16At(int off) => (off < 0 || off + 1 >= headerRaw.Length) ? (ushort)0 : (ushort)((headerRaw[off] << 8) | headerRaw[off + 1]);
             }
 
             return galaxy;
@@ -125,22 +124,16 @@ namespace Galaxy2.SaveData.Chunks.Game
 
                     // mFlag (u8) at offset 6 -- compute from boolean properties
                     byte flagByte = 0;
-                    try
-                    {
-                        if (s.Flag.TicoCoin) flagByte |= 0b1;
-                        if (s.Flag.Comet) flagByte |= 0b10;
-                    }
-                    catch { }
+                    if (s.Flag.TicoCoin) flagByte |= 0b1;
+                    if (s.Flag.Comet) flagByte |= 0b10;
+        
                     headerRaw[6] = flagByte;
 
                     writer.Write(headerRaw);
 
                     // write scenario entries
-                    if (s.Scenario != null)
-                    {
-                        foreach (var sc in s.Scenario)
-                            sc.WriteTo(writer);
-                    }
+                    foreach (var sc in s.Scenario)
+                        sc.WriteTo(writer);
                 }
             }
         }
@@ -159,7 +152,7 @@ namespace Galaxy2.SaveData.Chunks.Game
         [JsonPropertyName("flag")]
         public SaveDataStorageGalaxyFlag Flag { get; set; }
         [JsonPropertyName("scenario")]
-        public List<SaveDataStorageGalaxyScenario> Scenario { get; set; } = new List<SaveDataStorageGalaxyScenario>();
+        public List<SaveDataStorageGalaxyScenario> Scenario { get; set; } = [];
     }
 
     public class SaveDataStorageGalaxyScenario
@@ -183,20 +176,15 @@ namespace Galaxy2.SaveData.Chunks.Game
 
         public void WriteTo(BinaryWriter writer)
         {
-            if (writer == null) throw new ArgumentNullException(nameof(writer));
             writer.Write(MissNum);
             writer.WriteUInt32Be(BestTime);
 
             byte f = 0;
-            try
-            {
-                if (Flag.PowerStar) f |= 0b1;
-                if (Flag.BronzeStar) f |= 0b10;
-                if (Flag.AlreadyVisited) f |= 0b100;
-                if (Flag.GhostLuigi) f |= 0b1000;
-                if (Flag.IntrusivelyLuigi) f |= 0b10000;
-            }
-            catch { }
+            if (Flag.PowerStar) f |= 0b1;
+            if (Flag.BronzeStar) f |= 0b10;
+            if (Flag.AlreadyVisited) f |= 0b100;
+            if (Flag.GhostLuigi) f |= 0b1000;
+            if (Flag.IntrusivelyLuigi) f |= 0b10000;
             writer.Write(f);
         }
     }

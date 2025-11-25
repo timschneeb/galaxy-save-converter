@@ -1,6 +1,4 @@
 using System.Text.Json.Serialization;
-using System.IO;
-using System.Collections.Generic;
 using Galaxy2.SaveData.String;
 
 namespace Galaxy2.SaveData.Chunks.Sysconf
@@ -61,6 +59,20 @@ namespace Galaxy2.SaveData.Chunks.Sysconf
             using var fw = new BinaryWriter(ms);
             var attrs = new List<(ushort key, ushort offset)>();
 
+            AddU8("mIsEncouragePal60", IsEncouragePal60 ? (byte)1 : (byte)0);
+            AddI64("mTimeSent", TimeSent);
+            AddU32("mSentBytes", SentBytes);
+            AddU16("mBankStarPieceNum", BankStarPieceNum);
+            AddU16("mBankStarPieceMax", BankStarPieceMax);
+            AddU8("mGiftedPlayerLeft", GiftedPlayerLeft);
+            AddU16("mGiftedFileNameHash", GiftedFileNameHash);
+
+            fw.Flush();
+            var dataSize = (ushort)ms.Length;
+            writer.WriteBinaryDataContentHeader(attrs, dataSize);
+            writer.Write(ms.ToArray());
+            return;
+
             void AddU8(string name, byte v)
             {
                 var key = HashKey.Compute(name);
@@ -92,19 +104,6 @@ namespace Galaxy2.SaveData.Chunks.Sysconf
                 attrs.Add((key, offset));
                 fw.WriteUInt16Be(v);
             }
-
-            AddU8("mIsEncouragePal60", IsEncouragePal60 ? (byte)1 : (byte)0);
-            AddI64("mTimeSent", TimeSent);
-            AddU32("mSentBytes", SentBytes);
-            AddU16("mBankStarPieceNum", BankStarPieceNum);
-            AddU16("mBankStarPieceMax", BankStarPieceMax);
-            AddU8("mGiftedPlayerLeft", GiftedPlayerLeft);
-            AddU16("mGiftedFileNameHash", GiftedFileNameHash);
-
-            fw.Flush();
-            var dataSize = (ushort)ms.Length;
-            writer.WriteBinaryDataContentHeader(attrs, dataSize);
-            writer.Write(ms.ToArray());
         }
     }
 }

@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.IO;
 using System.Text.Json.Serialization;
 using Galaxy2.SaveData.String;
 
@@ -8,7 +6,7 @@ namespace Galaxy2.SaveData.Chunks.Game
     public class SaveDataStorageEventFlag
     {
         [JsonPropertyName("event_flag")]
-        public List<GameEventFlag> EventFlags { get; set; } = new List<GameEventFlag>();
+        public List<GameEventFlag> EventFlags { get; set; } = [];
 
         public static SaveDataStorageEventFlag ReadFrom(BinaryReader reader, int dataSize)
         {
@@ -42,7 +40,7 @@ namespace Galaxy2.SaveData.Chunks.Game
 
         public GameEventFlag(HashKey key, bool value)
         {
-            _inner = (ushort)(((ushort)key.Value & KeyMask) | (value ? ValueMask : (ushort)0));
+            _inner = (ushort)(((ushort)key.Value & KeyMask) | (value ? ValueMask : 0));
         }
 
         public GameEventFlag(ushort inner)

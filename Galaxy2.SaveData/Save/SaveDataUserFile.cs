@@ -1,10 +1,8 @@
-using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using Galaxy2.SaveData.Chunks.Game;
 using Galaxy2.SaveData.Chunks.Config;
 using Galaxy2.SaveData.Chunks.Sysconf;
 using Galaxy2.SaveData.String;
-using System.IO;
 
 namespace Galaxy2.SaveData.Save
 {
@@ -164,7 +162,7 @@ namespace Galaxy2.SaveData.Save
             // determine chunks to write
             if (name.StartsWith("user"))
             {
-                var chunks = GameData ?? new List<GameDataChunk>();
+                var chunks = GameData ?? [];
                 writer.Write((byte)chunks.Count);
                 writer.Write(new byte[2]); // reserved
 
@@ -246,7 +244,7 @@ namespace Galaxy2.SaveData.Save
              }
             else if (name.StartsWith("config"))
             {
-                var chunks = ConfigData ?? new List<ConfigDataChunk>();
+                var chunks = ConfigData ?? [];
                 writer.Write((byte)chunks.Count);
                 writer.Write(new byte[2]);
 
@@ -292,7 +290,7 @@ namespace Galaxy2.SaveData.Save
              }
             else if (name == "sysconf")
             {
-                var chunks = SysConfigData ?? new List<SysConfigData>();
+                var chunks = SysConfigData ?? [];
                 writer.Write((byte)chunks.Count);
                 writer.Write(new byte[2]);
 

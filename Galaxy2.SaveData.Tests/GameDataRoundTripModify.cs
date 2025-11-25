@@ -1,8 +1,5 @@
-using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.Json;
 using System.Text.Json.Nodes;
 using Galaxy2.SaveData.Chunks.Game;
 using Xunit;
@@ -41,8 +38,8 @@ namespace Galaxy2.SaveData.Tests
             save.WriteBeFile(tmpBin);
 
             // Produce JSON from both files using the existing JSON generator
-            Json.Program.Main(new[] { inputBin, origJson });
-            Json.Program.Main(new[] { tmpBin, roundJson });
+            Json.Program.Main([inputBin, origJson]);
+            Json.Program.Main([tmpBin, roundJson]);
 
             var referenceJson = File.ReadAllText(origJson);
             var generatedJson = File.ReadAllText(roundJson);

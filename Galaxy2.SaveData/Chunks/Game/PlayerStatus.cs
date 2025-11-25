@@ -1,6 +1,4 @@
 using System.Text.Json.Serialization;
-using System.IO;
-using System.Collections.Generic;
 using Galaxy2.SaveData.String;
 
 namespace Galaxy2.SaveData.Chunks.Game
@@ -51,6 +49,21 @@ namespace Galaxy2.SaveData.Chunks.Game
 
             var attrs = new List<(ushort key, ushort offset)>();
 
+            AddU8("mPlayerLeft", PlayerLeft);
+            AddU16("mStockedStarPieceNum", StockedStarPieceNum);
+            AddU16("mStockedCoinNum", StockedCoinNum);
+            AddU16("mLast1upCoinNum", Last1upCoinNum);
+            AddU8("mFlag", Flag.Value);
+
+            fw.Flush();
+
+            var dataSize = (ushort)ms.Length;
+
+            // write header and fields to the target writer
+            writer.WriteBinaryDataContentHeader(attrs, dataSize);
+            writer.Write(ms.ToArray());
+            return;
+
             // helper to add a byte field
             void AddU8(string name, byte v)
             {
@@ -67,35 +80,19 @@ namespace Galaxy2.SaveData.Chunks.Game
                 attrs.Add((key, offset));
                 fw.WriteUInt16Be(v);
             }
-
-            AddU8("mPlayerLeft", PlayerLeft);
-            AddU16("mStockedStarPieceNum", StockedStarPieceNum);
-            AddU16("mStockedCoinNum", StockedCoinNum);
-            AddU16("mLast1upCoinNum", Last1upCoinNum);
-            AddU8("mFlag", Flag.Value);
-
-            fw.Flush();
-
-            var dataSize = (ushort)ms.Length;
-
-            // write header and fields to the target writer
-            writer.WriteBinaryDataContentHeader(attrs, dataSize);
-            writer.Write(ms.ToArray());
         }
     }
 
     public struct SaveDataStoragePlayerStatusFlag(byte value)
     {
-        private byte _value = value;
-
         [JsonIgnore]
-        public byte Value => _value;
+        public byte Value { get; private set; } = value;
 
         [JsonPropertyName("player_luigi")]
         public bool PlayerLuigi
         {
-            get => (_value & 0b1) != 0;
-            set => _value = (byte)(value ? (_value | 0b1) : (_value & ~0b1));
+            get => (Value & 0b1) != 0;
+            set => Value = (byte)(value ? (Value | 0b1) : (Value & ~0b1));
         }
     }
 }

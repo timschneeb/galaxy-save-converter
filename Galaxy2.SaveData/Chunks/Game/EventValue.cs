@@ -1,13 +1,11 @@
 using System.Text.Json.Serialization;
-using System.IO;
-using System.Collections.Generic;
 
 namespace Galaxy2.SaveData.Chunks.Game
 {
     public class SaveDataStorageEventValue
     {
         [JsonPropertyName("event_value")]
-        public List<GameEventValue> EventValues { get; set; } = new List<GameEventValue>();
+        public List<GameEventValue> EventValues { get; set; } = [];
 
         public static SaveDataStorageEventValue ReadFrom(BinaryReader reader, int dataSize)
         {

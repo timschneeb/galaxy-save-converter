@@ -1,6 +1,3 @@
-using System;
-using System.IO;
-using System.Collections.Generic;
 using Galaxy2.SaveData.String;
 
 namespace Galaxy2.SaveData
