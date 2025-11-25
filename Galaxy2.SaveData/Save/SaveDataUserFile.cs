@@ -258,7 +258,8 @@ namespace Galaxy2.SaveData.Save
                     // TODO: calculate hashes
                     if (c is CreateChunk cr)
                     {
-                        bw.Write((sbyte)(cr.Create.IsCreated ? 1 : 0));
+                        // Rust writes -1 (0xFF) for true via bw(map = |b| -i8::from(*b)).
+                        bw.Write((sbyte)(cr.Create.IsCreated ? -1 : 0));
                         var body = ms.ToArray();
                         // HashCode::from_raw(0x2432DA)
                         writer.WriteChunkHeader(0x434F4E46, 0x2432DA, body.Length);
