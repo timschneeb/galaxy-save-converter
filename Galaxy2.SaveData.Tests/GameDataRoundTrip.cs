@@ -30,10 +30,10 @@ namespace Galaxy2.SaveData.Tests
             File.Copy(inputBin, origBin, true);
             
             // Deserialize original file into object
-            var save = SaveDataFile.ReadLeFile(inputBin);
+            var save = SaveDataFile.ReadBeFile(inputBin);
 
             // Serialize back out to a temporary file
-            save.WriteLeFile(tmpBin);
+            save.WriteBeFile(tmpBin);
 
             // Produce JSON from both files using the existing JSON generator
             Json.Program.Main(new[] { inputBin, origJson });

@@ -21,7 +21,7 @@ namespace Galaxy2.SaveData.Json
             var inputFile = args[0];
             var outputFile = args[1];
 
-            var saveData = SaveDataFile.ReadLeFile(inputFile);
+            var saveData = SaveDataFile.ReadBeFile(inputFile);
 
             // Serialize the existing saveData structures directly. The storage classes are
             // annotated (or exposed via Json-friendly accessors) so they produce the same JSON shape.

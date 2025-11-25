@@ -178,7 +178,7 @@ namespace Galaxy2.SaveData.Save
                     {
                         p.PlayerStatus.WriteTo(bw);
                         var body = ms.ToArray();
-                        // Hash = data_size + header_size (as in Rust SaveDataStoragePlayerStatus::hash_code)
+                        // Hash = data_size + header_size
                         // data_size = 1 + 2 + 2 + 2 + 1 = 8
                         // header_size = 4 + attribute_count*4; attribute_count = 5 => 4 + 20 = 24
                         uint playHash = (uint)(8 + 24);
@@ -217,7 +217,7 @@ namespace Galaxy2.SaveData.Save
                     {
                         g.Galaxy.WriteTo(bw);
                         var body = ms.ToArray();
-                        // Hash = scenario_data_size + stage_header_size + 2 (as in Rust SaveDataStorageGalaxy::hash_code)
+                        // Hash = scenario_data_size + stage_header_size + 2 
                         // scenario_data_size = 6, stage_header_size = 4 + 5*4 = 24
                         uint galaHash = (uint)(6 + 24 + 2);
                         writer.WriteChunkHeader(0x47414C41, galaHash, body.Length);
@@ -254,11 +254,10 @@ namespace Galaxy2.SaveData.Save
                 {
                     using var ms = new MemoryStream();
                     using var bw = new BinaryWriter(ms);
-
-                    // TODO: calculate hashes
+                    
                     if (c is CreateChunk cr)
                     {
-                        // Rust writes -1 (0xFF) for true via bw(map = |b| -i8::from(*b)).
+                        // Writes -1 (0xFF) for true
                         bw.Write((sbyte)(cr.Create.IsCreated ? -1 : 0));
                         var body = ms.ToArray();
                         // HashCode::from_raw(0x2432DA)

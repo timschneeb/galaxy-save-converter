@@ -5,7 +5,7 @@ namespace Galaxy2.SaveData.Save
         public required SaveDataFileHeader Header { get; set; }
         public required List<SaveDataUserFileInfo> UserFileInfo { get; set; }
 
-        public static SaveDataFile ReadLeFile(string path)
+        public static SaveDataFile ReadBeFile(string path)
         {
             using var reader = new BinaryReader(new FileStream(path, FileMode.Open));
             var header = new SaveDataFileHeader
@@ -36,7 +36,7 @@ namespace Galaxy2.SaveData.Save
             return new SaveDataFile { Header = header, UserFileInfo = userFileInfo };
         }
 
-        public void WriteLeFile(string path)
+        public void WriteBeFile(string path)
         {
             using var fs = new FileStream(path, FileMode.Create, FileAccess.ReadWrite);
             using var writer = new BinaryWriter(fs);
@@ -55,7 +55,7 @@ namespace Galaxy2.SaveData.Save
             foreach (var u in UserFileInfo)
             {
                 u.Name!.Value.WriteTo(writer);
-                writer.WriteUInt32Be(0); // TODO: placeholder offset, are these overwritten later?
+                writer.WriteUInt32Be(0);
             }
 
             // write each user file and remember offsets
