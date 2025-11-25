@@ -81,8 +81,8 @@ namespace Galaxy2.SaveData.Save
             writer.BaseStream.Position = 12; // checksum(4) + version(4) + userFileInfoNum(4)
             writer.WriteUInt32Be((uint)afterData);
 
-            // compute checksum over the file bytes after the checksum field (i.e., starting at offset 4),
-            // using little-endian 16-bit words like Rust's Checksum::from_le_bytes
+            // compute checksum over the file bytes after the checksum field (i.e., starting at offset 4)
+            // assemble 16-bit words MSB-first (big-endian) to match the reference checksum implementation
             writer.Flush();
             fs.Flush();
 
@@ -103,15 +103,15 @@ namespace Galaxy2.SaveData.Save
                 ushort invSum = 0;
                 for (int i = 0; i + 1 < remainingLen; i += 2)
                 {
-                    // little-endian u16
-                    ushort term = (ushort)(remaining[i] | (remaining[i + 1] << 8));
+                    // big-endian u16 (MSB first)
+                    ushort term = (ushort)((remaining[i] << 8) | remaining[i + 1]);
                     sum = (ushort)(sum + term);
                     invSum = (ushort)(invSum + (ushort)~term);
                 }
 
                 uint checksum = ((uint)sum << 16) | invSum;
 
-                // write checksum at beginning (big-endian as other reads use ReadUInt32Be for header)
+                // Write checksum at the start of the file (big-endian)
                 writer.BaseStream.Position = 0;
                 writer.WriteUInt32Be(checksum);
             }
