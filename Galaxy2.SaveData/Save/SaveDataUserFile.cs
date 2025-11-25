@@ -178,55 +178,72 @@ namespace Galaxy2.SaveData.Save
                     {
                         p.PlayerStatus.WriteTo(bw);
                         var body = ms.ToArray();
-                        writer.WriteChunkHeader(0x504C4159, 0, body.Length);
+                        // Hash = data_size + header_size (as in Rust SaveDataStoragePlayerStatus::hash_code)
+                        // data_size = 1 + 2 + 2 + 2 + 1 = 8
+                        // header_size = 4 + attribute_count*4; attribute_count = 5 => 4 + 20 = 24
+                        uint playHash = (uint)(8 + 24);
+                        writer.WriteChunkHeader(0x504C4159, playHash, body.Length);
                         writer.Write(body);
                     }
                     else if (c is EventFlagChunk ef)
                     {
                         ef.EventFlag.WriteTo(bw);
                         var body = ms.ToArray();
-                        writer.WriteChunkHeader(0x464C4731, 0, body.Length);
+                        // Hash = HashCode::from("2bytes/flag")
+                        var flgHash = Binary.HashCode.FromString("2bytes/flag").Value;
+                        writer.WriteChunkHeader(0x464C4731, flgHash, body.Length);
                         writer.Write(body);
                     }
                     else if (c is TicoFatChunk tf)
                     {
                         tf.TicoFat.WriteTo(bw);
                         var body = ms.ToArray();
-                        writer.WriteChunkHeader(0x53544631, 0, body.Length);
+                        // Hash = HashCode::from("SaveDataStorageTicoFat").into_raw().wrapping_add(0x120)
+                        var baseHash = Binary.HashCode.FromString("SaveDataStorageTicoFat").Value;
+                        uint tfHash = unchecked(baseHash + 0x120u);
+                        writer.WriteChunkHeader(0x53544631, tfHash, body.Length);
                         writer.Write(body);
                     }
                     else if (c is EventValueChunk ev)
                     {
                         ev.EventValue.WriteTo(bw);
                         var body = ms.ToArray();
-                        writer.WriteChunkHeader(0x564C4531, 0, body.Length);
+                        // Hash = u32::from_be_bytes(*b"VLE1")
+                        uint vleHash = ((uint)'V' << 24) | ((uint)'L' << 16) | ((uint)'E' << 8) | (uint)'1';
+                        writer.WriteChunkHeader(0x564C4531, vleHash, body.Length);
                         writer.Write(body);
                     }
                     else if (c is GalaxyChunk g)
                     {
                         g.Galaxy.WriteTo(bw);
                         var body = ms.ToArray();
-                        writer.WriteChunkHeader(0x47414C41, 0, body.Length);
+                        // Hash = scenario_data_size + stage_header_size + 2 (as in Rust SaveDataStorageGalaxy::hash_code)
+                        // scenario_data_size = 6, stage_header_size = 4 + 5*4 = 24
+                        uint galaHash = (uint)(6 + 24 + 2);
+                        writer.WriteChunkHeader(0x47414C41, galaHash, body.Length);
                         writer.Write(body);
                     }
                     else if (c is WorldMapChunk wm)
                     {
                         wm.WorldMap.WriteTo(bw);
                         var body = ms.ToArray();
-                        writer.WriteChunkHeader(0x5353574D, 0, body.Length);
+                        // Hash = HashCode::from("SaveDataStorageWorldMap").into_raw().wrapping_mul(9)
+                        var wmBase = Binary.HashCode.FromString("SaveDataStorageWorldMap").Value;
+                        uint wmHash = unchecked(wmBase * 9u);
+                        writer.WriteChunkHeader(0x5353574D, wmHash, body.Length);
                         writer.Write(body);
                     }
-                }
+                 }
 
-                // pad to user file fixed size
-                var endTarget = startPos + 0xF80;
-                var cur = writer.BaseStream.Position;
-                if (cur < endTarget)
-                {
-                    var pad = (int)(endTarget - cur);
-                    writer.Write(new byte[pad]);
-                }
-            }
+                 // pad to user file fixed size
+                 var endTarget = startPos + 0xF80;
+                 var cur = writer.BaseStream.Position;
+                 if (cur < endTarget)
+                 {
+                     var pad = (int)(endTarget - cur);
+                     writer.Write(new byte[pad]);
+                 }
+             }
             else if (name.StartsWith("config"))
             {
                 var chunks = ConfigData ?? new List<ConfigDataChunk>();
@@ -243,33 +260,36 @@ namespace Galaxy2.SaveData.Save
                     {
                         bw.Write((sbyte)(cr.Create.IsCreated ? 1 : 0));
                         var body = ms.ToArray();
-                        writer.WriteChunkHeader(0x434F4E46, 0, body.Length);
+                        // HashCode::from_raw(0x2432DA)
+                        writer.WriteChunkHeader(0x434F4E46, 0x2432DA, body.Length);
                         writer.Write(body);
                     }
                     else if (c is MiiChunk mc)
                     {
                         mc.Mii.WriteTo(bw);
                         var body = ms.ToArray();
-                        writer.WriteChunkHeader(0x4D494920, 0, body.Length);
+                        // HashCode::from_raw(0x2836E9)
+                        writer.WriteChunkHeader(0x4D494920, 0x2836E9, body.Length);
                         writer.Write(body);
                     }
                     else if (c is MiscChunk misc)
                     {
                         bw.WriteInt64Be(misc.Misc.LastModified);
                         var body = ms.ToArray();
-                        writer.WriteChunkHeader(0x4D495343, 0, body.Length);
+                        // HashCode::from_raw(0x1)
+                        writer.WriteChunkHeader(0x4D495343, 0x1, body.Length);
                         writer.Write(body);
                     }
-                }
+                 }
 
-                var endTarget = startPos + 0x60;
-                var cur = writer.BaseStream.Position;
-                if (cur < endTarget)
-                {
-                    var pad = (int)(endTarget - cur);
-                    writer.Write(new byte[pad]);
-                }
-            }
+                 var endTarget = startPos + 0x60;
+                 var cur = writer.BaseStream.Position;
+                 if (cur < endTarget)
+                 {
+                     var pad = (int)(endTarget - cur);
+                     writer.Write(new byte[pad]);
+                 }
+             }
             else if (name == "sysconf")
             {
                 var chunks = SysConfigData ?? new List<SysConfigData>();
@@ -283,7 +303,8 @@ namespace Galaxy2.SaveData.Save
                     using var bw = new BinaryWriter(ms);
                     c.WriteTo(bw);
                     var body = ms.ToArray();
-                    writer.WriteChunkHeader(0x53595343, 0, body.Length);
+                    // SysConfig hash: HashCode::from_raw(0x3)
+                    writer.WriteChunkHeader(0x53595343, 0x3, body.Length);
                     writer.Write(body);
                 }
 
