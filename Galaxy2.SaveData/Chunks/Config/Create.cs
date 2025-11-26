@@ -1,10 +1,9 @@
 using System.Text.Json.Serialization;
 
-namespace Galaxy2.SaveData.Chunks.Config
+namespace Galaxy2.SaveData.Chunks.Config;
+
+public class ConfigDataCreate
 {
-    public class ConfigDataCreate
-    {
-        [JsonPropertyName("is_created")]
-        public bool IsCreated { get; set; }
-    }
+    [JsonPropertyName("is_created")]
+    public bool IsCreated { get; set; }
 }

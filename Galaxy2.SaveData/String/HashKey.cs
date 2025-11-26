@@ -1,30 +1,20 @@
 using System.Text;
 
-namespace Galaxy2.SaveData.String
+namespace Galaxy2.SaveData.String;
+
+public struct HashKey(uint value)
 {
-    public struct HashKey(uint value)
-    {
-        public uint Value { get; set; } = value;
-        public ushort ShortValue => (ushort)(Value & 0xFFFF);
+    public uint Value { get; set; } = value;
+    public ushort ShortValue => (ushort)(Value & 0xFFFF);
+    private const uint HashKeyMultiplier = 31;
 
-        public override string ToString()
-        {
-            return $"0x{Value:X}";
-        }
+    public override string ToString() => $"0x{Value:X}";
 
-        public static HashKey FromString(string s)
-        {
-            uint hash = 0;
-            const uint hashKey = 31;
+    public static HashKey FromString(string s) => new(
+        Encoding.UTF8.GetBytes(s)
+            .Select(b => (sbyte)b)
+            .Aggregate<sbyte, uint>(0, (current, b) => (uint)b + (current * HashKeyMultiplier))
+    );
 
-            foreach (var b in Encoding.UTF8.GetBytes(s).Select(b => (sbyte)b))
-            {
-                hash = (uint)b + (hash * hashKey);
-            }
-
-            return new HashKey(hash);
-        }
-        
-        public static ushort Compute(string name) => FromString(name).ShortValue;
-    }
+    public static ushort Compute(string name) => FromString(name).ShortValue;
 }

@@ -1,39 +1,34 @@
 using System.Text;
 using System.Text.Json.Serialization;
 
-namespace Galaxy2.SaveData.String
+namespace Galaxy2.SaveData.String;
+
+[JsonConverter(typeof(FixedString12JsonConverter))]
+public readonly struct FixedString12
 {
-    [JsonConverter(typeof(FixedString12JsonConverter))]
-    public struct FixedString12
+    private const int Size = 12;
+    private readonly byte[] _buffer;
+
+    public FixedString12(string s)
     {
-        private const int Size = 12;
-        private readonly byte[] _buffer;
+        _buffer = new byte[Size];
+        var bytes = Encoding.UTF8.GetBytes(s);
+        Array.Copy(bytes, _buffer, Math.Min(bytes.Length, Size - 1));
+    }
 
-        public FixedString12(string s)
-        {
-            _buffer = new byte[Size];
-            var bytes = Encoding.UTF8.GetBytes(s);
-            Array.Copy(bytes, _buffer, Math.Min(bytes.Length, Size - 1));
-        }
+    public FixedString12(BinaryReader reader)
+    {
+        _buffer = reader.ReadBytes(Size);
+    }
 
-        public FixedString12(BinaryReader reader)
-        {
-            _buffer = reader.ReadBytes(Size);
-        }
+    public override string ToString()
+    {
+        var length = Array.IndexOf(_buffer, (byte)0);
+        return Encoding.UTF8.GetString(_buffer, 0, length == -1 ? Size : length);
+    }
 
-        public override string ToString()
-        {
-            int length = Array.IndexOf(_buffer, (byte)0);
-            if (length == -1)
-            {
-                length = Size;
-            }
-            return Encoding.UTF8.GetString(_buffer, 0, length);
-        }
-
-        public void WriteTo(BinaryWriter writer)
-        {
-            writer.Write(_buffer);
-        }
+    public void WriteTo(BinaryWriter writer)
+    {
+        writer.Write(_buffer);
     }
 }
