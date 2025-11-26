@@ -179,7 +179,7 @@ public class SaveDataUserFile
                     // Hash = data_size + header_size
                     // data_size = 1 + 2 + 2 + 2 + 1 = 8
                     // header_size = 4 + attribute_count*4; attribute_count = 5 => 4 + 20 = 24
-                    uint playHash = (uint)(8 + 24);
+                    var playHash = (uint)(8 + 24);
                     writer.WriteChunkHeader(0x504C4159, playHash, body.Length);
                     writer.Write(body);
                 }
@@ -198,7 +198,7 @@ public class SaveDataUserFile
                     var body = ms.ToArray();
                     // Hash = HashCode::from("SaveDataStorageTicoFat").into_raw().wrapping_add(0x120)
                     var baseHash = HashKey.FromString("SaveDataStorageTicoFat").Value;
-                    uint tfHash = unchecked(baseHash + 0x120u);
+                    var tfHash = unchecked(baseHash + 0x120u);
                     writer.WriteChunkHeader(0x53544631, tfHash, body.Length);
                     writer.Write(body);
                 }
@@ -207,7 +207,7 @@ public class SaveDataUserFile
                     ev.EventValue.WriteTo(bw);
                     var body = ms.ToArray();
                     // Hash = u32::from_be_bytes(*b"VLE1")
-                    uint vleHash = ((uint)'V' << 24) | ((uint)'L' << 16) | ((uint)'E' << 8) | (uint)'1';
+                    const uint vleHash = ((uint)'V' << 24) | ((uint)'L' << 16) | ((uint)'E' << 8) | (uint)'1';
                     writer.WriteChunkHeader(0x564C4531, vleHash, body.Length);
                     writer.Write(body);
                 }
@@ -217,7 +217,7 @@ public class SaveDataUserFile
                     var body = ms.ToArray();
                     // Hash = scenario_data_size + stage_header_size + 2 
                     // scenario_data_size = 6, stage_header_size = 4 + 5*4 = 24
-                    uint galaHash = (uint)(6 + 24 + 2);
+                    const uint galaHash = (uint)(6 + 24 + 2);
                     writer.WriteChunkHeader(0x47414C41, galaHash, body.Length);
                     writer.Write(body);
                 }
@@ -227,7 +227,7 @@ public class SaveDataUserFile
                     var body = ms.ToArray();
                     // Hash = HashCode::from("SaveDataStorageWorldMap").into_raw().wrapping_mul(9)
                     var wmBase = HashKey.FromString("SaveDataStorageWorldMap").Value;
-                    uint wmHash = unchecked(wmBase * 9u);
+                    var wmHash = unchecked(wmBase * 9u);
                     writer.WriteChunkHeader(0x5353574D, wmHash, body.Length);
                     writer.Write(body);
                 }
@@ -253,30 +253,36 @@ public class SaveDataUserFile
                 using var ms = new MemoryStream();
                 using var bw = new BinaryWriter(ms);
                     
-                if (c is CreateChunk cr)
+                switch (c)
                 {
-                    // Writes -1 (0xFF) for true
-                    bw.Write((sbyte)(cr.Create.IsCreated ? -1 : 0));
-                    var body = ms.ToArray();
-                    // HashCode::from_raw(0x2432DA)
-                    writer.WriteChunkHeader(0x434F4E46, 0x2432DA, body.Length);
-                    writer.Write(body);
-                }
-                else if (c is MiiChunk mc)
-                {
-                    mc.Mii.WriteTo(bw);
-                    var body = ms.ToArray();
-                    // HashCode::from_raw(0x2836E9)
-                    writer.WriteChunkHeader(0x4D494920, 0x2836E9, body.Length);
-                    writer.Write(body);
-                }
-                else if (c is MiscChunk misc)
-                {
-                    bw.WriteInt64Be(misc.Misc.LastModified);
-                    var body = ms.ToArray();
-                    // HashCode::from_raw(0x1)
-                    writer.WriteChunkHeader(0x4D495343, 0x1, body.Length);
-                    writer.Write(body);
+                    case CreateChunk cr:
+                    {
+                        // Writes -1 (0xFF) for true
+                        bw.Write((sbyte)(cr.Create.IsCreated ? -1 : 0));
+                        var body = ms.ToArray();
+                        // HashCode::from_raw(0x2432DA)
+                        writer.WriteChunkHeader(0x434F4E46, 0x2432DA, body.Length);
+                        writer.Write(body);
+                        break;
+                    }
+                    case MiiChunk mc:
+                    {
+                        mc.Mii.WriteTo(bw);
+                        var body = ms.ToArray();
+                        // HashCode::from_raw(0x2836E9)
+                        writer.WriteChunkHeader(0x4D494920, 0x2836E9, body.Length);
+                        writer.Write(body);
+                        break;
+                    }
+                    case MiscChunk misc:
+                    {
+                        bw.WriteInt64Be(misc.Misc.LastModified);
+                        var body = ms.ToArray();
+                        // HashCode::from_raw(0x1)
+                        writer.WriteChunkHeader(0x4D495343, 0x1, body.Length);
+                        writer.Write(body);
+                        break;
+                    }
                 }
             }
 
@@ -294,7 +300,6 @@ public class SaveDataUserFile
             writer.Write((byte)chunks.Count);
             writer.Write(new byte[2]);
 
-            // TODO: calculate hashes
             foreach (var c in chunks)
             {
                 using var ms = new MemoryStream();

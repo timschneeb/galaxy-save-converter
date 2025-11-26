@@ -101,15 +101,15 @@ public class SaveDataFile
         {
             ushort sum = 0;
             ushort invSum = 0;
-            for (int i = 0; i + 1 < remainingLen; i += 2)
+            for (var i = 0; i + 1 < remainingLen; i += 2)
             {
                 // big-endian u16 (MSB first)
-                ushort term = (ushort)((remaining[i] << 8) | remaining[i + 1]);
+                var term = (ushort)((remaining[i] << 8) | remaining[i + 1]);
                 sum = (ushort)(sum + term);
                 invSum = (ushort)(invSum + (ushort)~term);
             }
 
-            uint checksum = ((uint)sum << 16) | invSum;
+            var checksum = ((uint)sum << 16) | invSum;
 
             // Write checksum at the start of the file (big-endian)
             writer.BaseStream.Position = 0;

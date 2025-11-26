@@ -38,7 +38,7 @@ internal static class BinaryWriterExtensions
     }
 
     /// <summary>
-    /// Writes a binary-data-content header serializer (attribute count, data size, then attribute entries key+offset) .
+    /// Writes a binary-data-content header serializer (attribute count, data size, then attribute entries key+offset)
     /// Assumes offsets are u16 and dataSize fits in u16.
     /// </summary>
     public static void WriteBinaryDataContentHeader(this BinaryWriter writer, List<(ushort key, ushort offset)> attrs, ushort dataSize)
