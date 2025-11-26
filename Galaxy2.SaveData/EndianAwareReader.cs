@@ -6,26 +6,6 @@ namespace Galaxy2.SaveData;
 public class EndianAwareReader(Stream input) : BinaryReader(input)
 {
     public bool BigEndian { get; set; }
-    
-    public override decimal ReadDecimal()
-    {
-        throw new NotImplementedException();
-    }
-
-    public override double ReadDouble()
-    {
-        throw new NotImplementedException();
-    }
-
-    public override Half ReadHalf()
-    {
-        throw new NotImplementedException();
-    }
-    
-    public override float ReadSingle()
-    {
-        throw new NotImplementedException();
-    }
 
     public override short ReadInt16()
     {

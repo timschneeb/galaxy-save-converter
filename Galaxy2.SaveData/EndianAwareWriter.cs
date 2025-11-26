@@ -18,9 +18,7 @@ public class EndianAwareWriter(Stream input) : BinaryWriter(input)
         {
             BinaryPrimitives.WriteInt16LittleEndian(bytes, value);
         }
-        var arr = bytes.ToArray();
-        Console.Error.WriteLine($"DEBUG Write(short) BigEndian={BigEndian} bytes={BitConverter.ToString(arr)}");
-        BaseStream.Write(arr, 0, arr.Length);
+        Write(bytes);
     }
 
     public override void Write(int value)
