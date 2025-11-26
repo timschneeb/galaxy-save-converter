@@ -11,7 +11,7 @@ public class SaveDataStorageGalaxy
     public static SaveDataStorageGalaxy ReadFrom(BinaryReader reader)
     {
         var galaxy = new SaveDataStorageGalaxy();
-        var galaxyNum = reader.ReadUInt16Be();
+        var galaxyNum = reader.ReadUInt16();
         galaxy.Galaxy = new List<SaveDataStorageGalaxyStage>(galaxyNum);
 
         var stageSerializer = reader.ReadBinaryDataContentHeaderSerializer();
@@ -76,7 +76,7 @@ public class SaveDataStorageGalaxy
         if (writer == null) throw new ArgumentNullException(nameof(writer));
 
         // write number of galaxy stages
-        writer.WriteUInt16Be((ushort)(Galaxy?.Count ?? 0));
+        writer.WriteUInt16((ushort)(Galaxy?.Count ?? 0));
 
         // Build stage header serializer attributes. Layout mirrors the reader expectations.
         var stageAttrs = new List<(ushort key, ushort offset)>
@@ -169,7 +169,7 @@ public class SaveDataStorageGalaxyScenario
         return new SaveDataStorageGalaxyScenario
         {
             MissNum = reader.ReadByte(),
-            BestTime = reader.ReadUInt32Be(),
+            BestTime = reader.ReadUInt32(),
             Flag = new SaveDataStorageGalaxyScenarioFlag(reader.ReadByte())
         };
     }
@@ -177,7 +177,7 @@ public class SaveDataStorageGalaxyScenario
     public void WriteTo(BinaryWriter writer)
     {
         writer.Write(MissNum);
-        writer.WriteUInt32Be(BestTime);
+        writer.WriteUInt32(BestTime);
 
         byte f = 0;
         if (Flag.PowerStar) f |= 0b1;

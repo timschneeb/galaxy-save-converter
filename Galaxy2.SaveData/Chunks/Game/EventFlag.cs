@@ -15,7 +15,7 @@ public class SaveDataStorageEventFlag
         eventFlag.EventFlags = new List<GameEventFlag>(count);
         for (var i = 0; i < count; i++)
         {
-            var raw = reader.ReadUInt16Be();
+            var raw = reader.ReadUInt16();
             eventFlag.EventFlags.Add(new GameEventFlag(raw));
         }
         return eventFlag;
@@ -25,7 +25,7 @@ public class SaveDataStorageEventFlag
     {
         foreach (var f in EventFlags)
         {
-            writer.WriteUInt16Be(f.InnerValue);
+            writer.WriteUInt16(f.InnerValue);
         }
     }
 }

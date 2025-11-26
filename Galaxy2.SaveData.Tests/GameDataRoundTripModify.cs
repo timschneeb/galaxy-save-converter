@@ -28,18 +28,18 @@ public class GameDataRoundTripModify(ITestOutputHelper testOutputHelper)
         File.Copy(inputBin, origBin, true);
             
         // Deserialize original file into object
-        var save = SaveDataFile.ReadBeFile(inputBin);
+        var save = SaveDataFile.ReadFile(inputBin, bigEndian: true);
 
         var user1 = save.UserFileInfo.First(x => x.Name.ToString()!.StartsWith("user1"));
         var player = user1.UserFile!.GameData!.First(x => x is PlayerStatusChunk) as PlayerStatusChunk;
         player!.PlayerStatus.PlayerLeft = 32;
             
         // Serialize back out to a temporary file
-        save.WriteBeFile(tmpBin);
+        save.WriteFile(tmpBin, bigEndian: true);
 
         // Produce JSON from both files using the existing JSON generator
-        Json.Program.Main([inputBin, origJson]);
-        Json.Program.Main([tmpBin, roundJson]);
+        Json.Program.Main(["be2json", inputBin, origJson]);
+        Json.Program.Main(["be2json", tmpBin, roundJson]);
 
         var referenceJson = File.ReadAllText(origJson);
         var generatedJson = File.ReadAllText(roundJson);

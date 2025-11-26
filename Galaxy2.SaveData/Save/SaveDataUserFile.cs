@@ -9,9 +9,9 @@ namespace Galaxy2.SaveData.Save;
 public class SaveDataUserFileInfo
 {
     [JsonPropertyName("name")]
-    public FixedString12? Name { get; set; }
+    public required FixedString12 Name { get; set; }
     [JsonPropertyName("user_file")]
-    public SaveDataUserFile? UserFile { get; set; }
+    public required SaveDataUserFile UserFile { get; set; }
 }
 
 public class SaveDataUserFile
@@ -120,7 +120,7 @@ public class SaveDataUserFile
                     chunk = new MiiChunk { Mii = ConfigDataMii.ReadFrom(r, inner) };
                     break;
                 case 0x4D495343: // MISC
-                    var misc = new ConfigDataMisc { LastModified = r.ReadInt64Be() };
+                    var misc = new ConfigDataMisc { LastModified = r.ReadInt64() };
                     chunk = new MiscChunk { Misc = misc };
                     break;
                 default:
@@ -155,6 +155,7 @@ public class SaveDataUserFile
     public void WriteTo(BinaryWriter writer, string name)
     {
         var startPos = writer.BaseStream.Position;
+        var useBigEndian = writer is EndianAwareWriter { BigEndian: true };
             
         // write version
         writer.Write((byte)2);
@@ -169,9 +170,9 @@ public class SaveDataUserFile
             foreach (var c in chunks)
             {
                 using var ms = new MemoryStream();
-                using var bw = new BinaryWriter(ms);
+                using var bw = new EndianAwareWriter(ms);
+                bw.BigEndian = useBigEndian;
 
-                // TODO: calculate hashes
                 if (c is PlayerStatusChunk p)
                 {
                     p.PlayerStatus.WriteTo(bw);
@@ -251,7 +252,8 @@ public class SaveDataUserFile
             foreach (var c in chunks)
             {
                 using var ms = new MemoryStream();
-                using var bw = new BinaryWriter(ms);
+                using var bw = new EndianAwareWriter(ms);
+                bw.BigEndian = useBigEndian;
                     
                 switch (c)
                 {
@@ -260,7 +262,6 @@ public class SaveDataUserFile
                         // Writes -1 (0xFF) for true
                         bw.Write((sbyte)(cr.Create.IsCreated ? -1 : 0));
                         var body = ms.ToArray();
-                        // HashCode::from_raw(0x2432DA)
                         writer.WriteChunkHeader(0x434F4E46, 0x2432DA, body.Length);
                         writer.Write(body);
                         break;
@@ -269,16 +270,14 @@ public class SaveDataUserFile
                     {
                         mc.Mii.WriteTo(bw);
                         var body = ms.ToArray();
-                        // HashCode::from_raw(0x2836E9)
                         writer.WriteChunkHeader(0x4D494920, 0x2836E9, body.Length);
                         writer.Write(body);
                         break;
                     }
                     case MiscChunk misc:
                     {
-                        bw.WriteInt64Be(misc.Misc.LastModified);
+                        bw.WriteInt64(misc.Misc.LastModified);
                         var body = ms.ToArray();
-                        // HashCode::from_raw(0x1)
                         writer.WriteChunkHeader(0x4D495343, 0x1, body.Length);
                         writer.Write(body);
                         break;
@@ -303,10 +302,11 @@ public class SaveDataUserFile
             foreach (var c in chunks)
             {
                 using var ms = new MemoryStream();
-                using var bw = new BinaryWriter(ms);
+                using var bw = new EndianAwareWriter(ms);
+                bw.BigEndian = useBigEndian;
+                
                 c.WriteTo(bw);
                 var body = ms.ToArray();
-                // SysConfig hash: HashCode::from_raw(0x3)
                 writer.WriteChunkHeader(0x53595343, 0x3, body.Length);
                 writer.Write(body);
             }

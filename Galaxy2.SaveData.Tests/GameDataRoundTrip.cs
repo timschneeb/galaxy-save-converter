@@ -26,14 +26,26 @@ public class GameDataRoundTrip(ITestOutputHelper testOutputHelper)
         File.Copy(inputBin, origBin, true);
             
         // Deserialize original file into object
-        var save = SaveDataFile.ReadBeFile(inputBin);
+        var save = SaveDataFile.ReadFile(inputBin, bigEndian: true);
 
         // Serialize back out to a temporary file
-        save.WriteBeFile(tmpBin);
-
+        save.WriteFile(tmpBin, bigEndian: true);
+        
+            
+        var referenceBin = File.ReadAllBytes(origBin);
+        var generatedBin = File.ReadAllBytes(tmpBin);
+            
+        var diffsBlocks = referenceBin.CompareWith(generatedBin);
+        foreach (var d in diffsBlocks)
+        {
+            testOutputHelper.WriteLine(d);
+        }
+            
+        Assert.True(diffsBlocks.Count == 0, "Round-tripped binary file does not match original binary file. See test output for differing blocks.");        
+        
         // Produce JSON from both files using the existing JSON generator
-        Json.Program.Main([inputBin, origJson]);
-        Json.Program.Main([tmpBin, roundJson]);
+        Json.Program.Main(["be2json", inputBin, origJson]);
+        Json.Program.Main(["be2json", tmpBin, roundJson]);
 
         var referenceJson = File.ReadAllText(origJson);
         var generatedJson = File.ReadAllText(roundJson);
@@ -48,16 +60,5 @@ public class GameDataRoundTrip(ITestOutputHelper testOutputHelper)
         }
 
         Assert.True(diffs.Count == 0, "Round-tripped JSON does not match original JSON. See test output for details.");
-            
-        var referenceBin = File.ReadAllBytes(origBin);
-        var generatedBin = File.ReadAllBytes(tmpBin);
-            
-        var diffsBlocks = referenceBin.CompareWith(generatedBin);
-        foreach (var d in diffsBlocks)
-        {
-            testOutputHelper.WriteLine(d);
-        }
-            
-        Assert.True(diffsBlocks.Count == 0, "Round-tripped binary file does not match original binary file. See test output for differing blocks.");
     }
 }

@@ -18,9 +18,9 @@ public class SaveDataStorageTicoFat
         var ticoFat = new SaveDataStorageTicoFat();
         for (var i = 0; i < 8; i++)
         for (var j = 0; j < 6; j++)
-            ticoFat.StarPieceNum[i, j] = reader.ReadUInt16Be();
+            ticoFat.StarPieceNum[i, j] = reader.ReadUInt16();
         for (var i = 0; i < 16; i++)
-            ticoFat.CoinGalaxyName[i] = reader.ReadUInt16Be();
+            ticoFat.CoinGalaxyName[i] = reader.ReadUInt16();
         return ticoFat;
     }
 
@@ -29,8 +29,8 @@ public class SaveDataStorageTicoFat
         if (writer == null) throw new ArgumentNullException(nameof(writer));
         for (var i = 0; i < 8; i++)
         for (var j = 0; j < 6; j++)
-            writer.WriteUInt16Be(StarPieceNum[i,j]);
+            writer.WriteUInt16(StarPieceNum[i,j]);
         for (var i = 0; i < 16; i++)
-            writer.WriteUInt16Be(CoinGalaxyName[i]);
+            writer.WriteUInt16(CoinGalaxyName[i]);
     }
 }

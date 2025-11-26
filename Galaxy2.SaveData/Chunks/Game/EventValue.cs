@@ -13,7 +13,7 @@ public class SaveDataStorageEventValue
         var count = dataSize / 4;
         ev.EventValues = new List<GameEventValue>(count);
         for (var i = 0; i < count; i++)
-            ev.EventValues.Add(new GameEventValue { Key = reader.ReadUInt16Be(), Value = reader.ReadUInt16Be() });
+            ev.EventValues.Add(new GameEventValue { Key = reader.ReadUInt16(), Value = reader.ReadUInt16() });
         return ev;
     }
 
@@ -21,8 +21,8 @@ public class SaveDataStorageEventValue
     {
         foreach (var v in EventValues)
         {
-            writer.WriteUInt16Be(v.Key);
-            writer.WriteUInt16Be(v.Value);
+            writer.WriteUInt16(v.Key);
+            writer.WriteUInt16(v.Value);
         }
     }
 }

@@ -13,7 +13,7 @@ public class GameDataJsonDeserialize(ITestOutputHelper testOutputHelper)
     public void GeneratedJson_ShouldMatch_Reference()
     {
         // Run the JSON generator which should produce GameData.json
-        Json.Program.Main(["TestData/GameData_Input.bin", "GameData.json"]);
+        Json.Program.Main(["be2json", "TestData/GameData_Input.bin", "GameData.json"]);
 
         var referenceJson = File.ReadAllText("TestData/GameData_Reference.json");
         var generatedJson = File.ReadAllText("GameData.json");

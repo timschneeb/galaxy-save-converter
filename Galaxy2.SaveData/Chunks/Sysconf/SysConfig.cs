@@ -56,7 +56,8 @@ public class SysConfigData
     public void WriteTo(BinaryWriter writer)
     {
         using var ms = new MemoryStream();
-        using var fw = new BinaryWriter(ms);
+        using var fw = new EndianAwareWriter(ms);
+        fw.BigEndian = writer is EndianAwareWriter { BigEndian: true };
         var attrs = new List<(ushort key, ushort offset)>();
 
         AddU8("mIsEncouragePal60", IsEncouragePal60 ? (byte)1 : (byte)0);
@@ -86,7 +87,7 @@ public class SysConfigData
             var key = HashKey.Compute(name);
             var offset = (ushort)ms.Position;
             attrs.Add((key, offset));
-            fw.WriteInt64Be(v);
+            fw.WriteInt64(v);
         }
 
         void AddU32(string name, uint v)
@@ -94,7 +95,7 @@ public class SysConfigData
             var key = HashKey.Compute(name);
             var offset = (ushort)ms.Position;
             attrs.Add((key, offset));
-            fw.WriteUInt32Be(v);
+            fw.WriteUInt32(v);
         }
 
         void AddU16(string name, ushort v)
@@ -102,7 +103,7 @@ public class SysConfigData
             var key = HashKey.Compute(name);
             var offset = (ushort)ms.Position;
             attrs.Add((key, offset));
-            fw.WriteUInt16Be(v);
+            fw.WriteUInt16(v);
         }
     }
 }

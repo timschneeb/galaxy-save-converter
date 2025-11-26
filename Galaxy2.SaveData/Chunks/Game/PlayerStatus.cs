@@ -41,11 +41,10 @@ public class SaveDataStoragePlayerStatus
 
     public void WriteTo(BinaryWriter writer)
     {
-        if (writer == null) throw new ArgumentNullException(nameof(writer));
-
         // We'll build the fields area into a memory stream to compute offsets
         using var ms = new MemoryStream();
-        using var fw = new BinaryWriter(ms);
+        using var fw = new EndianAwareWriter(ms);
+        fw.BigEndian = writer is EndianAwareWriter { BigEndian: true };
 
         var attrs = new List<(ushort key, ushort offset)>();
 
@@ -78,7 +77,7 @@ public class SaveDataStoragePlayerStatus
             var key = HashKey.Compute(name);
             var offset = (ushort)ms.Position;
             attrs.Add((key, offset));
-            fw.WriteUInt16Be(v);
+            fw.WriteUInt16(v);
         }
     }
 }
