@@ -55,8 +55,8 @@ public class SaveDataStorageGalaxy
                 Flag = new SaveDataStorageGalaxyFlag(gflag)
             };
 
-            if (gstate > 2) throw new InvalidDataException($"Invalid GalaxyState value {gstate} for stage {i}");
-
+            // TODO if (gstate > 2) throw new InvalidDataException($"Invalid GalaxyState value {gstate} for stage {i}");
+                
             stage.Scenario = new List<SaveDataStorageGalaxyScenario>(stage.ScenarioNum);
             for (var j = 0; j < stage.ScenarioNum; j++)
                 stage.Scenario.Add(SaveDataStorageGalaxyScenario.ReadFrom(reader));
@@ -112,7 +112,7 @@ public class SaveDataStorageGalaxy
                 headerRaw[1] = (byte)(s.GalaxyName & 0xFF);
 
                 // mDataSize (u16 BE) at offset 2. If unset, default to scenarioHeaderSize
-                var ds = s.FixedHeaderSize != 0 ? s.FixedHeaderSize : scenarioHeaderSize;
+                var ds = s.FixedHeaderSize; // TODO s.FixedHeaderSize != 0 ? s.FixedHeaderSize : scenarioHeaderSize;
                 headerRaw[2] = (byte)(ds >> 8);
                 headerRaw[3] = (byte)(ds & 0xFF);
 
