@@ -40,5 +40,7 @@ public static class Program
         var json = JsonSerializer.Serialize(rootObj, JsonOptions);
         File.WriteAllText(outputFile, json);
         Console.WriteLine($"Successfully converted {inputFile} to {outputFile}");
+        
+        saveData.WriteFile("reconstructed_save_data.bin", bigEndian: mode == "be2json");
     }
 }

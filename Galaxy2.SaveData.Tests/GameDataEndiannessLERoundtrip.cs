@@ -3,9 +3,10 @@ using System.IO;
 using System.Linq;
 using System.Text.Json.Nodes;
 using Xunit;
-using Xunit.Abstractions;
 using Galaxy2.SaveData.Save;
 using Galaxy2.SaveData.Tests.Utils;
+
+[assembly: CaptureConsole]
 
 namespace Galaxy2.SaveData.Tests;
 
