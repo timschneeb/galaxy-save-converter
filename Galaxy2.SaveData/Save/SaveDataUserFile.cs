@@ -195,7 +195,9 @@ public class SaveDataUserFile
                     var body = ms.ToArray();
                     // Hash = HashCode::from("SaveDataStorageTicoFat").into_raw().wrapping_add(0x120)
                     var baseHash = HashKey.FromString("SaveDataStorageTicoFat").Value;
-                    var tfHash = unchecked(baseHash + 0x120u);
+                    // TODO for WII: var tfHash = unchecked(baseHash + 0x120u);
+                    // TODO for SWITCH:
+                    var tfHash = unchecked(baseHash + 0x1e0u);
                     writer.WriteChunkHeader(0x53544631, tfHash, body.Length);
                     writer.Write(body);
                 }
