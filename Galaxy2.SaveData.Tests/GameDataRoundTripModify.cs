@@ -27,14 +27,14 @@ public class GameDataRoundTripModify(ITestOutputHelper testOutputHelper)
         File.Copy(inputBin, origBin, true);
             
         // Deserialize original file into object
-        var save = SaveDataFile.ReadFile(inputBin, bigEndian: true);
+        var save = SaveDataFile.ReadFile(inputBin, ConsoleType.Wii);
 
         var user1 = save.UserFileInfo.First(x => x.Name.ToString()!.StartsWith("user1"));
         var player = user1.UserFile!.GameData!.First(x => x is PlayerStatusChunk) as PlayerStatusChunk;
         player!.PlayerStatus.PlayerLeft = 32;
             
         // Serialize back out to a temporary file
-        save.WriteFile(tmpBin, bigEndian: true);
+        save.WriteFile(tmpBin, ConsoleType.Wii);
 
         // Produce JSON from both files using the existing JSON generator
         Json.Program.Main(["be2json", inputBin, origJson]);

@@ -3,9 +3,15 @@ using System.Buffers.Binary;
 
 namespace Galaxy2.SaveData;
 
-public class EndianAwareWriter(Stream input) : BinaryWriter(input)
+public class EndianAwareWriter(Stream input, ConsoleType consoleType) : BinaryWriter(input)
 {
-    public bool BigEndian { get; set; }
+    public bool BigEndian => ConsoleType == ConsoleType.Wii;
+    public ConsoleType ConsoleType { get; set; } = consoleType;
+    
+    public EndianAwareWriter NewWriter(Stream stream)
+    {
+        return new EndianAwareWriter(stream, ConsoleType);
+    }
     
     public override void Write(short value)
     {

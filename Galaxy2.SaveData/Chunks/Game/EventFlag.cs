@@ -21,7 +21,7 @@ public class SaveDataStorageEventFlag
         return eventFlag;
     }
 
-    public void WriteTo(BinaryWriter writer)
+    public void WriteTo(EndianAwareWriter writer)
     {
         foreach (var f in EventFlags)
         {

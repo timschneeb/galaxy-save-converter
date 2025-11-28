@@ -53,11 +53,10 @@ public class SysConfigData
         return sysConfig;
     }
 
-    public void WriteTo(BinaryWriter writer)
+    public void WriteTo(EndianAwareWriter writer)
     {
         using var ms = new MemoryStream();
-        using var fw = new EndianAwareWriter(ms);
-        fw.BigEndian = writer is EndianAwareWriter { BigEndian: true };
+        using var fw = writer.NewWriter(ms);
         var attrs = new List<(ushort key, ushort offset)>();
 
         AddU8("mIsEncouragePal60", IsEncouragePal60 ? (byte)1 : (byte)0);

@@ -18,11 +18,17 @@ public class GameDataJsonDeserialize(ITestOutputHelper testOutputHelper)
 
     private void Deserialize(string mode, string inputFile, string referenceJsonFile)
     {
+        const string outputDir = "GameData_JsonDeserialize";
+        var outputJson = $"{outputDir}/{mode}_GameData.json";
+        
+        if (!Directory.Exists(outputDir))
+            Directory.CreateDirectory(outputDir);
+        
         // Run the JSON generator which should produce GameData.json
-        Json.Program.Main([mode, inputFile, "GameData.json"]);
+        Json.Program.Main([mode, inputFile, outputJson]);
 
         var referenceJson = File.ReadAllText(referenceJsonFile);
-        var generatedJson = File.ReadAllText("GameData.json");
+        var generatedJson = File.ReadAllText(outputJson);
 
         var referenceToken = JsonNode.Parse(referenceJson);
         var generatedToken = JsonNode.Parse(generatedJson);
@@ -34,15 +40,5 @@ public class GameDataJsonDeserialize(ITestOutputHelper testOutputHelper)
         }
 
         Assert.True(diffs.Count == 0, "Generated JSON does not match reference JSON. See test output for details.");
-
-        try
-        {
-            if (File.Exists("GameData.json"))
-                File.Delete("GameData.json");
-        }
-        catch (Exception ex)
-        {
-            testOutputHelper.WriteLine($"Warning: failed to delete generated GameData.json: {ex.Message}");
-        }
     }
 }

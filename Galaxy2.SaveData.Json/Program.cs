@@ -35,12 +35,12 @@ public static class Program
         var inputFile = args[1];
         var outputFile = args[2];
 
-        var saveData = SaveDataFile.ReadFile(inputFile, bigEndian: mode == "be2json");
+        var saveData = SaveDataFile.ReadFile(inputFile, mode == "be2json" ? ConsoleType.Wii : ConsoleType.Switch);
         var rootObj = new { user_file_info = saveData.UserFileInfo };
         var json = JsonSerializer.Serialize(rootObj, JsonOptions);
         File.WriteAllText(outputFile, json);
         Console.WriteLine($"Successfully converted {inputFile} to {outputFile}");
         
-        saveData.WriteFile("reconstructed_save_data.bin", bigEndian: mode == "be2json");
+        // saveData.WriteFile("reconstructed_save_data.bin", mode == "be2json" ? ConsoleType.Wii : ConsoleType.Switch);
     }
 }

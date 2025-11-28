@@ -152,7 +152,7 @@ public class SaveDataUserFile
         }
     }
 
-    public void WriteTo(BinaryWriter writer, string name)
+    public void WriteTo(EndianAwareWriter writer, string name)
     {
         var startPos = writer.BaseStream.Position;
         var useBigEndian = writer is EndianAwareWriter { BigEndian: true };
@@ -170,8 +170,7 @@ public class SaveDataUserFile
             foreach (var c in chunks)
             {
                 using var ms = new MemoryStream();
-                using var bw = new EndianAwareWriter(ms);
-                bw.BigEndian = useBigEndian;
+                using var bw = writer.NewWriter(ms);
 
                 if (c is PlayerStatusChunk p)
                 {
@@ -195,9 +194,11 @@ public class SaveDataUserFile
                     var body = ms.ToArray();
                     // Hash = HashCode::from("SaveDataStorageTicoFat").into_raw().wrapping_add(0x120)
                     var baseHash = HashKey.FromString("SaveDataStorageTicoFat").Value;
-                    // TODO for WII: var tfHash = unchecked(baseHash + 0x120u);
-                    // TODO for SWITCH:
-                    var tfHash = unchecked(baseHash + 0x1e0u);
+                    var tfHash =
+                        // TODO investigate this. the 'constant' may be some kind of length
+                        writer.ConsoleType == ConsoleType.Switch
+                        ? unchecked(baseHash + 0x1e0u)
+                        : unchecked(baseHash + 0x120u);
                     writer.WriteChunkHeader(0x53544631, tfHash, body.Length);
                     writer.Write(body);
                 }
@@ -212,12 +213,9 @@ public class SaveDataUserFile
                 }
                 else if (c is GalaxyChunk g)
                 {
-                    g.Galaxy.WriteTo(bw);
+                    g.Galaxy.WriteTo(bw, out var hash);
                     var body = ms.ToArray();
-                    // Hash = scenario_data_size + stage_header_size + 2 
-                    // scenario_data_size = 6, stage_header_size = 4 + 5*4 = 24
-                    const uint galaHash = (uint)(6 + 24 + 2);
-                    writer.WriteChunkHeader(0x47414C41, galaHash, body.Length);
+                    writer.WriteChunkHeader(0x47414C41, hash, body.Length);
                     writer.Write(body);
                 }
                 else if (c is WorldMapChunk wm)
@@ -250,8 +248,7 @@ public class SaveDataUserFile
             foreach (var c in chunks)
             {
                 using var ms = new MemoryStream();
-                using var bw = new EndianAwareWriter(ms);
-                bw.BigEndian = useBigEndian;
+                using var bw = writer.NewWriter(ms);
                     
                 switch (c)
                 {
@@ -259,6 +256,11 @@ public class SaveDataUserFile
                     {
                         // Writes -1 (0xFF) for true
                         bw.Write((sbyte)(cr.Create.IsCreated ? -1 : 0));
+                        if (writer.ConsoleType == ConsoleType.Switch)
+                        {
+                            bw.WriteAlignmentPadding(alignment: 4);
+                        }
+                        
                         var body = ms.ToArray();
                         writer.WriteChunkHeader(0x434F4E46, 0x2432DA, body.Length);
                         writer.Write(body);
@@ -267,6 +269,7 @@ public class SaveDataUserFile
                     case MiiChunk mc:
                     {
                         mc.Mii.WriteTo(bw);
+                        
                         var body = ms.ToArray();
                         writer.WriteChunkHeader(0x4D494920, 0x2836E9, body.Length);
                         writer.Write(body);
@@ -275,6 +278,11 @@ public class SaveDataUserFile
                     case MiscChunk misc:
                     {
                         bw.WriteInt64(misc.Misc.LastModified);
+                        if (writer.ConsoleType == ConsoleType.Switch)
+                        {
+                            bw.WriteAlignmentPadding(alignment: 4);
+                        }
+                        
                         var body = ms.ToArray();
                         writer.WriteChunkHeader(0x4D495343, 0x1, body.Length);
                         writer.Write(body);
@@ -300,8 +308,7 @@ public class SaveDataUserFile
             foreach (var c in chunks)
             {
                 using var ms = new MemoryStream();
-                using var bw = new EndianAwareWriter(ms);
-                bw.BigEndian = useBigEndian;
+                using var bw = writer.NewWriter(ms);
                 
                 c.WriteTo(bw);
                 var body = ms.ToArray();

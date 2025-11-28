@@ -24,9 +24,8 @@ public class SaveDataStorageTicoFat
         return ticoFat;
     }
 
-    public void WriteTo(BinaryWriter writer)
+    public void WriteTo(EndianAwareWriter writer)
     {
-        if (writer == null) throw new ArgumentNullException(nameof(writer));
         for (var i = 0; i < 8; i++)
         for (var j = 0; j < 6; j++)
             writer.WriteUInt16(StarPieceNum[i,j]);

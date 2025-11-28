@@ -22,11 +22,15 @@ public class ConfigDataMii
         return mii;
     }
 
-    public void WriteTo(BinaryWriter writer)
+    public void WriteTo(EndianAwareWriter writer)
     {
         writer.Write(Flag);
         writer.Write(MiiId);
         writer.Write((byte)IconId);
+        if (writer.ConsoleType == ConsoleType.Switch)
+        {
+            writer.WriteAlignmentPadding(alignment: 4);
+        }
     }
 }
     

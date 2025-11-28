@@ -113,12 +113,11 @@ public class SaveDataStoragePlayerStatus
          */
     }
 
-    public void WriteTo(BinaryWriter writer, out uint hash)
+    public void WriteTo(EndianAwareWriter writer, out uint hash)
     {
         // We'll build the fields area into a memory stream to compute offsets
         using var ms = new MemoryStream();
-        using var fw = new EndianAwareWriter(ms);
-        fw.BigEndian = writer is EndianAwareWriter { BigEndian: true };
+        using var fw = writer.NewWriter(ms);
 
         var attrs = new List<(ushort key, ushort offset)>();
 
@@ -140,7 +139,10 @@ public class SaveDataStoragePlayerStatus
         var dataSize = (ushort)ms.Length;
         var headerSize = writer.WriteBinaryDataContentHeader(attrs, dataSize);
         writer.Write(ms.ToArray());
-        writer.WriteAlignmentPadding(alignment: 4);
+        if (writer.ConsoleType == ConsoleType.Switch)
+        {
+            writer.WriteAlignmentPadding(alignment: 4);
+        }
         
         // Hash = data_size + header_size
         // header_size = 4 + attribute_count*4

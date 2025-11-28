@@ -25,10 +25,10 @@ public class GameDataRoundTrip(ITestOutputHelper testOutputHelper)
         File.Copy(inputBin, origBin, true);
             
         // Deserialize original file into object
-        var save = SaveDataFile.ReadFile(inputBin, bigEndian: true);
+        var save = SaveDataFile.ReadFile(inputBin, ConsoleType.Wii);
 
         // Serialize back out to a temporary file
-        save.WriteFile(tmpBin, bigEndian: true);
+        save.WriteFile(tmpBin, ConsoleType.Wii);
         
             
         var referenceBin = File.ReadAllBytes(origBin);

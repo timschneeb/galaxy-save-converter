@@ -17,7 +17,7 @@ public class SaveDataStorageEventValue
         return ev;
     }
 
-    public void WriteTo(BinaryWriter writer)
+    public void WriteTo(EndianAwareWriter writer)
     {
         foreach (var v in EventValues)
         {

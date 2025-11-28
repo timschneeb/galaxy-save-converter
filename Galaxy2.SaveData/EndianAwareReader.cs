@@ -3,10 +3,11 @@ using System.Buffers.Binary;
 
 namespace Galaxy2.SaveData;
 
-public class EndianAwareReader(Stream input) : BinaryReader(input)
+public class EndianAwareReader(Stream input, ConsoleType target) : BinaryReader(input)
 {
-    public bool BigEndian { get; set; }
-
+    public bool BigEndian => ConsoleType == ConsoleType.Wii;
+    public ConsoleType ConsoleType { get; set; } = target;
+    
     public override short ReadInt16()
     {
         Span<byte> bytes = stackalloc byte[2];

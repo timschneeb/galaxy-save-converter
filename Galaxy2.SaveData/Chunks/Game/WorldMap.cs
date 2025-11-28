@@ -19,9 +19,13 @@ public class SaveDataStorageWorldMap
         };
     }
 
-    public void WriteTo(BinaryWriter writer)
+    public void WriteTo(EndianAwareWriter writer)
     {
         writer.Write(StarCheckPointFlag);
         writer.Write(WorldNo);
+        if (writer.ConsoleType == ConsoleType.Switch)
+        {
+            writer.WriteAlignmentPadding(alignment: 4);
+        }
     }
 }

@@ -29,13 +29,13 @@ public class GameDataEndiannessRoundtrip(ITestOutputHelper testOutputHelper)
         File.Copy(inputBin, origBin, true);
             
         // Deserialize original file into object
-        var save = SaveDataFile.ReadFile(inputBin, bigEndian: true);
+        var save = SaveDataFile.ReadFile(inputBin, ConsoleType.Wii);
 
         // Serialize back out to a temporary file
-        save.WriteFile(leBin, bigEndian: false);
+        save.WriteFile(leBin, ConsoleType.Switch);
         
-        var saveLe = SaveDataFile.ReadFile(leBin, bigEndian: false);
-        saveLe.WriteFile(roundtripBin, bigEndian: true);
+        var saveLe = SaveDataFile.ReadFile(leBin, ConsoleType.Switch);
+        saveLe.WriteFile(roundtripBin, ConsoleType.Wii);
         
         var diffsBlocks = File.ReadAllBytes(origBin).CompareWith(File.ReadAllBytes(roundtripBin));
         foreach (var d in diffsBlocks)

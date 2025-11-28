@@ -7,11 +7,10 @@ public class SaveDataFile
     public required SaveDataFileHeader Header { get; set; }
     public required List<SaveDataUserFileInfo> UserFileInfo { get; set; }
     
-    public static SaveDataFile ReadFile(string path, bool bigEndian)
+    public static SaveDataFile ReadFile(string path, ConsoleType consoleType)
     {
         using var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
-        using var reader = new EndianAwareReader(fs);
-        reader.BigEndian = bigEndian;
+        using var reader = new EndianAwareReader(fs, consoleType);
 
         var header = new SaveDataFileHeader
         {
@@ -48,11 +47,10 @@ public class SaveDataFile
         return new SaveDataFile { Header = header, UserFileInfo = userFileInfo };
     }
 
-    public void WriteFile(string path, bool bigEndian)
+    public void WriteFile(string path, ConsoleType consoleType)
     {
         using var fs = new FileStream(path, FileMode.Create, FileAccess.ReadWrite, FileShare.None);
-        using var writer = new EndianAwareWriter(fs);
-        writer.BigEndian = bigEndian;
+        using var writer = new EndianAwareWriter(fs, consoleType);
 
         // header placeholders (checksum=0, version, count, fileSize=0)
         writer.WriteUInt32(0);
@@ -93,7 +91,7 @@ public class SaveDataFile
         // compute checksum from byte 4 to end using streaming buffer
         writer.Flush();
         fs.Flush();
-        var checksum = ComputeChecksum(stream: fs, endPosition, bigEndian: bigEndian);
+        var checksum = ComputeChecksum(stream: fs, endPosition, writer.BigEndian);
 
         // write checksum at start
         writer.BaseStream.Position = 0;
