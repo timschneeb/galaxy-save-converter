@@ -10,11 +10,11 @@ public class SaveDataStorageWorldMap
     [JsonPropertyName("world_no")]
     public byte WorldNo { get; set; } = 1;
 
-    public static SaveDataStorageWorldMap ReadFrom(BinaryReader reader, int dataSize)
+    public static SaveDataStorageWorldMap ReadFrom(BinaryReader reader)
     {
         return new SaveDataStorageWorldMap
         {
-            StarCheckPointFlag = reader.ReadBytes(8),
+            StarCheckPointFlag = reader.ReadBytes(WorldCapacity),
             WorldNo = reader.ReadByte()
         };
     }

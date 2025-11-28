@@ -13,7 +13,7 @@ public class SaveDataStorageTicoFat
     [JsonPropertyName("coin_galaxy_name")]
     public ushort[] CoinGalaxyName { get; set; } = new ushort[CoinGalaxyNameNum];
 
-    public static SaveDataStorageTicoFat ReadFrom(BinaryReader reader, int dataSize)
+    public static SaveDataStorageTicoFat ReadFrom(BinaryReader reader)
     {
         var ticoFat = new SaveDataStorageTicoFat();
         for (var i = 0; i < 8; i++)

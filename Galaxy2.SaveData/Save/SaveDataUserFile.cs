@@ -86,7 +86,7 @@ public class SaveDataUserFile
                     result = new EventFlagChunk { EventFlag = SaveDataStorageEventFlag.ReadFrom(r, inner) };
                     break;
                 case 0x53544631: // STF1
-                    result = new TicoFatChunk { TicoFat = SaveDataStorageTicoFat.ReadFrom(r, inner) };
+                    result = new TicoFatChunk { TicoFat = SaveDataStorageTicoFat.ReadFrom(r) };
                     break;
                 case 0x564C4531: // VLE1
                     result = new EventValueChunk { EventValue = SaveDataStorageEventValue.ReadFrom(r, inner) };
@@ -95,7 +95,7 @@ public class SaveDataUserFile
                     result = new GalaxyChunk { Galaxy = SaveDataStorageGalaxy.ReadFrom(r) };
                     break;
                 case 0x5353574D: // SSWM
-                    result = new WorldMapChunk { WorldMap = SaveDataStorageWorldMap.ReadFrom(r, inner) };
+                    result = new WorldMapChunk { WorldMap = SaveDataStorageWorldMap.ReadFrom(r) };
                     break;
                 default:
                     Console.Error.WriteLine($"Unknown GameData chunk magic: 0x{magic:X8} at 0x{start:X} (size={size}), skipping");

@@ -30,23 +30,7 @@ public class SaveDataStorageGalaxy
 
             // Build stage attributes list from serializer metadata
             var stageAttrs = stageSerializer.attributes;
-            for (var si = 0; si < stageAttrs.Count; si++)
-            {
-                var (key, offset) = stageAttrs[si];
-                var nextOffset = (si + 1 < stageAttrs.Count)
-                    ? stageAttrs[si + 1].offset
-                    : stageHeaderSize;
-                var size = nextOffset - offset;
-                if (offset < 0 || offset + size > headerRaw.Length || size <= 0)
-                {
-                    throw new InvalidDataException(
-                        $"Invalid attribute size or offset in stage header (key: {key}, offset: {offset}, size: {size}).");
-                }
-
-                var data = new byte[size];
-                Buffer.BlockCopy(headerRaw, offset, data, 0, size);
-                stage.Attributes.Add(new SaveDataAttribute(key, data));
-            }
+            stage.Attributes = ReadAttributes(headerRaw, stageAttrs, stageHeaderSize);
 
             // Determine scenario count from attribute list
             var keyScenarioNum = HashKey.Compute("mScenarioNum");
@@ -57,21 +41,8 @@ public class SaveDataStorageGalaxy
             {
                 var scRaw = reader.ReadBytes(scenarioHeaderSize);
                 var scenario = new SaveDataStorageGalaxyScenario();
-                var scAttrs = scenarioSerializer.attributes.ToList();
-                for (var k = 0; k < scAttrs.Count; k++)
-                {
-                    var (key, off) = scAttrs[k];
-                    var nextOff = (k + 1 < scAttrs.Count) ? scAttrs[k + 1].offset : scenarioHeaderSize;
-                    var size = nextOff - off;
-                    if (off < 0 || off + size > scRaw.Length || size <= 0)
-                    {
-                        throw new InvalidDataException(
-                            $"Invalid attribute size or offset in scenario header (key: {key}, offset: {off}, size: {size}).");
-                    }
-                    var data = new byte[size];
-                    Buffer.BlockCopy(scRaw, off, data, 0, size);
-                    scenario.Attributes.Add(new SaveDataAttribute(key, data));
-                }
+                var scAttrs = scenarioSerializer.attributes;
+                scenario.Attributes = ReadAttributes(scRaw, scAttrs, scenarioHeaderSize);
                 stage.Scenario.Add(scenario);
             }
 
@@ -81,121 +52,110 @@ public class SaveDataStorageGalaxy
         return galaxy;
     }
 
-    public void WriteTo(EndianAwareWriter writer, out uint hash)
+    private static List<SaveDataAttribute> ReadAttributes(byte[] headerRaw, IReadOnlyList<(ushort key, int offset)> attrs, int headerSize)
     {
-        writer.WriteUInt16((ushort)Galaxy.Count);
-
-        List<(ushort key, ushort offset)> stageAttrs;
-        ushort stageDataSize;
-        uint stageHeaderSize;
-
+        var list = new List<SaveDataAttribute>(attrs.Count);
+        for (var i = 0; i < attrs.Count; i++)
         {
-            // Build stage serializer dynamically from union of keys across all stages
-            var stageKeySet = new HashSet<ushort>();
-            var stageKeyMaxSize = new Dictionary<ushort, int>();
-            foreach (var s in Galaxy)
+            var (key, offset) = attrs[i];
+            var nextOffset = (i + 1 < attrs.Count) ? attrs[i + 1].offset : headerSize;
+            var size = nextOffset - offset;
+            if (offset < 0 || offset + size > headerRaw.Length || size <= 0)
             {
-                foreach (var a in s.Attributes)
-                {
-                    stageKeySet.Add(a.Key);
-                    var len = a.Data.Length;
-                    if (!stageKeyMaxSize.TryGetValue(a.Key, out var cur) || len > cur) stageKeyMaxSize[a.Key] = len;
-                }
+                throw new InvalidDataException(
+                    $"Invalid attribute size or offset in header (key: {key}, offset: {offset}, size: {size}).");
             }
 
-            // ensure there is at least one key so header sizes behave
-            stageAttrs = new List<(ushort key, ushort offset)>();
-            using var stageMs = new MemoryStream();
-            foreach (var key in stageKeySet.ToList())
-            {
-                var offset = (ushort)stageMs.Position;
-                stageAttrs.Add((key, offset));
-                var size = stageKeyMaxSize.GetValueOrDefault(key, 0);
-                if (size > 0) stageMs.Write(new byte[size]);
-            }
-            stageDataSize = (ushort)stageMs.Length;
-
-            stageHeaderSize = writer.WriteBinaryDataContentHeader(stageAttrs, stageDataSize);
+            var data = new byte[size];
+            Buffer.BlockCopy(headerRaw, offset, data, 0, size);
+            list.Add(new SaveDataAttribute(key, data));
         }
 
-        List<(ushort key, ushort offset)> scenarioAttrs;
-        ushort scenarioDataSize;
-
-        {
-            var scenarioKeySet = new HashSet<ushort>();
-            var scenarioKeyMaxSize = new Dictionary<ushort, int>();
-            foreach (var s in Galaxy)
-            {
-                foreach (var sc in s.Scenario)
-                {
-                    foreach (var a in sc.Attributes)
-                    {
-                        scenarioKeySet.Add(a.Key);
-                        var len = a.Data.Length;
-                        if (!scenarioKeyMaxSize.TryGetValue(a.Key, out var cur) || len > cur) 
-                            scenarioKeyMaxSize[a.Key] = len;
-                    }
-                }
-            }
-
-            scenarioAttrs = new List<(ushort key, ushort offset)>();
-            using var scenarioMs = new MemoryStream();
-            foreach (var key in scenarioKeySet)
-            {
-                var offset = (ushort)scenarioMs.Position;
-                scenarioAttrs.Add((key, offset));
-                var size = scenarioKeyMaxSize.GetValueOrDefault(key, 0);
-                if (size > 0) scenarioMs.Write(new byte[size]);
-            }
-            scenarioDataSize = (ushort)scenarioMs.Length;
-
-            writer.WriteBinaryDataContentHeader(scenarioAttrs, scenarioDataSize);
-        }
-        
-        foreach (var s in Galaxy)
-        {
-            // Build stage header block using the computed serializer layout
-            var headerRaw = new byte[stageDataSize];
-            for (var i = 0; i < stageAttrs.Count; i++)
-            {
-                var (key, offset) = stageAttrs[i];
-                var size = ((i + 1) < stageAttrs.Count) ? stageAttrs[i + 1].offset - offset : stageDataSize - offset;
-                var attr = s.Attributes?.FirstOrDefault(a => a.Key == key);
-                if (attr is { Data.Length: > 0 })
-                {
-                    Buffer.BlockCopy(attr.Data, 0, headerRaw, offset, Math.Min(size, attr.Data.Length));
-                }
-            }
-
-            writer.Write(headerRaw);
-
-            // Write each scenario block for this stage
-            foreach (var sc in s.Scenario)
-            {
-                var scRaw = new byte[scenarioDataSize];
-                for (var i = 0; i < scenarioAttrs.Count; i++)
-                {
-                    var (key, offset) = scenarioAttrs[i];
-                    var size = ((i + 1) < scenarioAttrs.Count) ? scenarioAttrs[i + 1].offset - offset : scenarioDataSize - offset;
-                    var attr = sc.Attributes?.FirstOrDefault(a => a.Key == key);
-                    if (attr is { Data.Length: > 0 })
-                    {
-                        Buffer.BlockCopy(attr.Data, 0, scRaw, offset, Math.Min(size, attr.Data.Length));
-                    }
-                }
-                writer.Write(scRaw);
-            }
-        }
-        
-        if (writer.ConsoleType == ConsoleType.Switch)
-        {
-            writer.WriteAlignmentPadding(alignment: 4);
-        }
-        
-        // Hash = scenario_data_size + stage_header_size + 2 
-        hash = scenarioDataSize + stageHeaderSize + 2;
+        return list;
     }
-}
+
+    // Helper: build a header block (byte[]) from an attributes list and a serializer layout
+    private static byte[] BuildHeaderRaw(List<SaveDataAttribute>? attributes, IReadOnlyList<(ushort key, ushort offset)> layout, int dataSize)
+    {
+        var raw = new byte[dataSize];
+        if (attributes == null || layout.Count == 0) return raw;
+
+        for (var i = 0; i < layout.Count; i++)
+        {
+            var (key, offset) = layout[i];
+            var nextOffset = (i + 1 < layout.Count) ? layout[i + 1].offset : dataSize;
+            var size = nextOffset - offset;
+            var attr = attributes.FirstOrDefault(a => a.Key == key);
+            if (attr is { Data.Length: > 0 })
+            {
+                Buffer.BlockCopy(attr.Data, 0, raw, offset, Math.Min(size, attr.Data.Length));
+            }
+        }
+
+        return raw;
+    }
+
+    // Helper: compute layout (key->offset list) and total data size from a sequence of attribute collections
+    private static (List<(ushort key, ushort offset)> layout, ushort dataSize) BuildLayout(IEnumerable<IEnumerable<SaveDataAttribute>> groups)
+    {
+        var keySet = new HashSet<ushort>();
+        var keyMaxSize = new Dictionary<ushort, int>();
+
+        foreach (var attrs in groups)
+        {
+            foreach (var a in attrs)
+            {
+                keySet.Add(a.Key);
+                var len = a.Data.Length;
+                if (!keyMaxSize.TryGetValue(a.Key, out var cur) || len > cur) keyMaxSize[a.Key] = len;
+            }
+        }
+
+        var layout = new List<(ushort key, ushort offset)>();
+        using var ms = new MemoryStream();
+        foreach (var key in keySet)
+        {
+            var offset = (ushort)ms.Position;
+            layout.Add((key, offset));
+            var size = keyMaxSize.GetValueOrDefault(key, 0);
+            if (size > 0) ms.Write(new byte[size]);
+        }
+
+        var dataSize = (ushort)ms.Length;
+        return (layout, dataSize);
+    }
+     
+     public void WriteTo(EndianAwareWriter writer, out uint hash)
+     {
+         writer.WriteUInt16((ushort)Galaxy.Count);
+
+         var (stageAttrs, stageDataSize) = BuildLayout(Galaxy.Select(s => s.Attributes));
+         var stageHeaderSize = writer.WriteBinaryDataContentHeader(stageAttrs, stageDataSize);
+
+         var (scenarioAttrs, scenarioDataSize) = BuildLayout(Galaxy.SelectMany(s => s.Scenario).Select(sc => sc.Attributes));
+         writer.WriteBinaryDataContentHeader(scenarioAttrs, scenarioDataSize);
+         
+         foreach (var s in Galaxy)
+         {
+             // Build stage header block using the computed serializer layout
+             writer.Write(BuildHeaderRaw(s.Attributes, stageAttrs, stageDataSize));
+
+             // Write each scenario block for this stage
+             foreach (var sc in s.Scenario)
+             {
+                 writer.Write(BuildHeaderRaw(sc.Attributes, scenarioAttrs, scenarioDataSize));
+             }
+         }
+          
+         if (writer.ConsoleType == ConsoleType.Switch)
+         {
+             writer.WriteAlignmentPadding(alignment: 4);
+         }
+          
+         // Hash = scenario_data_size + stage_header_size + 2 
+         hash = scenarioDataSize + stageHeaderSize + 2;
+      }
+  }
 
 public class SaveDataStorageGalaxyStage
 {
