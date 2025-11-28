@@ -1,6 +1,4 @@
-using System.Runtime.CompilerServices;
-
-namespace Galaxy2.SaveData;
+namespace Galaxy2.SaveData.Utils;
 
 internal static class BinaryWriterExtensions
 {
@@ -15,21 +13,24 @@ internal static class BinaryWriterExtensions
         public void WriteUInt64(ulong value) => writer.Write(value);
         
         /// <summary>
-        /// Writes a chunk header (magic, hash, size). The size written is innerSize + 12.
+        /// Writes a chunk header (magic, hash, size)
+        /// Returns the number of bytes written.
         /// </summary>
-        public void WriteChunkHeader(uint magic, uint hash, int innerSize)
+        public uint WriteChunkHeader(uint magic, uint hash, int innerSize)
         {
+            const uint headerSize = 12;
             writer.WriteUInt32(magic);
             writer.WriteUInt32(hash);
-            writer.WriteUInt32((uint)(innerSize + 12));
+            writer.WriteUInt32((uint)(innerSize + headerSize));
+            return headerSize;
         }
 
         /// <summary>
-        /// Writes a binary-data-content header serializer (attribute count, data size, then attribute entries key+offset)
+        /// Writes an attribute table header serializer (attribute count, data size, then attribute entries key+offset)
         /// Assumes offsets are u16 and dataSize fits in u16.
         /// Returns the number of bytes written.
         /// </summary>
-        public uint WriteBinaryDataContentHeader(List<(ushort key, ushort offset)> attrs, ushort dataSize)
+        public uint WriteAttributeTableHeader(List<(ushort key, ushort offset)> attrs, ushort dataSize)
         {
             writer.WriteUInt16((ushort)attrs.Count);
             writer.WriteUInt16(dataSize);

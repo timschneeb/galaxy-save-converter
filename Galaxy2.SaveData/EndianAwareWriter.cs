@@ -8,6 +8,9 @@ public class EndianAwareWriter(Stream input, ConsoleType consoleType) : BinaryWr
     public bool BigEndian => ConsoleType == ConsoleType.Wii;
     public ConsoleType ConsoleType { get; set; } = consoleType;
     
+    /// <summary>
+    /// Creates a new EndianAwareWriter with the same <c name="ConsoleType"/> and endianness.
+    /// </summary>
     public EndianAwareWriter NewWriter(Stream stream)
     {
         return new EndianAwareWriter(stream, ConsoleType);

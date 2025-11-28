@@ -1,36 +1,34 @@
 using System.Text.Json.Serialization;
-using Galaxy2.SaveData.String;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+using Galaxy2.SaveData.Chunks.Game.Attributes;
+using Galaxy2.SaveData.Utils;
 
 namespace Galaxy2.SaveData.Chunks.Game;
 
 public class SaveDataStorageGalaxy
 {
     [JsonPropertyName("galaxy")]
-    public List<SaveDataStorageGalaxyStage> Galaxy { get; set; } = [];
+    public List<GalaxyStage> Galaxy { get; set; } = [];
     
     public static SaveDataStorageGalaxy ReadFrom(BinaryReader reader)
     {
         var galaxy = new SaveDataStorageGalaxy();
         var galaxyNum = reader.ReadUInt16();
-        galaxy.Galaxy = new List<SaveDataStorageGalaxyStage>(galaxyNum);
+        galaxy.Galaxy = new List<GalaxyStage>(galaxyNum);
 
-        var stageSerializer = reader.ReadBinaryDataContentHeaderSerializer();
-        var scenarioSerializer = reader.ReadBinaryDataContentHeaderSerializer();
+        var stageSerializer = reader.ReadAttributeTableHeader();
+        var scenarioSerializer = reader.ReadAttributeTableHeader();
         
         for (var i = 0; i < galaxyNum; i++)
         {
-            var stage = new SaveDataStorageGalaxyStage();
+            var stage = new GalaxyStage();
             stage.Attributes = ReadAttributes(reader, stageSerializer);
-            stage.Scenario = new List<SaveDataStorageGalaxyScenario>(stage.ScenarioNum);
+            stage.Scenarios = new List<GalaxyScenario>(stage.ScenarioNum);
             
             for (var j = 0; j < stage.ScenarioNum; j++)
             {
-                var scenario = new SaveDataStorageGalaxyScenario();
+                var scenario = new GalaxyScenario();
                 scenario.Attributes = ReadAttributes(reader, scenarioSerializer);
-                stage.Scenario.Add(scenario);
+                stage.Scenarios.Add(scenario);
             }
 
             galaxy.Galaxy.Add(stage);
@@ -39,9 +37,9 @@ public class SaveDataStorageGalaxy
         return galaxy;
     }
 
-    private static List<BaseSaveDataAttribute> ReadAttributes(BinaryReader reader, AttributeTableHeader table)
+    private static List<AbstractDataAttribute> ReadAttributes(BinaryReader reader, AttributeTableHeader table)
     {
-        var list = new List<BaseSaveDataAttribute>(table.AttributeNum);
+        var list = new List<AbstractDataAttribute>(table.AttributeNum);
         var headerStart = reader.BaseStream.Position;
         
         for (var i = 0; i < table.AttributeNum; i++)
@@ -56,13 +54,13 @@ public class SaveDataStorageGalaxy
             }
 
             reader.BaseStream.Position = headerStart + offset;
-            list.Add(BaseSaveDataAttribute.ReadFrom(reader, key, size));
+            list.Add(AbstractDataAttribute.ReadFrom(reader, key, size));
         }
 
         return list;
     }
 
-    private static void WriteAttributes(EndianAwareWriter writer, List<BaseSaveDataAttribute> attributes, IReadOnlyList<(ushort key, ushort offset)> layout, int dataSize)
+    private static void WriteAttributes(EndianAwareWriter writer, List<AbstractDataAttribute> attributes, IReadOnlyList<(ushort key, ushort offset)> layout, int dataSize)
     {
         using var ms = new MemoryStream(dataSize);
         using var bw = writer.NewWriter(ms);
@@ -85,7 +83,7 @@ public class SaveDataStorageGalaxy
     }
 
     // Helper: compute layout (key->offset list) and total data size from a sequence of attribute collections
-    private static (List<(ushort key, ushort offset)> layout, ushort dataSize) BuildLayout(IEnumerable<IEnumerable<BaseSaveDataAttribute>> groups)
+    private static (List<(ushort key, ushort offset)> layout, ushort dataSize) BuildLayout(IEnumerable<IEnumerable<AbstractDataAttribute>> groups)
     {
         var keySet = new HashSet<ushort>();
         var keyMaxSize = new Dictionary<ushort, int>();
@@ -115,165 +113,32 @@ public class SaveDataStorageGalaxy
         return (layout, dataSize);
     }
      
-     public void WriteTo(EndianAwareWriter writer, out uint hash)
-     {
-         writer.WriteUInt16((ushort)Galaxy.Count);
+    public void WriteTo(EndianAwareWriter writer, out uint hash)
+    {
+        writer.WriteUInt16((ushort)Galaxy.Count);
 
-         var (stageAttrs, stageDataSize) = BuildLayout(Galaxy.Select(s => s.Attributes));
-         var stageHeaderSize = writer.WriteBinaryDataContentHeader(stageAttrs, stageDataSize);
+        var (stageAttrs, stageDataSize) = BuildLayout(Galaxy.Select(s => s.Attributes));
+        var stageHeaderSize = writer.WriteAttributeTableHeader(stageAttrs, stageDataSize);
 
-         var (scenarioAttrs, scenarioDataSize) = BuildLayout(Galaxy.SelectMany(s => s.Scenario).Select(sc => sc.Attributes));
-         writer.WriteBinaryDataContentHeader(scenarioAttrs, scenarioDataSize);
+        var (scenarioAttrs, scenarioDataSize) = BuildLayout(Galaxy.SelectMany(s => s.Scenarios).Select(sc => sc.Attributes));
+        writer.WriteAttributeTableHeader(scenarioAttrs, scenarioDataSize);
          
-         foreach (var s in Galaxy)
-         {
-             WriteAttributes(writer, s.Attributes, stageAttrs, stageDataSize);
+        foreach (var s in Galaxy)
+        {
+            WriteAttributes(writer, s.Attributes, stageAttrs, stageDataSize);
 
-             foreach (var sc in s.Scenario)
-             {
-                 WriteAttributes(writer, sc.Attributes, scenarioAttrs, scenarioDataSize);
-             }
-         }
+            foreach (var sc in s.Scenarios)
+            {
+                WriteAttributes(writer, sc.Attributes, scenarioAttrs, scenarioDataSize);
+            }
+        }
           
-         if (writer.ConsoleType == ConsoleType.Switch)
-         {
-             writer.WriteAlignmentPadding(alignment: 4);
-         }
+        if (writer.ConsoleType == ConsoleType.Switch)
+        {
+            writer.WriteAlignmentPadding(alignment: 4);
+        }
           
-         // Hash = scenario_data_size + stage_header_size + 2 
-         hash = scenarioDataSize + stageHeaderSize + 2;
-      }
-  }
-
-public class SaveDataStorageGalaxyStage
-{
-    [JsonPropertyName("attributes")]
-    public List<BaseSaveDataAttribute> Attributes { get; set; } = [];
-
-    [JsonPropertyName("scenario")]
-    public List<SaveDataStorageGalaxyScenario> Scenario { get; set; } = [];
-    
-    [JsonIgnore]
-    public ushort GalaxyName
-    {
-        get => Attributes.FindByName<ushort>("mGalaxyName")?.Value ?? 0;
-        set => Attributes.FindByName<ushort>("mGalaxyName")!.Value = value;
-    }
-    [JsonIgnore]
-    public ushort DataSize
-    {
-        get => Attributes.FindByName<ushort>("mDataSize")?.Value ?? 0;
-        set => Attributes.FindByName<ushort>("mDataSize")!.Value = value;
-    }
-    [JsonIgnore]
-    public byte ScenarioNum
-    {
-        get => Attributes.FindByName<byte>("mScenarioNum")?.Value ?? 0;
-        set => Attributes.FindByName<byte>("mScenarioNum")!.Value = value;
-    }
-    [JsonIgnore]
-    public SaveDataStorageGalaxyState GalaxyState
-    {
-        get => (SaveDataStorageGalaxyState)(Attributes.FindByName<byte>("mGalaxyState")?.Value ?? 0);
-        set => Attributes.FindByName<byte>("mGalaxyState")!.Value = (byte)value;
-    }
-    [JsonIgnore]
-    public SaveDataStorageGalaxyFlag Flag
-    {
-        get => new(Attributes.FindByName<byte>("mFlag")?.Value ?? 0);
-        set => Attributes.FindByName<byte>("mFlag")!.Value = value.Value;
-    }
-}
-
-public class SaveDataStorageGalaxyScenario
-{
-    [JsonPropertyName("attributes")]
-    public List<BaseSaveDataAttribute> Attributes { get; set; } = [];
-
-    [JsonIgnore]
-    public byte MissNum
-    {
-        get => Attributes.FindByName<byte>("mMissNum")?.Value ?? 0;
-        set => Attributes.FindByName<byte>("mMissNum")!.Value = value;
-    }
-    [JsonIgnore]
-    public uint BestTime
-    {
-        get => Attributes.FindByName<uint>("mBestTime")?.Value ?? 0;
-        set => Attributes.FindByName<uint>("mBestTime")!.Value = value;
-    }
-    [JsonIgnore]
-    public SaveDataStorageGalaxyScenarioFlag Flag
-    {
-        get => new(Attributes.FindByName<byte>("mFlag")?.Value ?? 0);
-        set => Attributes.FindByName<byte>("mFlag")!.Value = value.Value;
-    }
-}
-    
-public struct SaveDataStorageGalaxyScenarioFlag(byte value)
-{
-    [JsonIgnore]
-    public byte Value { get; private set; } = value;
-
-    [JsonPropertyName("power_star")]
-    public bool PowerStar
-    {
-        get => (Value & 0b1) != 0;
-        set => Value = (byte)(value ? (Value | 0b1) : (Value & ~0b1));
-    }
-
-    [JsonPropertyName("bronze_star")]
-    public bool BronzeStar
-    {
-        get => (Value & 0b10) != 0;
-        set => Value = (byte)(value ? (Value | 0b10) : (Value & ~0b10));
-    }
-
-    [JsonPropertyName("already_visited")]
-    public bool AlreadyVisited
-    {
-        get => (Value & 0b100) != 0;
-        set => Value = (byte)(value ? (Value | 0b100) : (Value & ~0b100));
-    }
-
-    [JsonPropertyName("ghost_luigi")]
-    public bool GhostLuigi
-    {
-        get => (Value & 0b1000) != 0;
-        set => Value = (byte)(value ? (Value | 0b1000) : (Value & ~0b1000));
-    }
-
-    [JsonPropertyName("intrusively_luigi")]
-    public bool IntrusivelyLuigi
-    {
-        get => (Value & 0b10000) != 0;
-        set => Value = (byte)(value ? (Value | 0b10000) : (Value & ~0b10000));
-    }
-}
-
-public enum SaveDataStorageGalaxyState : byte
-{
-    Closed = 0,
-    New = 1,
-    Opened = 2,
-}
-
-public struct SaveDataStorageGalaxyFlag(byte value)
-{
-    [JsonIgnore]
-    public byte Value { get; private set; } = value;
-
-    [JsonPropertyName("tico_coin")]
-    public bool TicoCoin
-    {
-        get => (Value & 0b1) != 0;
-        set => Value = (byte)(value ? (Value | 0b1) : (Value & ~0b1));
-    }
-        
-    [JsonPropertyName("comet")]
-    public bool Comet
-    {
-        get => (Value & 0b10) != 0;
-        set => Value = (byte)(value ? (Value | 0b10) : (Value & ~0b10));
+        // Hash = scenario_data_size + stage_header_size + 2 
+        hash = scenarioDataSize + stageHeaderSize + 2;
     }
 }

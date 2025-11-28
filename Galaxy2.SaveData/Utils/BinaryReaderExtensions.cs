@@ -1,7 +1,7 @@
-using System.Runtime.CompilerServices;
+using Galaxy2.SaveData.Chunks.Game.Attributes;
 using Galaxy2.SaveData.String;
 
-namespace Galaxy2.SaveData;
+namespace Galaxy2.SaveData.Utils;
 
 internal static class BinaryReaderExtensions
 {
@@ -17,7 +17,7 @@ internal static class BinaryReaderExtensions
             return (magic, hash, size, inner, start);
         }
 
-        public AttributeTableHeader ReadBinaryDataContentHeaderSerializer()
+        public AttributeTableHeader ReadAttributeTableHeader()
         {
             var attributeNum = reader.ReadUInt16();
             var dataSize = reader.ReadUInt16();

@@ -3,6 +3,7 @@ using Galaxy2.SaveData.Chunks.Game;
 using Galaxy2.SaveData.Chunks.Config;
 using Galaxy2.SaveData.Chunks.Sysconf;
 using Galaxy2.SaveData.String;
+using Galaxy2.SaveData.Utils;
 
 namespace Galaxy2.SaveData.Save;
 
@@ -155,8 +156,7 @@ public class SaveDataUserFile
     public void WriteTo(EndianAwareWriter writer, string name)
     {
         var startPos = writer.BaseStream.Position;
-        var useBigEndian = writer is EndianAwareWriter { BigEndian: true };
-            
+
         // write version
         writer.Write((byte)2);
             

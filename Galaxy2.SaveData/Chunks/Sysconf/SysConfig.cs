@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using Galaxy2.SaveData.String;
+using Galaxy2.SaveData.Utils;
 
 namespace Galaxy2.SaveData.Chunks.Sysconf;
 
@@ -25,7 +26,7 @@ public class SysConfigData
         var sysConfig = new SysConfigData();
         var dataStartPos = reader.BaseStream.Position;
 
-        var attributes = reader.ReadBinaryDataContentHeaderSerializer().AsOffsetDictionary();
+        var attributes = reader.ReadAttributeTableHeader().AsOffsetDictionary();
         var fieldsDataStartPos = reader.BaseStream.Position;
 
         if (reader.TryReadU8(fieldsDataStartPos, attributes, "mIsEncouragePal60", out var pal60))
@@ -69,7 +70,7 @@ public class SysConfigData
 
         fw.Flush();
         var dataSize = (ushort)ms.Length;
-        writer.WriteBinaryDataContentHeader(attrs, dataSize);
+        writer.WriteAttributeTableHeader(attrs, dataSize);
         writer.Write(ms.ToArray());
         return;
 

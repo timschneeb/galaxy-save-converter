@@ -1,4 +1,4 @@
-namespace Galaxy2.SaveData;
+namespace Galaxy2.SaveData.Chunks.Game.Attributes;
 
 public class AttributeTableHeader
 {
