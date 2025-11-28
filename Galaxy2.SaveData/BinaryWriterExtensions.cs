@@ -27,8 +27,9 @@ internal static class BinaryWriterExtensions
         /// <summary>
         /// Writes a binary-data-content header serializer (attribute count, data size, then attribute entries key+offset)
         /// Assumes offsets are u16 and dataSize fits in u16.
+        /// Returns the number of bytes written.
         /// </summary>
-        public void WriteBinaryDataContentHeader(List<(ushort key, ushort offset)> attrs, ushort dataSize)
+        public uint WriteBinaryDataContentHeader(List<(ushort key, ushort offset)> attrs, ushort dataSize)
         {
             writer.WriteUInt16((ushort)attrs.Count);
             writer.WriteUInt16(dataSize);
@@ -37,6 +38,18 @@ internal static class BinaryWriterExtensions
                 writer.WriteUInt16(a.key);
                 writer.WriteUInt16(a.offset);
             }
+            return 4 + (uint)(attrs.Count * 4);
+        }
+        
+        /// <summary>
+        /// Writes padding bytes to align the current stream position to the specified alignment.
+        /// </summary>
+        public void WriteAlignmentPadding(int alignment)
+        {
+            var pos = writer.BaseStream.Position;
+            var pad = (int)((alignment - (pos % alignment)) % alignment);
+            if (pad > 0)
+                writer.Write(new byte[pad]);
         }
     }
 }

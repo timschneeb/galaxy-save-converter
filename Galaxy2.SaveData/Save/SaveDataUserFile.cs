@@ -175,13 +175,9 @@ public class SaveDataUserFile
 
                 if (c is PlayerStatusChunk p)
                 {
-                    p.PlayerStatus.WriteTo(bw);
+                    p.PlayerStatus.WriteTo(bw, out var hash);
                     var body = ms.ToArray();
-                    // Hash = data_size + header_size
-                    // data_size = 1 + 2 + 2 + 2 + 1 = 8
-                    // header_size = 4 + attribute_count*4; attribute_count = 5 => 4 + 20 = 24
-                    var playHash = (uint)(8 + 24);
-                    writer.WriteChunkHeader(0x504C4159, playHash, body.Length);
+                    writer.WriteChunkHeader(0x504C4159, hash, body.Length);
                     writer.Write(body);
                 }
                 else if (c is EventFlagChunk ef)

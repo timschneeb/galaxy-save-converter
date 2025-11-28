@@ -113,7 +113,7 @@ public class SaveDataStoragePlayerStatus
          */
     }
 
-    public void WriteTo(BinaryWriter writer)
+    public void WriteTo(BinaryWriter writer, out uint hash)
     {
         // We'll build the fields area into a memory stream to compute offsets
         using var ms = new MemoryStream();
@@ -132,14 +132,20 @@ public class SaveDataStoragePlayerStatus
             // TODO swap endianness for multi-byte keys if needed
             if (a.Data is { Length: > 0 })
                 fw.Write(a.Data);
+
+            // removed per-attribute padding: values stay packed
         }
-
         fw.Flush();
+        
         var dataSize = (ushort)ms.Length;
-
-        // write header and fields to the target writer
-        writer.WriteBinaryDataContentHeader(attrs, dataSize);
+        var headerSize = writer.WriteBinaryDataContentHeader(attrs, dataSize);
         writer.Write(ms.ToArray());
+        writer.WriteAlignmentPadding(alignment: 4);
+        
+        // Hash = data_size + header_size
+        // header_size = 4 + attribute_count*4
+        // data_size = length of all attribute data
+        hash = dataSize + headerSize;
     }
 
     // helpers to get/set attributes by name (uses HashKey)
