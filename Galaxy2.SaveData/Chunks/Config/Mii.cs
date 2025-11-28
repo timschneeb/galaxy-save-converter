@@ -16,7 +16,7 @@ public class ConfigDataMii
         var mii = new ConfigDataMii();
         var start = reader.BaseStream.Position;
         mii.Flag = reader.ReadByte();
-        mii.MiiId = reader.ReadBytes(8);
+        mii.MiiId = reader.ReadBytes(8); // endianness not handled; however Switch version doesn't support Miis anyways
         mii.IconId = (ConfigDataMiiIcon)reader.ReadByte();
         reader.BaseStream.Position = start + dataSize;
         return mii;
