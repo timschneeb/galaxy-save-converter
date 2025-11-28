@@ -1,3 +1,5 @@
+using Galaxy2.SaveData.Chunks.Game.Attributes;
+
 namespace Galaxy2.SaveData.Utils;
 
 internal static class BinaryWriterExtensions
@@ -30,16 +32,16 @@ internal static class BinaryWriterExtensions
         /// Assumes offsets are u16 and dataSize fits in u16.
         /// Returns the number of bytes written.
         /// </summary>
-        public uint WriteAttributeTableHeader(List<(ushort key, ushort offset)> attrs, ushort dataSize)
+        public uint WriteAttributeTableHeader(AttributeTableHeader table)
         {
-            writer.WriteUInt16((ushort)attrs.Count);
-            writer.WriteUInt16(dataSize);
-            foreach (var a in attrs)
+            writer.WriteUInt16((ushort)table.Offsets.Count);
+            writer.WriteUInt16(table.DataSize);
+            foreach (var a in table.Offsets)
             {
                 writer.WriteUInt16(a.key);
                 writer.WriteUInt16(a.offset);
             }
-            return 4 + (uint)(attrs.Count * 4);
+            return 4 + (uint)(table.Offsets.Count * 4);
         }
         
         /// <summary>

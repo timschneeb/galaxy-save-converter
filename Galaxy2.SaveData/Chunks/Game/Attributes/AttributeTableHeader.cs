@@ -2,13 +2,12 @@ namespace Galaxy2.SaveData.Chunks.Game.Attributes;
 
 public class AttributeTableHeader
 {
-    public ushort AttributeNum { get; set; }
-    public int DataSize { get; set; }
-    public List<(ushort key, int offset)> Offsets { get; set; } = [];
+    public ushort DataSize { get; set; }
+    public List<(ushort key, ushort offset)> Offsets { get; set; } = [];
     
-    public Dictionary<ushort, int> AsOffsetDictionary()
+    public Dictionary<ushort, ushort> AsOffsetDictionary()
     {
-        var dict = new Dictionary<ushort,int>(AttributeNum);
+        var dict = new Dictionary<ushort,ushort>(Offsets.Count);
         foreach (var a in Offsets) dict[a.key] = a.offset;
         return dict;
     }

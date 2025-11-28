@@ -64,24 +64,7 @@ public class SaveDataStoragePlayerStatus
         var dataStartPos = reader.BaseStream.Position;
 
         var table = reader.ReadAttributeTableHeader();
-        var fieldsDataStartPos = reader.BaseStream.Position;
-
-        // convert to list sorted by offset so sizes can be determined
-        var items = table.AsOffsetDictionary()
-            .Select(kv => (key: kv.Key, offset: kv.Value))
-            .OrderBy(x => x.offset)
-            .ToList();
-
-        for (var i = 0; i < items.Count; i++)
-        {
-            var key = items[i].key;
-            var offset = items[i].offset;
-            var nextOffset = (i + 1 < items.Count) ? items[i + 1].offset : table.DataSize;
-            var size = nextOffset - offset;
-
-            reader.BaseStream.Position = fieldsDataStartPos + offset;
-            status.Attributes.Add(AbstractDataAttribute.ReadFrom(reader, key, size));
-        }
+        status.Attributes = reader.ReadAttributes(table);
 
         // advance stream to end of this data block
         reader.BaseStream.Position = dataStartPos + dataSize;
@@ -104,16 +87,14 @@ public class SaveDataStoragePlayerStatus
         fw.Flush();
         
         var dataSize = (ushort)ms.Length;
-        var headerSize = writer.WriteAttributeTableHeader(attrs, dataSize);
+        var header = new AttributeTableHeader { Offsets = attrs, DataSize = dataSize };
+        var headerSize = writer.WriteAttributeTableHeader(header);
         writer.Write(ms.ToArray());
         if (writer.ConsoleType == ConsoleType.Switch)
         {
             writer.WriteAlignmentPadding(alignment: 4);
         }
         
-        // Hash = data_size + header_size
-        // header_size = 4 + attribute_count*4
-        // data_size = length of all attribute data
         hash = dataSize + headerSize;
     }
 }

@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using Galaxy2.SaveData.Chunks.Game.Attributes;
 using Galaxy2.SaveData.String;
 using Galaxy2.SaveData.Utils;
 
@@ -70,7 +71,8 @@ public class SysConfigData
 
         fw.Flush();
         var dataSize = (ushort)ms.Length;
-        writer.WriteAttributeTableHeader(attrs, dataSize);
+        var header = new AttributeTableHeader { Offsets = attrs, DataSize = dataSize };
+        writer.WriteAttributeTableHeader(header);
         writer.Write(ms.ToArray());
         return;
 

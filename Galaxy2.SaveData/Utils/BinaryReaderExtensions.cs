@@ -21,7 +21,7 @@ internal static class BinaryReaderExtensions
         {
             var attributeNum = reader.ReadUInt16();
             var dataSize = reader.ReadUInt16();
-            var attrs = new List<(ushort key, int offset)>();
+            var attrs = new List<(ushort key, ushort offset)>();
             for (var i = 0; i < attributeNum; i++)
             {
                 var key = reader.ReadUInt16();
@@ -31,13 +31,35 @@ internal static class BinaryReaderExtensions
 
             return new AttributeTableHeader()
             {
-                AttributeNum = attributeNum,
                 DataSize = dataSize,
                 Offsets = attrs
             };
         }
+        
+        public List<AbstractDataAttribute> ReadAttributes(AttributeTableHeader table)
+        {
+            var list = new List<AbstractDataAttribute>(table.Offsets.Count);
+            var headerStart = reader.BaseStream.Position;
+        
+            for (var i = 0; i < table.Offsets.Count; i++)
+            {
+                var (key, offset) = table.Offsets[i];
+                var nextOffset = (i + 1 < table.Offsets.Count) ? table.Offsets[i + 1].offset : table.DataSize;
+                var size = nextOffset - offset;
+                if (offset + size > table.DataSize || size <= 0)
+                {
+                    throw new InvalidDataException(
+                        $"Invalid attribute size or offset in header (key: {key}, offset: {offset}, size: {size}).");
+                }
 
-        public bool TryReadU8(long fieldsStart, Dictionary<ushort,int> attrs, string keyName, out byte value)
+                reader.BaseStream.Position = headerStart + offset;
+                list.Add(AbstractDataAttribute.ReadFrom(reader, key, size));
+            }
+
+            return list;
+        }
+
+        public bool TryReadU8(long fieldsStart, Dictionary<ushort,ushort> attrs, string keyName, out byte value)
         {
             var key = HashKey.Compute(keyName);
             if (attrs.TryGetValue(key, out var off))
@@ -50,7 +72,7 @@ internal static class BinaryReaderExtensions
             return false;
         }
 
-        public bool TryReadU16(long fieldsStart, Dictionary<ushort,int> attrs, string keyName, out ushort value)
+        public bool TryReadU16(long fieldsStart, Dictionary<ushort,ushort> attrs, string keyName, out ushort value)
         {
             var key = HashKey.Compute(keyName);
             if (attrs.TryGetValue(key, out var off))
@@ -63,7 +85,7 @@ internal static class BinaryReaderExtensions
             return false;
         }
 
-        public bool TryReadU32(long fieldsStart, Dictionary<ushort,int> attrs, string keyName, out uint value)
+        public bool TryReadU32(long fieldsStart, Dictionary<ushort,ushort> attrs, string keyName, out uint value)
         {
             var key = HashKey.Compute(keyName);
             if (attrs.TryGetValue(key, out var off))
@@ -76,7 +98,7 @@ internal static class BinaryReaderExtensions
             return false;
         }
 
-        public bool TryReadI64(long fieldsStart, Dictionary<ushort,int> attrs, string keyName, out long value)
+        public bool TryReadI64(long fieldsStart, Dictionary<ushort,ushort> attrs, string keyName, out long value)
         {
             var key = HashKey.Compute(keyName);
             if (attrs.TryGetValue(key, out var off))
