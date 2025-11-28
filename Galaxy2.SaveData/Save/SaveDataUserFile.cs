@@ -1,3 +1,4 @@
+using System.Buffers.Binary;
 using System.Text.Json.Serialization;
 using Galaxy2.SaveData.Chunks.Game;
 using Galaxy2.SaveData.Chunks.Config;
@@ -183,7 +184,6 @@ public class SaveDataUserFile
                 {
                     ef.EventFlag.WriteTo(bw);
                     var body = ms.ToArray();
-                    // Hash = HashCode::from("2bytes/flag")
                     var flgHash = HashKey.FromString("2bytes/flag").Value;
                     writer.WriteChunkHeader(0x464C4731, flgHash, body.Length);
                     writer.Write(body);
@@ -192,7 +192,6 @@ public class SaveDataUserFile
                 {
                     tf.TicoFat.WriteTo(bw);
                     var body = ms.ToArray();
-                    // Hash = HashCode::from("SaveDataStorageTicoFat").into_raw().wrapping_add(0x120)
                     var baseHash = HashKey.FromString("SaveDataStorageTicoFat").Value;
                     var tfHash =
                         // TODO investigate this. the 'constant' may be some kind of length
@@ -206,8 +205,7 @@ public class SaveDataUserFile
                 {
                     ev.EventValue.WriteTo(bw);
                     var body = ms.ToArray();
-                    // Hash = u32::from_be_bytes(*b"VLE1")
-                    const uint vleHash = ((uint)'V' << 24) | ((uint)'L' << 16) | ((uint)'E' << 8) | (uint)'1';
+                    var vleHash = BinaryPrimitives.ReadUInt32BigEndian("VLE1"u8);
                     writer.WriteChunkHeader(0x564C4531, vleHash, body.Length);
                     writer.Write(body);
                 }
@@ -222,7 +220,6 @@ public class SaveDataUserFile
                 {
                     wm.WorldMap.WriteTo(bw);
                     var body = ms.ToArray();
-                    // Hash = HashCode::from("SaveDataStorageWorldMap").into_raw().wrapping_mul(9)
                     var wmBase = HashKey.FromString("SaveDataStorageWorldMap").Value;
                     var wmHash = unchecked(wmBase * 9u);
                     writer.WriteChunkHeader(0x5353574D, wmHash, body.Length);
