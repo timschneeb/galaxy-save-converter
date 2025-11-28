@@ -26,11 +26,21 @@ public class ConfigDataMii
     public void WriteTo(EndianAwareWriter writer)
     {
         writer.Write(Flag);
-        writer.Write(MiiId);
-        writer.Write((byte)IconId);
         if (writer.ConsoleType == ConsoleType.Switch)
         {
+            // Miis are not supported on Switch; write zeroed MiiId
+            writer.Write(new byte[8]);
+            if (IconId == ConfigDataMiiIcon.Mii)
+            {
+                IconId = ConfigDataMiiIcon.Mario;
+            }
+            writer.Write((byte)IconId);
             writer.WriteAlignmentPadding(alignment: 4);
+        }
+        else
+        {
+            writer.Write(MiiId);
+            writer.Write((byte)IconId);
         }
     }
 }
