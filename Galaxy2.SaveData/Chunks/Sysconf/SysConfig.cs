@@ -25,7 +25,7 @@ public class SysConfigData
         var sysConfig = new SysConfigData();
         var dataStartPos = reader.BaseStream.Position;
 
-        var (attributes, _) = reader.ReadAttributesAsDictionary();
+        var attributes = reader.ReadBinaryDataContentHeaderSerializer().AsOffsetDictionary();
         var fieldsDataStartPos = reader.BaseStream.Position;
 
         if (reader.TryReadU8(fieldsDataStartPos, attributes, "mIsEncouragePal60", out var pal60))

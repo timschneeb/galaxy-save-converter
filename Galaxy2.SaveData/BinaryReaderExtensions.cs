@@ -17,7 +17,7 @@ internal static class BinaryReaderExtensions
             return (magic, hash, size, inner, start);
         }
 
-        public (ushort attributeNum, int dataSize, List<(ushort key, int offset)> attributes) ReadBinaryDataContentHeaderSerializer()
+        public AttributeTableHeader ReadBinaryDataContentHeaderSerializer()
         {
             var attributeNum = reader.ReadUInt16();
             var dataSize = reader.ReadUInt16();
@@ -28,15 +28,13 @@ internal static class BinaryReaderExtensions
                 var offset = reader.ReadUInt16();
                 attrs.Add((key, offset));
             }
-            return (attributeNum, dataSize, attrs);
-        }
 
-        public (Dictionary<ushort,int> attributes, int headerDataSize) ReadAttributesAsDictionary()
-        {
-            var (attributeNum, dataSize, attrs) = reader.ReadBinaryDataContentHeaderSerializer();
-            var dict = new Dictionary<ushort,int>(attributeNum);
-            foreach (var a in attrs) dict[a.key] = a.offset;
-            return (dict, dataSize);
+            return new AttributeTableHeader()
+            {
+                AttributeNum = attributeNum,
+                DataSize = dataSize,
+                Offsets = attrs
+            };
         }
 
         public bool TryReadU8(long fieldsStart, Dictionary<ushort,int> attrs, string keyName, out byte value)

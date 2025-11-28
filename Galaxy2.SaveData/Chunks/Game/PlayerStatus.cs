@@ -1,51 +1,47 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text.Json.Serialization;
-using Galaxy2.SaveData.String;
 
 namespace Galaxy2.SaveData.Chunks.Game;
 
 public class SaveDataStoragePlayerStatus
 {
     [JsonPropertyName("attributes")]
-    public List<SaveDataAttribute> Attributes { get; set; } = [];
+    public List<BaseSaveDataAttribute> Attributes { get; set; } = [];
 
     // Convenience accessors (not serialized separately)
     [JsonIgnore]
     public byte PlayerLeft
     {
-        get => GetU8("mPlayerLeft") ?? 4;
-        set => SetU8("mPlayerLeft", value);
+        get => Attributes.FindByName<byte>("mPlayerLeft")?.Value ?? 4;
+        set => Attributes.FindByName<byte>("mPlayerLeft")!.Value = value;
     }
 
     [JsonIgnore]
     public ushort StockedStarPieceNum
     {
-        get => GetU16("mStockedStarPieceNum") ?? 0;
-        set => SetU16("mStockedStarPieceNum", value);
+        get => Attributes.FindByName<ushort>("mStockedStarPieceNum")?.Value ?? 0;
+        set => Attributes.FindByName<ushort>("mStockedStarPieceNum")!.Value = value;
     }
 
     [JsonIgnore]
     public ushort StockedCoinNum
     {
-        get => GetU16("mStockedCoinNum") ?? 0;
-        set => SetU16("mStockedCoinNum", value);
+        get => Attributes.FindByName<ushort>("mStockedCoinNum")?.Value ?? 0;
+        set => Attributes.FindByName<ushort>("mStockedCoinNum")!.Value = value;
     }
 
     [JsonIgnore]
-    public ushort Last1upCoinNum
+    public ushort Last1UpCoinNum
     {
-        get => GetU16("mLast1upCoinNum") ?? 0;
-        set => SetU16("mLast1upCoinNum", value);
+        get => Attributes.FindByName<ushort>("mLast1upCoinNum")?.Value ?? 0;
+        set => Attributes.FindByName<ushort>("mLast1upCoinNum")!.Value = value;
     }
 
     [JsonIgnore]
     public SaveDataStoragePlayerStatusFlag Flag
     {
-        get => new(GetU8("mFlag") ?? 0);
-        set => SetU8("mFlag", value.Value);
+        get => new(Attributes.FindByName<byte>("mFlag")?.Value ?? 0);
+        set => Attributes.FindByName<byte>("mFlag")!.Value = value.Value;
     }
 
     public static SaveDataStoragePlayerStatus ReadFrom(BinaryReader reader, int dataSize)
@@ -53,11 +49,11 @@ public class SaveDataStoragePlayerStatus
         var status = new SaveDataStoragePlayerStatus();
         var dataStartPos = reader.BaseStream.Position;
 
-        var (attributes, headerDataSize) = reader.ReadAttributesAsDictionary();
+        var table = reader.ReadBinaryDataContentHeaderSerializer();
         var fieldsDataStartPos = reader.BaseStream.Position;
 
         // convert to list sorted by offset so sizes can be determined
-        var items = attributes
+        var items = table.AsOffsetDictionary()
             .Select(kv => (key: kv.Key, offset: kv.Value))
             .OrderBy(x => x.offset)
             .ToList();
@@ -66,12 +62,11 @@ public class SaveDataStoragePlayerStatus
         {
             var key = items[i].key;
             var offset = items[i].offset;
-            var nextOffset = (i + 1 < items.Count) ? items[i + 1].offset : headerDataSize;
+            var nextOffset = (i + 1 < items.Count) ? items[i + 1].offset : table.DataSize;
             var size = nextOffset - offset;
 
             reader.BaseStream.Position = fieldsDataStartPos + offset;
-            var data = reader.ReadBytes(size);
-            status.Attributes.Add(new SaveDataAttribute(key, data));
+            status.Attributes.Add(BaseSaveDataAttribute.ReadFrom(reader, key, size));
         }
 
         // advance stream to end of this data block
@@ -115,24 +110,16 @@ public class SaveDataStoragePlayerStatus
 
     public void WriteTo(EndianAwareWriter writer, out uint hash)
     {
-        // We'll build the fields area into a memory stream to compute offsets
         using var ms = new MemoryStream();
         using var fw = writer.NewWriter(ms);
 
         var attrs = new List<(ushort key, ushort offset)>();
 
         // write attributes sequentially into ms and record offsets
-        foreach (var a in Attributes)
+        foreach (var attr in Attributes)
         {
-            var key = a.Key;
-            var offset = (ushort)ms.Position;
-            attrs.Add((key, offset));
-
-            // TODO swap endianness for multi-byte keys if needed
-            if (a.Data is { Length: > 0 })
-                fw.Write(a.Data);
-
-            // removed per-attribute padding: values stay packed
+            attrs.Add((attr.Key, (ushort)ms.Position));
+            attr.WriteTo(fw);
         }
         fw.Flush();
         
@@ -149,75 +136,63 @@ public class SaveDataStoragePlayerStatus
         // data_size = length of all attribute data
         hash = dataSize + headerSize;
     }
-
-    // helpers to get/set attributes by name (uses HashKey)
-    private SaveDataAttribute? FindAttrByName(string name)
-    {
-        var key = HashKey.Compute(name);
-        return Attributes.FirstOrDefault(a => a.Key == key);
-    }
-
-    private byte? GetU8(string name)
-    {
-        var a = FindAttrByName(name);
-        if (a?.Data == null || a.Data.Length < 1) return null;
-        return a.Data[0];
-    }
-
-    private ushort? GetU16(string name)
-    {
-        var a = FindAttrByName(name);
-        if (a?.Data == null) return null;
-        switch (a.Data.Length)
-        {
-            // TODO handle endianness properly?
-            case >= 2:
-                return (ushort)((a.Data[0] << 8) | a.Data[1]); // interpret as big-endian
-            case 1:
-                return a.Data[0];
-            default:
-                return null;
-        }
-    }
-
-    private void SetU8(string name, byte v)
-    {
-        var key = HashKey.Compute(name);
-        var attr = Attributes.FirstOrDefault(a => a.Key == key);
-        if (attr != null)
-        {
-            attr.Data = [v];
-        }
-        else
-        {
-            Attributes.Add(new SaveDataAttribute(key, [v]));
-        }
-    }
-
-    private void SetU16(string name, ushort v)
-    {
-        var key = HashKey.Compute(name);
-        var attr = Attributes.FirstOrDefault(a => a.Key == key);
-        // TODO: handle endianness properly?
-        var data = new[] { (byte)(v >> 8), (byte)(v & 0xFF) };
-        if (attr != null)
-        {
-            attr.Data = data;
-        }
-        else
-        {
-            Attributes.Add(new SaveDataAttribute(key, data));
-        }
-    }
 }
 
-public class SaveDataAttribute(ushort key, byte[] data)
+[JsonPolymorphic(TypeDiscriminatorPropertyName = "$type")]
+[JsonDerivedType(typeof(SaveDataAttribute<byte>), "u8")]
+[JsonDerivedType(typeof(SaveDataAttribute<ushort>), "u16")]
+[JsonDerivedType(typeof(SaveDataAttribute<uint>), "u32")]
+public abstract class BaseSaveDataAttribute(ushort key)
 {
     [JsonPropertyName("key")]
     public ushort Key { get; set; } = key;
+    [JsonIgnore]
+    public abstract int Size { get; }
+    
+    public abstract void WriteTo(BinaryWriter writer);
+    
+    public static BaseSaveDataAttribute ReadFrom(BinaryReader reader, ushort key, int size)
+    {
+        return size switch
+        {
+            1 => new SaveDataAttribute<byte>(key, reader.ReadByte()),
+            2 => new SaveDataAttribute<ushort>(key, reader.ReadUInt16()),
+            4 => new SaveDataAttribute<uint>(key, reader.ReadUInt32()),
+            _ => throw new InvalidDataException($"Unsupported attribute data size: {size}"),
+        };
+    }
+}
 
-    [JsonPropertyName("data")]
-    public byte[] Data { get; set; } = data ?? [];
+public class SaveDataAttribute<T>(ushort key, T value) : BaseSaveDataAttribute(key) where T : struct
+{
+    [JsonPropertyName("value")]
+    public T Value { get; set; } = value;
+    
+    [JsonIgnore]
+    public override int Size => Marshal.SizeOf(default(T));
+    
+    public override void WriteTo(BinaryWriter writer)
+    {
+        switch (Value)
+        {
+            case byte b:
+                writer.Write(b);
+                break;
+            case ushort us:
+                writer.WriteUInt16(us);
+                break;
+            case uint ui:
+                writer.WriteUInt32(ui);
+                break;
+            default:
+                throw new InvalidDataException($"Unsupported attribute data type: {typeof(T)}");
+        }
+    }
+
+    public override string ToString()
+    {
+        return Value.ToString() ?? "<null>";
+    }
 }
 
 public struct SaveDataStoragePlayerStatusFlag(byte value)
