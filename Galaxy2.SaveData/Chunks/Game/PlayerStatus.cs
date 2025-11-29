@@ -152,10 +152,10 @@ public class SaveDataStoragePlayerStatus
         new DataAttribute<ushort>(0xBF77, 0), // mDemoSkipNum
         new DataAttribute<ushort>(0xBFD3, 0), // mMusicPlaySeconds
         new DataAttribute<ushort>(0x1E85, 0), // mPlayNum
-        new DataAttribute<ushort>(0xEFDB, 0), // ?
+        new DataAttribute<ushort>(0xEFDB, 0), // m2pNum
         new DataAttribute<ushort>(0xE6D1, 0), // mLuigiNum
         new DataAttribute<uint>(0x3D5F, 0), // mGameFinishTime
-        new DataAttribute<uint>(0x0AC6, 0), // ?
+        new DataAttribute<uint>(0x0AC6, 0), // mBossesFinishedFlag
         new DataAttribute<uint>(0x71E3, 0), // mNpcConversationFlag
         new DataAttribute<byte>(0xE983, 0) // mIsAssistMode
     ];
