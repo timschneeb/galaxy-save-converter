@@ -23,20 +23,13 @@ public class SaveDataStorageGalaxy
             var stage = new GalaxyStage();
             stage.Attributes = reader.ReadAttributes(stageSerializer);
             stage.Scenarios = new List<GalaxyScenario>(stage.ScenarioNum);
-
-            var dataSize = stage.Attributes.Sum(x => x.Size);
             
             for (var j = 0; j < stage.ScenarioNum; j++)
             {
                 var scenario = new GalaxyScenario();
                 scenario.Attributes = reader.ReadAttributes(scenarioSerializer);
                 stage.Scenarios.Add(scenario);
-                
-                dataSize += (ushort)scenario.Attributes.Sum(x => x.Size);
             }
-
-            Console.WriteLine($"[Galaxy] Stage {i}; data size: {dataSize} bytes");
-            stage.DataSize = (ushort)dataSize;
             
             galaxy.Galaxy.Add(stage);
         }
@@ -68,6 +61,14 @@ public class SaveDataStorageGalaxy
                 
                 sc.Attributes = validatedAttrs;
             }
+            
+            // Calculate total attribute data size
+            var dataSize = s.Attributes.Sum(x => x.Size);
+            dataSize += s.Scenarios
+                .SelectMany(x => x.Attributes)
+                .Sum(x => x.Size);
+
+            s.DataSize = (ushort)dataSize;
         }
         
         var stageHeader = BuildHeaderLayout(Galaxy.Select(s => s.Attributes));
