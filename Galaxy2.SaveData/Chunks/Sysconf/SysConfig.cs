@@ -64,9 +64,7 @@ public class SysConfigData
         var attrs = new List<(ushort key, ushort offset)>();
 
         AddU8("mIsEncouragePal60", IsEncouragePal60 ? (byte)1 : (byte)0);
-        AddI64("mTimeSent", writer.ConsoleType == ConsoleType.Wii
-            ? OsTime.UnixToWiiTicks(TimeSent)
-            : new DateTimeOffset(TimeSent).ToUnixTimeSeconds());
+        AddTime("mTimeSent", TimeSent);
         AddU32("mSentBytes", SentBytes);
         AddU16("mBankStarPieceNum", BankStarPieceNum);
         AddU16("mBankStarPieceMax", BankStarPieceMax);
@@ -88,12 +86,12 @@ public class SysConfigData
             fw.Write(v);
         }
 
-        void AddI64(string name, long v)
+        void AddTime(string name, DateTime v)
         {
             var key = HashKey.Compute(name);
             var offset = (ushort)ms.Position;
             attrs.Add((key, offset));
-            fw.WriteInt64(v);
+            fw.WriteTime(v);
         }
 
         void AddU32(string name, uint v)
