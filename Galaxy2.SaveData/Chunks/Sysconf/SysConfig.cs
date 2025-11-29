@@ -62,7 +62,7 @@ public class SysConfigData
         var attrs = new List<(ushort key, ushort offset)>();
 
         AddU8("mIsEncouragePal60", IsEncouragePal60 ? (byte)1 : (byte)0);
-        AddI64("mTimeSent", TimeSent);
+        AddI64("mTimeSent", 1763941776);// TODO TimeSent);
         AddU32("mSentBytes", SentBytes);
         AddU16("mBankStarPieceNum", BankStarPieceNum);
         AddU16("mBankStarPieceMax", BankStarPieceMax);

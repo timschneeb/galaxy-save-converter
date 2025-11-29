@@ -65,7 +65,7 @@ public class SaveDataStoragePlayerStatus
 
         var table = reader.ReadAttributeTableHeader();
         status.Attributes = reader.ReadAttributes(table);
-
+        
         // advance stream to end of this data block
         reader.BaseStream.Position = dataStartPos + dataSize;
         return status;
@@ -78,8 +78,21 @@ public class SaveDataStoragePlayerStatus
 
         var attrs = new List<(ushort key, ushort offset)>();
 
-        // write attributes sequentially into ms and record offsets
-        foreach (var attr in Attributes)
+        // Ensure all allowed attributes are present for the platform and at the correct locations
+        var allowedAttrs = writer.ConsoleType == ConsoleType.Switch
+            ? AllowedSwitchAttributes
+            : AllowedWiiAttributes;
+        
+        var validatedAttrs = new List<AbstractDataAttribute>();
+        foreach (var reqAttr in allowedAttrs)
+        {
+            // Insert existing attribute if present, otherwise the default one
+            var existingAttr = Attributes.Find(a => a.Key == reqAttr.Key);
+            validatedAttrs.Add(existingAttr ?? reqAttr);
+        }
+        
+        // Write attributes sequentially into ms and record offsets
+        foreach (var attr in validatedAttrs)
         {
             attrs.Add((attr.Key, (ushort)ms.Position));
             attr.WriteTo(fw);
@@ -97,4 +110,62 @@ public class SaveDataStoragePlayerStatus
         
         hash = dataSize + headerSize;
     }
+    
+    /*
+        --- Switch Attributes (w/ size)
+            4ED5: 1
+            E352: 2
+            450D: 2
+            23EC: 2
+            7579: 1
+            AA83: 1
+            7213: 1
+            EA99: 1
+            BF77: 2
+            BFD3: 2
+            1E85: 2
+            EFDB: 2
+            E6D1: 2
+            3D5F: 4
+            0AC6: 4
+            71E3: 4
+            E983: 1
+       
+        --- Wii Attributes
+            4ED5: 1
+            E352: 2
+            450D: 2
+            23EC: 2
+            7579: 1
+    */
+    
+    public static List<AbstractDataAttribute> AllowedSwitchAttributes { get; } =
+    [
+        new DataAttribute<byte>(0x4ED5, 0), // mPlayerLeft
+        new DataAttribute<ushort>(0xE352, 0), // mStockedStarPieceNum
+        new DataAttribute<ushort>(0x450D, 0), // mStockedCoinNum
+        new DataAttribute<ushort>(0x23EC, 0), // mLast1upCoinNum
+        new DataAttribute<byte>(0x7579, 0), // mFlag
+        new DataAttribute<byte>(0xAA83, 0), // mAmiiboScanNum
+        new DataAttribute<byte>(0x7213, 0), // mBankToadToolIndex
+        new DataAttribute<byte>(0xEA99, 0), // mIsPictureBookOpened
+        new DataAttribute<ushort>(0xBF77, 0), // mDemoSkipNum
+        new DataAttribute<ushort>(0xBFD3, 0), // mMusicPlaySeconds
+        new DataAttribute<ushort>(0x1E85, 0), // mPlayNum
+        new DataAttribute<ushort>(0xEFDB, 0), // ?
+        new DataAttribute<ushort>(0xE6D1, 0), // mLuigiNum
+        new DataAttribute<uint>(0x3D5F, 0), // mGameFinishTime
+        new DataAttribute<uint>(0x0AC6, 0), // ?
+        new DataAttribute<uint>(0x71E3, 0), // mNpcConversationFlag
+        new DataAttribute<byte>(0xE983, 0) // mIsAssistMode
+    ];
+    
+    public static List<AbstractDataAttribute> AllowedWiiAttributes { get; } =
+    [
+        new DataAttribute<byte>(0x4ED5, 0), // mPlayerLeft
+        new DataAttribute<ushort>(0xE352, 0), // mStockedStarPieceNum
+        new DataAttribute<ushort>(0x450D, 0), // mStockedCoinNum
+        new DataAttribute<ushort>(0x23EC, 0), // mLast1upCoinNum
+        new DataAttribute<byte>(0x7579, 0), // mFlag
+    ];
 }

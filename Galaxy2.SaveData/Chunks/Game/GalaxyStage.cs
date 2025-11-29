@@ -69,4 +69,24 @@ public class GalaxyStage
             set => Value = (byte)(value ? (Value | 0b10) : (Value & ~0b10));
         }
     }
+    
+    /*
+        --- Switch Attributes (w/ size)
+        Galaxy Stage Attributes:
+            8208: 2
+            0658: 2
+            6729: 1
+            ACB4: 1
+            7579: 1
+
+        --- Wii Attributes
+        Galaxy Stage Attributes:
+            8208: 2
+            0658: 2
+            6729: 1
+            ACB4: 1
+            7579: 1
+           
+        Same attribute keys and sizes on both platforms.
+     */
 }

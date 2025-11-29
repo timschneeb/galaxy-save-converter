@@ -42,14 +42,14 @@ public class GameDataEndiannessRoundtrip(ITestOutputHelper testOutputHelper)
         {
             testOutputHelper.WriteLine(d);
         }
-            
-        Assert.True(diffsBlocks.Count == 0, "Round-tripped binary file does not match original binary file. See test output for differing blocks.");        
         
         // Produce JSON from both files using the existing JSON generator
         Json.Program.Main(["be2json", inputBin, origJson]);
         Json.Program.Main(["le2json", leBin, leJson]);
         Json.Program.Main(["be2json", roundtripBin, roundtripJson]);
 
+        Assert.True(diffsBlocks.Count == 0, "Round-tripped binary file does not match original binary file. See test output for differing blocks.");        
+        
         AssertJsonFilesEqual(origJson, leJson);
         AssertJsonFilesEqual(origJson, roundtripJson);
         AssertJsonFilesEqual(leJson, roundtripJson);

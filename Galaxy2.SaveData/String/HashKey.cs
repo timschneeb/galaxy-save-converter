@@ -10,6 +10,7 @@ public struct HashKey(uint value)
 
     public override string ToString() => $"0x{Value:X}";
 
+    // TODO: On Switch, Japanese strings use UTF-8; on Wii something else is used, adapt if needed
     public static HashKey FromString(string s) => new(
         Encoding.UTF8.GetBytes(s)
             .Select(b => (sbyte)b)

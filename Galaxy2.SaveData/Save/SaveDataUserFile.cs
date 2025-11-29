@@ -27,7 +27,7 @@ public class SaveDataUserFile
     [JsonPropertyName("SysConfigData")]
     public List<SysConfigData>? SysConfigData { get; set; }
 
-    public static SaveDataUserFile ReadFrom(BinaryReader reader, string name)
+    public static SaveDataUserFile ReadFrom(EndianAwareReader reader, string name)
     {
         var version = reader.ReadByte();
         if (version != 2)
@@ -75,7 +75,7 @@ public class SaveDataUserFile
 
         return userFile;
 
-        static GameDataChunk? ReadGameChunk(BinaryReader r)
+        static GameDataChunk? ReadGameChunk(EndianAwareReader r)
         {
             var (magic, hash, size, inner, start) = r.ReadChunkHeader();
             GameDataChunk? result = null;
@@ -274,7 +274,8 @@ public class SaveDataUserFile
                     }
                     case MiscChunk misc:
                     {
-                        bw.WriteInt64(misc.Misc.LastModified);
+                        // TODO bw.WriteInt64(misc.Misc.LastModified);
+                        bw.WriteInt64(1763941776);
                         if (writer.ConsoleType == ConsoleType.Switch)
                         {
                             bw.WriteAlignmentPadding(alignment: 4);

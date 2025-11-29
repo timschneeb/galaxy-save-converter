@@ -68,4 +68,38 @@ public class GalaxyScenario
             set => Value = (byte)(value ? (Value | 0b10000) : (Value & ~0b10000));
         }
     }
+    
+    /*
+        --- Switch Attributes (w/ size)
+        Galaxy Scenario Attributes:
+            CFBD: 1
+            F25E: 4
+            7579: 1
+            2DA8: 2
+            8DD1: 2
+            26FF: 2
+
+        --- Wii Attributes
+        Galaxy Scenario Attributes:
+            CFBD: 1
+            F25E: 4
+            7579: 1
+     */
+    
+    public static List<AbstractDataAttribute> AllowedSwitchAttributes { get; } =
+    [
+        new DataAttribute<byte>(0xCFBD, 0), // mMissNum
+        new DataAttribute<uint>(0xF25E, 0), // mBestTime
+        new DataAttribute<byte>(0x7579, 0), // mFlag
+        new DataAttribute<ushort>(0x2DA8, 0), // mClearStageNum
+        new DataAttribute<ushort>(0x8DD1, 0), // mMissStageNum
+        new DataAttribute<ushort>(0x26FF, 0) // mTotalPlaySecond
+    ];
+    
+    public static List<AbstractDataAttribute> AllowedWiiAttributes { get; } =
+    [
+        new DataAttribute<byte>(0xCFBD, 0), // mMissNum
+        new DataAttribute<uint>(0xF25E, 0), // mBestTime
+        new DataAttribute<byte>(0x7579, 0) // mFlag
+    ];
 }

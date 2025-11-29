@@ -33,7 +33,7 @@ public class SaveDataStorageGalaxy
 
             galaxy.Galaxy.Add(stage);
         }
-
+        
         return galaxy;
     }
     
@@ -41,6 +41,30 @@ public class SaveDataStorageGalaxy
     {
         writer.WriteUInt16((ushort)Galaxy.Count);
 
+        // Validate attributes
+        foreach (var s in Galaxy)
+        {
+            foreach (var sc in s.Scenarios)
+            {
+                // Ensure all allowed attributes are present for the platform and at the correct locations
+                var allowedAttributes = writer.ConsoleType == ConsoleType.Switch
+                    ? GalaxyScenario.AllowedSwitchAttributes
+                    : GalaxyScenario.AllowedWiiAttributes;
+        
+                var validatedAttrs = new List<AbstractDataAttribute>();
+                foreach (var reqAttr in allowedAttributes)
+                {
+                    // Insert existing attribute if present, otherwise the default one
+                    var existingAttr = sc.Attributes.Find(a => a.Key == reqAttr.Key);
+                    validatedAttrs.Add(existingAttr ?? reqAttr);
+                }
+                
+                sc.Attributes = validatedAttrs;
+            }
+        }
+        
+        // TODO galaxy datasize not updated
+        
         var stageHeader = BuildHeaderLayout(Galaxy.Select(s => s.Attributes));
         var stageHeaderSize = writer.WriteAttributeTableHeader(stageHeader);
 
