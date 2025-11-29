@@ -36,7 +36,7 @@ public class SysConfigData
         if (reader.TryReadI64(fieldsDataStartPos, attributes, "mTimeSent", out var timeSent))
             sysConfig.TimeSent = reader.ConsoleType == ConsoleType.Wii
                 ? OsTime.WiiTicksToUnix(timeSent)
-                : DateTimeOffset.FromUnixTimeSeconds(timeSent).DateTime;
+                : DateTimeOffset.FromUnixTimeSeconds(timeSent).UtcDateTime;
 
         if (reader.TryReadU32(fieldsDataStartPos, attributes, "mSentBytes", out var sentBytes))
             sysConfig.SentBytes = sentBytes;

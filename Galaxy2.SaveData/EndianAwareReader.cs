@@ -14,7 +14,7 @@ public class EndianAwareReader(Stream input, ConsoleType target) : BinaryReader(
         var ticks = ReadInt64();
         return ConsoleType == ConsoleType.Wii ?
             OsTime.WiiTicksToUnix(ticks) : 
-            DateTimeOffset.FromUnixTimeSeconds(ticks).DateTime;
+            DateTimeOffset.FromUnixTimeSeconds(ticks).UtcDateTime;
     }
     
     public override short ReadInt16()

@@ -30,7 +30,7 @@ public class EndianAwareWriter(Stream input, ConsoleType consoleType) : BinaryWr
         
         var ticks = ConsoleType == ConsoleType.Wii
             ? OsTime.UnixToWiiTicks(time)
-            : new DateTimeOffset(time).ToUnixTimeSeconds();
+            : ((DateTimeOffset)time).ToUnixTimeSeconds();
         this.WriteInt64(ticks);
     }
     
