@@ -41,240 +41,299 @@
             "EventFlag": {
               "event_flag": [
                 {
-                  "key": 31418,
-                  "value": false
+                  "key": 23868,
+                  "value": false,
+                  "#comment": "\u30CF\u30C1\u30DE\u30EA\u30AA\u521D\u5909\u8EAB"
                 },
                 {
-                  "key": 3214,
-                  "value": false
+                  "key": 22426,
+                  "value": false,
+                  "#comment": "\u30C6\u30EC\u30B5\u30DE\u30EA\u30AA\u521D\u5909\u8EAB"
                 },
                 {
-                  "key": 6223,
-                  "value": false
+                  "key": 22525,
+                  "value": false,
+                  "#comment": "\u30DB\u30C3\u30D1\u30FC\u30DE\u30EA\u30AA\u521D\u5909\u8EAB"
                 },
                 {
-                  "key": 3678,
-                  "value": false
+                  "key": 23381,
+                  "value": false,
+                  "#comment": "\u30D5\u30A1\u30A4\u30A2\u30DE\u30EA\u30AA\u521D\u5909\u8EAB"
                 },
                 {
-                  "key": 25317,
-                  "value": false
+                  "key": 2402,
+                  "value": false,
+                  "#comment": "\u30A2\u30A4\u30B9\u30DE\u30EA\u30AA\u521D\u5909\u8EAB"
                 },
                 {
-                  "key": 19491,
-                  "value": false
+                  "key": 8076,
+                  "value": false,
+                  "#comment": "\u7121\u6575\u30DE\u30EA\u30AA\u521D\u5909\u8EAB"
                 },
                 {
-                  "key": 30884,
-                  "value": false
+                  "key": 7438,
+                  "value": false,
+                  "#comment": "\u30B4\u30ED\u5CA9\u30DE\u30EA\u30AA\u521D\u5909\u8EAB"
                 },
                 {
-                  "key": 23528,
-                  "value": false
+                  "key": 20810,
+                  "value": false,
+                  "#comment": "\u96F2\u30DE\u30EA\u30AA\u521D\u5909\u8EAB"
                 },
                 {
-                  "key": 29983,
-                  "value": false
+                  "key": 23944,
+                  "value": false,
+                  "#comment": "\u30C9\u30EA\u30EB\u521D\u30B2\u30C3\u30C8"
                 },
                 {
-                  "key": 6272,
-                  "value": true
+                  "key": 30140,
+                  "value": true,
+                  "#comment": "\u30E9\u30A4\u30D5\u30A2\u30C3\u30D7\u30AD\u30CE\u30B3\u89E3\u8AAC"
                 },
                 {
-                  "key": 15718,
-                  "value": true
+                  "key": 18395,
+                  "value": true,
+                  "#comment": "\uFF11\uFF35\uFF30\u30AD\u30CE\u30B3\u89E3\u8AAC"
                 },
                 {
-                  "key": 13879,
-                  "value": false
+                  "key": 30365,
+                  "value": false,
+                  "#comment": "\u30E8\u30C3\u30B7\u30FC\u51FA\u4F1A\u3044"
                 },
                 {
-                  "key": 16169,
-                  "value": false
+                  "key": 16064,
+                  "value": false,
+                  "#comment": "\u30B3\u30E1\u30C3\u30C8\u30E1\u30C0\u30EB\u89E3\u8AAC"
                 },
                 {
-                  "key": 2971,
-                  "value": false
+                  "key": 30583,
+                  "value": false,
+                  "#comment": "\uFF12\uFF30\u30B5\u30DD\u30FC\u30C8\u89E3\u8AAC"
                 },
                 {
-                  "key": 20088,
-                  "value": false
+                  "key": 17131,
+                  "value": false,
+                  "#comment": "\u30BF\u30DE\u30B3\u30ED\u30C1\u30E5\u30FC\u30C8\u30EA\u30A2\u30EB"
                 },
                 {
-                  "key": 11719,
-                  "value": false
+                  "key": 11058,
+                  "value": false,
+                  "#comment": "\u30B0\u30E9\u30A4\u30D0\u30FC\u30C9\u30C1\u30E5\u30FC\u30C8\u30EA\u30A2\u30EB"
                 },
                 {
-                  "key": 27380,
-                  "value": true
+                  "key": 27868,
+                  "value": true,
+                  "#comment": "\u30EF\u30FC\u30EB\u30C91\u521D\u30D7\u30EC\u30A4"
                 },
                 {
-                  "key": 23029,
-                  "value": false
+                  "key": 29533,
+                  "value": false,
+                  "#comment": "\u30EF\u30FC\u30EB\u30C92\u521D\u30D7\u30EC\u30A4"
                 },
                 {
-                  "key": 18678,
-                  "value": false
+                  "key": 31198,
+                  "value": false,
+                  "#comment": "\u30EF\u30FC\u30EB\u30C93\u521D\u30D7\u30EC\u30A4"
                 },
                 {
-                  "key": 14327,
-                  "value": false
+                  "key": 95,
+                  "value": false,
+                  "#comment": "\u30EF\u30FC\u30EB\u30C94\u521D\u30D7\u30EC\u30A4"
                 },
                 {
-                  "key": 9976,
-                  "value": false
+                  "key": 1760,
+                  "value": false,
+                  "#comment": "\u30EF\u30FC\u30EB\u30C95\u521D\u30D7\u30EC\u30A4"
                 },
                 {
-                  "key": 5625,
-                  "value": false
+                  "key": 3425,
+                  "value": false,
+                  "#comment": "\u30EF\u30FC\u30EB\u30C96\u521D\u30D7\u30EC\u30A4"
                 },
                 {
-                  "key": 1274,
-                  "value": false
+                  "key": 5090,
+                  "value": false,
+                  "#comment": "\u30EF\u30FC\u30EB\u30C97\u521D\u30D7\u30EC\u30A4"
                 },
                 {
-                  "key": 30487,
-                  "value": false
+                  "key": 25540,
+                  "value": false,
+                  "#comment": "\u30EF\u30FC\u30EB\u30C92\u4ED6\u306E\u30EF\u30FC\u30EB\u30C9\u3078\u8A98\u5C0E"
                 },
                 {
-                  "key": 22744,
-                  "value": false
+                  "key": 27427,
+                  "value": false,
+                  "#comment": "\u30EF\u30FC\u30EB\u30C93\u4ED6\u306E\u30EF\u30FC\u30EB\u30C9\u3078\u8A98\u5C0E"
                 },
                 {
-                  "key": 15001,
-                  "value": false
+                  "key": 29314,
+                  "value": false,
+                  "#comment": "\u30EF\u30FC\u30EB\u30C94\u4ED6\u306E\u30EF\u30FC\u30EB\u30C9\u3078\u8A98\u5C0E"
                 },
                 {
-                  "key": 7258,
-                  "value": false
+                  "key": 31201,
+                  "value": false,
+                  "#comment": "\u30EF\u30FC\u30EB\u30C95\u4ED6\u306E\u30EF\u30FC\u30EB\u30C9\u3078\u8A98\u5C0E"
                 },
                 {
-                  "key": 32283,
-                  "value": false
+                  "key": 320,
+                  "value": false,
+                  "#comment": "\u30EF\u30FC\u30EB\u30C96\u4ED6\u306E\u30EF\u30FC\u30EB\u30C9\u3078\u8A98\u5C0E"
                 },
                 {
-                  "key": 19352,
-                  "value": false
+                  "key": 4976,
+                  "value": false,
+                  "#comment": "\u30EF\u30FC\u30EB\u30C92\u30B2\u30FC\u30E0\u30AA\u30FC\u30D0\u30FC\u306B\u3088\u308B\u8A98\u5C0E"
                 },
                 {
-                  "key": 6297,
-                  "value": false
+                  "key": 26353,
+                  "value": false,
+                  "#comment": "\u30EF\u30FC\u30EB\u30C93\u30B2\u30FC\u30E0\u30AA\u30FC\u30D0\u30FC\u306B\u3088\u308B\u8A98\u5C0E"
                 },
                 {
-                  "key": 26010,
-                  "value": false
+                  "key": 14962,
+                  "value": false,
+                  "#comment": "\u30EF\u30FC\u30EB\u30C94\u30B2\u30FC\u30E0\u30AA\u30FC\u30D0\u30FC\u306B\u3088\u308B\u8A98\u5C0E"
                 },
                 {
-                  "key": 12955,
-                  "value": false
+                  "key": 3571,
+                  "value": false,
+                  "#comment": "\u30EF\u30FC\u30EB\u30C95\u30B2\u30FC\u30E0\u30AA\u30FC\u30D0\u30FC\u306B\u3088\u308B\u8A98\u5C0E"
                 },
                 {
-                  "key": 32668,
-                  "value": false
+                  "key": 24948,
+                  "value": false,
+                  "#comment": "\u30EF\u30FC\u30EB\u30C96\u30B2\u30FC\u30E0\u30AA\u30FC\u30D0\u30FC\u306B\u3088\u308B\u8A98\u5C0E"
                 },
                 {
-                  "key": 18737,
-                  "value": false
+                  "key": 14043,
+                  "value": false,
+                  "#comment": "\u30B0\u30E9\u30F3\u30C9\u30AE\u30E3\u30E9\u30AF\u30B7\u30FC\u30DE\u30C3\u30D7\u521D\u30D7\u30EC\u30A4"
                 },
                 {
-                  "key": 5944,
-                  "value": false
+                  "key": 29887,
+                  "value": false,
+                  "#comment": "\u30B0\u30EA\u30FC\u30F3\u30B9\u30BF\u30FC\u51FA\u73FE\u30C7\u30E2"
                 },
                 {
-                  "key": 28464,
-                  "value": false
+                  "key": 21984,
+                  "value": false,
+                  "#comment": "\u30AF\u30C3\u30D1\u6700\u7D42\u6226\u76F4\u524D\u30C7\u30E2"
                 },
                 {
                   "key": 27285,
-                  "value": false
+                  "value": false,
+                  "#comment": "IsOpenScenarioGoroRockGalaxy3"
                 },
                 {
                   "key": 32308,
-                  "value": false
+                  "value": false,
+                  "#comment": "IsOpenScenarioJungleGliderGalaxy2"
                 },
                 {
                   "key": 5109,
-                  "value": false
+                  "value": false,
+                  "#comment": "IsOpenScenarioThunderFleetGalaxy3"
                 },
                 {
                   "key": 2262,
-                  "value": false
+                  "value": false,
+                  "#comment": "IsOpenScenarioChallengeGliderGalaxy2"
                 },
                 {
                   "key": 897,
-                  "value": false
+                  "value": false,
+                  "#comment": "IsOpenScenarioHoneyBeeVillageGalaxy2"
                 },
                 {
                   "key": 25423,
-                  "value": false
+                  "value": false,
+                  "#comment": "IsOpenScenarioUnderGroundDangeonGalaxy2"
                 },
                 {
                   "key": 28295,
-                  "value": false
+                  "value": false,
+                  "#comment": "IsOpenScenarioMokumokuValleyGalaxy2"
                 },
                 {
-                  "key": 10254,
-                  "value": true
+                  "key": 12032,
+                  "value": true,
+                  "#comment": "\u30AA\u30FC\u30D7\u30CB\u30F3\u30B0\u5B9F\u884C"
                 },
                 {
-                  "key": 18471,
-                  "value": false
+                  "key": 21336,
+                  "value": false,
+                  "#comment": "\u30B3\u30E1\u30C3\u30C8\u89E3\u8AAC"
                 },
                 {
-                  "key": 14093,
-                  "value": false
+                  "key": 20528,
+                  "value": false,
+                  "#comment": "\u9280\u884C\u5C4B\u30AD\u30CE\u30D4\u30AA\u521D\u56DE"
                 },
                 {
-                  "key": 30668,
-                  "value": false
+                  "key": 19565,
+                  "value": false,
+                  "#comment": "\u3067\u3057\u3083\u3070\u308A\u30EB\u30A4\u30FC\u30B8\u51FA\u73FE\u958B\u59CB"
                 },
                 {
-                  "key": 10960,
-                  "value": false
+                  "key": 21437,
+                  "value": false,
+                  "#comment": "\u30CE\u30FC\u30DE\u30EB\u30A8\u30F3\u30C7\u30A3\u30F3\u30B0\u5B9F\u884C"
                 },
                 {
-                  "key": 28689,
-                  "value": false
+                  "key": 24782,
+                  "value": false,
+                  "#comment": "\u30CE\u30FC\u30DE\u30EB\u30A8\u30F3\u30C7\u30A3\u30F3\u30B0\u5F8C\u30C7\u30E2"
                 },
                 {
-                  "key": 21509,
-                  "value": false
+                  "key": 5977,
+                  "value": false,
+                  "#comment": "\u30B9\u30BF\u30FC120\u500B\u30A8\u30F3\u30C7\u30A3\u30F3\u30B0\u5B9F\u884C"
                 },
                 {
-                  "key": 8198,
-                  "value": false
+                  "key": 10162,
+                  "value": false,
+                  "#comment": "\u30B9\u30BF\u30FC120\u500B\u30A8\u30F3\u30C7\u30A3\u30F3\u30B0\u5F8C\u30C7\u30E2"
                 },
                 {
-                  "key": 233,
-                  "value": false
+                  "key": 13735,
+                  "value": false,
+                  "#comment": "\u6700\u7D42\u30AE\u30E3\u30E9\u30AF\u30B7\u30FC\u51FA\u73FE"
                 },
                 {
-                  "key": 26747,
-                  "value": false
+                  "key": 26668,
+                  "value": false,
+                  "#comment": "\u30CE\u30FC\u30DE\u30EB\u30A8\u30F3\u30C7\u30A3\u30F3\u30B0\u30E1\u30FC\u30EB\u9001\u4FE1"
                 },
                 {
-                  "key": 14714,
-                  "value": false
+                  "key": 3182,
+                  "value": false,
+                  "#comment": "\u30B3\u30F3\u30D7\u30EA\u30FC\u30C8\u30E1\u30FC\u30EB\u9001\u4FE1"
                 },
                 {
-                  "key": 27298,
-                  "value": false
+                  "key": 26842,
+                  "value": false,
+                  "#comment": "\u30B9\u30BF\u30FC\u30D4\u30FC\u30B9\u30AB\u30A6\u30F3\u30BF\u30FC\u30B9\u30C8\u30C3\u30D7"
                 },
                 {
-                  "key": 28856,
-                  "value": false
+                  "key": 14836,
+                  "value": false,
+                  "#comment": "\u30B3\u30A4\u30F3\u30AB\u30A6\u30F3\u30BF\u30FC\u30B9\u30C8\u30C3\u30D7"
                 },
                 {
-                  "key": 28468,
-                  "value": false
+                  "key": 21725,
+                  "value": false,
+                  "#comment": "\u30EB\u30A4\u30FC\u30B8\u30D7\u30EC\u30A4\u6E08"
                 },
                 {
-                  "key": 24672,
-                  "value": false
+                  "key": 29431,
+                  "value": false,
+                  "#comment": "\u3067\u3057\u3083\u3070\u308A\u30EB\u30A4\u30FC\u30B8\u51FA\u73FE\u4E2D"
                 },
                 {
-                  "key": 16842,
-                  "value": false
+                  "key": 13585,
+                  "value": false,
+                  "#comment": "\u30B2\u30FC\u30E0\u30AA\u30FC\u30D0\u30FC\u3067\u7D42\u4E86"
                 }
               ]
             }
@@ -373,148 +432,184 @@
             "EventValue": {
               "event_value": [
                 {
-                  "key": 61246,
-                  "value": 0
+                  "key": 7684,
+                  "value": 0,
+                  "#comment": "\u30B0\u30E9\u30A4\u30C0\u30FC[\u30B8\u30E3\u30F3\u30B0\u30EB]/hi"
                 },
                 {
-                  "key": 61376,
-                  "value": 5400
+                  "key": 7814,
+                  "value": 5400,
+                  "#comment": "\u30B0\u30E9\u30A4\u30C0\u30FC[\u30B8\u30E3\u30F3\u30B0\u30EB]/lo"
                 },
                 {
-                  "key": 22480,
-                  "value": 0
+                  "key": 47409,
+                  "value": 0,
+                  "#comment": "\u30B0\u30E9\u30A4\u30C0\u30FC[\u30C1\u30E3\u30EC\u30F3\u30B8]/hi"
                 },
                 {
-                  "key": 22610,
-                  "value": 5400
+                  "key": 47539,
+                  "value": 5400,
+                  "#comment": "\u30B0\u30E9\u30A4\u30C0\u30FC[\u30C1\u30E3\u30EC\u30F3\u30B8]/lo"
                 },
                 {
-                  "key": 13863,
-                  "value": 0
+                  "key": 60501,
+                  "value": 0,
+                  "#comment": "\u30D9\u30B9\u30C8\u30B9\u30B3\u30A2[MokumokuValleyGalaxy]/lo"
                 },
                 {
-                  "key": 13733,
-                  "value": 0
+                  "key": 60371,
+                  "value": 0,
+                  "#comment": "\u30D9\u30B9\u30C8\u30B9\u30B3\u30A2[MokumokuValleyGalaxy]/hi"
                 },
                 {
-                  "key": 54143,
-                  "value": 0
+                  "key": 58129,
+                  "value": 0,
+                  "#comment": "\u30D9\u30B9\u30C8\u30B9\u30B3\u30A2[HoneyBeeVillageGalaxy]/lo"
                 },
                 {
-                  "key": 54013,
-                  "value": 0
+                  "key": 57999,
+                  "value": 0,
+                  "#comment": "\u30D9\u30B9\u30C8\u30B9\u30B3\u30A2[HoneyBeeVillageGalaxy]/hi"
                 },
                 {
-                  "key": 49375,
-                  "value": 0
+                  "key": 45069,
+                  "value": 0,
+                  "#comment": "\u30D9\u30B9\u30C8\u30B9\u30B3\u30A2[UnderGroundDangeonGalaxy]/lo"
                 },
                 {
-                  "key": 49245,
-                  "value": 0
+                  "key": 44939,
+                  "value": 0,
+                  "#comment": "\u30D9\u30B9\u30C8\u30B9\u30B3\u30A2[UnderGroundDangeonGalaxy]/hi"
                 },
                 {
-                  "key": 63525,
-                  "value": 0
+                  "key": 25043,
+                  "value": 0,
+                  "#comment": "\u30D9\u30B9\u30C8\u30B9\u30B3\u30A2[TwisterTowerGalaxy]/lo"
                 },
                 {
-                  "key": 63395,
-                  "value": 0
+                  "key": 24913,
+                  "value": 0,
+                  "#comment": "\u30D9\u30B9\u30C8\u30B9\u30B3\u30A2[TwisterTowerGalaxy]/hi"
                 },
                 {
-                  "key": 8130,
-                  "value": 0
+                  "key": 54768,
+                  "value": 0,
+                  "#comment": "\u30D9\u30B9\u30C8\u30B9\u30B3\u30A2[KachikochiLavaGalaxy]/lo"
                 },
                 {
-                  "key": 8000,
-                  "value": 0
+                  "key": 54638,
+                  "value": 0,
+                  "#comment": "\u30D9\u30B9\u30C8\u30B9\u30B3\u30A2[KachikochiLavaGalaxy]/hi"
                 },
                 {
-                  "key": 15462,
-                  "value": 0
+                  "key": 57720,
+                  "value": 0,
+                  "#comment": "\u30D9\u30B9\u30C8\u30B9\u30B3\u30A2[WhiteSnowGalaxy]/lo"
                 },
                 {
-                  "key": 15332,
-                  "value": 0
+                  "key": 57590,
+                  "value": 0,
+                  "#comment": "\u30D9\u30B9\u30C8\u30B9\u30B3\u30A2[WhiteSnowGalaxy]/hi"
                 },
                 {
-                  "key": 60887,
-                  "value": 0
+                  "key": 2543,
+                  "value": 0,
+                  "#comment": "\u90F5\u4FBF\u5C4B[\u30BF\u30B9\u30AF\u624B\u7D19\u65E2\u8AAD\u30D5\u30E9\u30B0]/0"
                 },
                 {
-                  "key": 60888,
-                  "value": 0
+                  "key": 2544,
+                  "value": 0,
+                  "#comment": "\u90F5\u4FBF\u5C4B[\u30BF\u30B9\u30AF\u624B\u7D19\u65E2\u8AAD\u30D5\u30E9\u30B0]/1"
                 },
                 {
-                  "key": 9630,
-                  "value": 0
+                  "key": 43833,
+                  "value": 0,
+                  "#comment": "\u90F5\u4FBF\u5C4B[\u91CD\u8981\u624B\u7D19\u65E2\u8AAD\u30D5\u30E9\u30B0]/0"
                 },
                 {
-                  "key": 9631,
-                  "value": 0
+                  "key": 43834,
+                  "value": 0,
+                  "#comment": "\u90F5\u4FBF\u5C4B[\u91CD\u8981\u624B\u7D19\u65E2\u8AAD\u30D5\u30E9\u30B0]/1"
                 },
                 {
-                  "key": 25301,
-                  "value": 0
+                  "key": 42026,
+                  "value": 0,
+                  "#comment": "\u90F5\u4FBF\u5C4B[\u6700\u5F8C\u306B\u8AAD\u3093\u3060\u30BF\u30B9\u30AF\u624B\u7D19\u30A4\u30F3\u30C7\u30C3\u30AF\u30B9]"
                 },
                 {
-                  "key": 64169,
-                  "value": 0
+                  "key": 19654,
+                  "value": 0,
+                  "#comment": "\u90F5\u4FBF\u5C4B[\u30D4\u30FC\u30C1\u624B\u7D19\u3092\u8AAD\u3093\u3060\u6642\u306E\u7D2F\u7A4D\u6B7B\u4EA1\u56DE\u6570]"
                 },
                 {
-                  "key": 35401,
-                  "value": 0
+                  "key": 16173,
+                  "value": 0,
+                  "#comment": "\u30E1\u30C3\u30BB\u30FC\u30B8\u65E2\u8AAD\u30D5\u30E9\u30B0/0"
                 },
                 {
-                  "key": 35402,
-                  "value": 0
+                  "key": 16174,
+                  "value": 0,
+                  "#comment": "\u30E1\u30C3\u30BB\u30FC\u30B8\u65E2\u8AAD\u30D5\u30E9\u30B0/1"
                 },
                 {
-                  "key": 61856,
-                  "value": 1
+                  "key": 16409,
+                  "value": 1,
+                  "#comment": "\u7D2F\u7A4D\u6B7B\u4EA1\u56DE\u6570"
                 },
                 {
-                  "key": 6300,
-                  "value": 0
+                  "key": 8484,
+                  "value": 0,
+                  "#comment": "\u7D2F\u7A4D\u30B2\u30FC\u30E0\u30AA\u30FC\u30D0\u30FC\u56DE\u6570"
                 },
                 {
-                  "key": 11767,
-                  "value": 7675
+                  "key": 17492,
+                  "value": 7675,
+                  "#comment": "\u7D2F\u7A4D\u30D7\u30EC\u30A4\u6642\u9593/lo"
                 },
                 {
-                  "key": 11637,
-                  "value": 1
+                  "key": 17362,
+                  "value": 1,
+                  "#comment": "\u7D2F\u7A4D\u30D7\u30EC\u30A4\u6642\u9593/hi"
                 },
                 {
-                  "key": 27360,
-                  "value": 0
+                  "key": 47082,
+                  "value": 0,
+                  "#comment": "\u3067\u3057\u3083\u3070\u308A\u30EB\u30A4\u30FC\u30B8\u51FA\u73FE\u30AB\u30A6\u30F3\u30BF"
                 },
                 {
-                  "key": 31625,
-                  "value": 0
+                  "key": 49378,
+                  "value": 0,
+                  "#comment": "\u9280\u884C\u5C4B\u30AD\u30CE\u30D4\u30AA[\u5229\u5B50]"
                 },
                 {
-                  "key": 52973,
-                  "value": 10
+                  "key": 19248,
+                  "value": 10,
+                  "#comment": "\u9854\u60D1\u661F\u30A4\u30D9\u30F3\u30C8\u756A\u53F7/0"
                 },
                 {
-                  "key": 52974,
-                  "value": 0
+                  "key": 19249,
+                  "value": 0,
+                  "#comment": "\u9854\u60D1\u661F\u30A4\u30D9\u30F3\u30C8\u756A\u53F7/1"
                 },
                 {
-                  "key": 52975,
-                  "value": 0
+                  "key": 19250,
+                  "value": 0,
+                  "#comment": "\u9854\u60D1\u661F\u30A4\u30D9\u30F3\u30C8\u756A\u53F7/2"
                 },
                 {
-                  "key": 52976,
-                  "value": 0
+                  "key": 19251,
+                  "value": 0,
+                  "#comment": "\u9854\u60D1\u661F\u30A4\u30D9\u30F3\u30C8\u756A\u53F7/3"
                 },
                 {
-                  "key": 22141,
-                  "value": 0
+                  "key": 21723,
+                  "value": 0,
+                  "#comment": "\u9854\u60D1\u661F\u30A4\u30D9\u30F3\u30C8\u30B0\u30E9\u30F3\u30C9\u30B9\u30BF\u30FC\u756A\u53F7"
                 },
                 {
-                  "key": 41581,
-                  "value": 0
+                  "key": 32745,
+                  "value": 0,
+                  "#comment": "\u4E00\u5B9A\u6570\u6B7B\u4EA1\u5F8C\u306E\u30B9\u30C6\u30FC\u30B8\u30AF\u30EA\u30A2\u56DE\u6570"
                 }
               ]
             }
@@ -6692,7 +6787,7 @@
           {
             "$type": "MiscChunk",
             "Misc": {
-              "last_modified": 98723734659286972
+              "last_modified": "2051-06-30T19:40:52.0047238Z"
             }
           }
         ]
@@ -6739,240 +6834,299 @@
             "EventFlag": {
               "event_flag": [
                 {
-                  "key": 31418,
-                  "value": true
+                  "key": 23868,
+                  "value": true,
+                  "#comment": "\u30CF\u30C1\u30DE\u30EA\u30AA\u521D\u5909\u8EAB"
                 },
                 {
-                  "key": 3214,
-                  "value": true
+                  "key": 22426,
+                  "value": true,
+                  "#comment": "\u30C6\u30EC\u30B5\u30DE\u30EA\u30AA\u521D\u5909\u8EAB"
                 },
                 {
-                  "key": 6223,
-                  "value": true
+                  "key": 22525,
+                  "value": true,
+                  "#comment": "\u30DB\u30C3\u30D1\u30FC\u30DE\u30EA\u30AA\u521D\u5909\u8EAB"
                 },
                 {
-                  "key": 3678,
-                  "value": true
+                  "key": 23381,
+                  "value": true,
+                  "#comment": "\u30D5\u30A1\u30A4\u30A2\u30DE\u30EA\u30AA\u521D\u5909\u8EAB"
                 },
                 {
-                  "key": 25317,
-                  "value": false
+                  "key": 2402,
+                  "value": false,
+                  "#comment": "\u30A2\u30A4\u30B9\u30DE\u30EA\u30AA\u521D\u5909\u8EAB"
                 },
                 {
-                  "key": 19491,
-                  "value": true
+                  "key": 8076,
+                  "value": true,
+                  "#comment": "\u7121\u6575\u30DE\u30EA\u30AA\u521D\u5909\u8EAB"
                 },
                 {
-                  "key": 30884,
-                  "value": true
+                  "key": 7438,
+                  "value": true,
+                  "#comment": "\u30B4\u30ED\u5CA9\u30DE\u30EA\u30AA\u521D\u5909\u8EAB"
                 },
                 {
-                  "key": 23528,
-                  "value": true
+                  "key": 20810,
+                  "value": true,
+                  "#comment": "\u96F2\u30DE\u30EA\u30AA\u521D\u5909\u8EAB"
                 },
                 {
-                  "key": 29983,
-                  "value": true
+                  "key": 23944,
+                  "value": true,
+                  "#comment": "\u30C9\u30EA\u30EB\u521D\u30B2\u30C3\u30C8"
                 },
                 {
-                  "key": 6272,
-                  "value": true
+                  "key": 30140,
+                  "value": true,
+                  "#comment": "\u30E9\u30A4\u30D5\u30A2\u30C3\u30D7\u30AD\u30CE\u30B3\u89E3\u8AAC"
                 },
                 {
-                  "key": 15718,
-                  "value": true
+                  "key": 18395,
+                  "value": true,
+                  "#comment": "\uFF11\uFF35\uFF30\u30AD\u30CE\u30B3\u89E3\u8AAC"
                 },
                 {
-                  "key": 13879,
-                  "value": true
+                  "key": 30365,
+                  "value": true,
+                  "#comment": "\u30E8\u30C3\u30B7\u30FC\u51FA\u4F1A\u3044"
                 },
                 {
-                  "key": 16169,
-                  "value": true
+                  "key": 16064,
+                  "value": true,
+                  "#comment": "\u30B3\u30E1\u30C3\u30C8\u30E1\u30C0\u30EB\u89E3\u8AAC"
                 },
                 {
-                  "key": 2971,
-                  "value": true
+                  "key": 30583,
+                  "value": true,
+                  "#comment": "\uFF12\uFF30\u30B5\u30DD\u30FC\u30C8\u89E3\u8AAC"
                 },
                 {
-                  "key": 20088,
-                  "value": true
+                  "key": 17131,
+                  "value": true,
+                  "#comment": "\u30BF\u30DE\u30B3\u30ED\u30C1\u30E5\u30FC\u30C8\u30EA\u30A2\u30EB"
                 },
                 {
-                  "key": 11719,
-                  "value": true
+                  "key": 11058,
+                  "value": true,
+                  "#comment": "\u30B0\u30E9\u30A4\u30D0\u30FC\u30C9\u30C1\u30E5\u30FC\u30C8\u30EA\u30A2\u30EB"
                 },
                 {
-                  "key": 27380,
-                  "value": true
+                  "key": 27868,
+                  "value": true,
+                  "#comment": "\u30EF\u30FC\u30EB\u30C91\u521D\u30D7\u30EC\u30A4"
                 },
                 {
-                  "key": 23029,
-                  "value": true
+                  "key": 29533,
+                  "value": true,
+                  "#comment": "\u30EF\u30FC\u30EB\u30C92\u521D\u30D7\u30EC\u30A4"
                 },
                 {
-                  "key": 18678,
-                  "value": true
+                  "key": 31198,
+                  "value": true,
+                  "#comment": "\u30EF\u30FC\u30EB\u30C93\u521D\u30D7\u30EC\u30A4"
                 },
                 {
-                  "key": 14327,
-                  "value": true
+                  "key": 95,
+                  "value": true,
+                  "#comment": "\u30EF\u30FC\u30EB\u30C94\u521D\u30D7\u30EC\u30A4"
                 },
                 {
-                  "key": 9976,
-                  "value": true
+                  "key": 1760,
+                  "value": true,
+                  "#comment": "\u30EF\u30FC\u30EB\u30C95\u521D\u30D7\u30EC\u30A4"
                 },
                 {
-                  "key": 5625,
-                  "value": true
+                  "key": 3425,
+                  "value": true,
+                  "#comment": "\u30EF\u30FC\u30EB\u30C96\u521D\u30D7\u30EC\u30A4"
                 },
                 {
-                  "key": 1274,
-                  "value": true
+                  "key": 5090,
+                  "value": true,
+                  "#comment": "\u30EF\u30FC\u30EB\u30C97\u521D\u30D7\u30EC\u30A4"
                 },
                 {
-                  "key": 30487,
-                  "value": false
+                  "key": 25540,
+                  "value": false,
+                  "#comment": "\u30EF\u30FC\u30EB\u30C92\u4ED6\u306E\u30EF\u30FC\u30EB\u30C9\u3078\u8A98\u5C0E"
                 },
                 {
-                  "key": 22744,
-                  "value": false
+                  "key": 27427,
+                  "value": false,
+                  "#comment": "\u30EF\u30FC\u30EB\u30C93\u4ED6\u306E\u30EF\u30FC\u30EB\u30C9\u3078\u8A98\u5C0E"
                 },
                 {
-                  "key": 15001,
-                  "value": false
+                  "key": 29314,
+                  "value": false,
+                  "#comment": "\u30EF\u30FC\u30EB\u30C94\u4ED6\u306E\u30EF\u30FC\u30EB\u30C9\u3078\u8A98\u5C0E"
                 },
                 {
-                  "key": 7258,
-                  "value": false
+                  "key": 31201,
+                  "value": false,
+                  "#comment": "\u30EF\u30FC\u30EB\u30C95\u4ED6\u306E\u30EF\u30FC\u30EB\u30C9\u3078\u8A98\u5C0E"
                 },
                 {
-                  "key": 32283,
-                  "value": false
+                  "key": 320,
+                  "value": false,
+                  "#comment": "\u30EF\u30FC\u30EB\u30C96\u4ED6\u306E\u30EF\u30FC\u30EB\u30C9\u3078\u8A98\u5C0E"
                 },
                 {
-                  "key": 19352,
-                  "value": true
+                  "key": 4976,
+                  "value": true,
+                  "#comment": "\u30EF\u30FC\u30EB\u30C92\u30B2\u30FC\u30E0\u30AA\u30FC\u30D0\u30FC\u306B\u3088\u308B\u8A98\u5C0E"
                 },
                 {
-                  "key": 6297,
-                  "value": true
+                  "key": 26353,
+                  "value": true,
+                  "#comment": "\u30EF\u30FC\u30EB\u30C93\u30B2\u30FC\u30E0\u30AA\u30FC\u30D0\u30FC\u306B\u3088\u308B\u8A98\u5C0E"
                 },
                 {
-                  "key": 26010,
-                  "value": true
+                  "key": 14962,
+                  "value": true,
+                  "#comment": "\u30EF\u30FC\u30EB\u30C94\u30B2\u30FC\u30E0\u30AA\u30FC\u30D0\u30FC\u306B\u3088\u308B\u8A98\u5C0E"
                 },
                 {
-                  "key": 12955,
-                  "value": true
+                  "key": 3571,
+                  "value": true,
+                  "#comment": "\u30EF\u30FC\u30EB\u30C95\u30B2\u30FC\u30E0\u30AA\u30FC\u30D0\u30FC\u306B\u3088\u308B\u8A98\u5C0E"
                 },
                 {
-                  "key": 32668,
-                  "value": true
+                  "key": 24948,
+                  "value": true,
+                  "#comment": "\u30EF\u30FC\u30EB\u30C96\u30B2\u30FC\u30E0\u30AA\u30FC\u30D0\u30FC\u306B\u3088\u308B\u8A98\u5C0E"
                 },
                 {
-                  "key": 18737,
-                  "value": true
+                  "key": 14043,
+                  "value": true,
+                  "#comment": "\u30B0\u30E9\u30F3\u30C9\u30AE\u30E3\u30E9\u30AF\u30B7\u30FC\u30DE\u30C3\u30D7\u521D\u30D7\u30EC\u30A4"
                 },
                 {
-                  "key": 5944,
-                  "value": false
+                  "key": 29887,
+                  "value": false,
+                  "#comment": "\u30B0\u30EA\u30FC\u30F3\u30B9\u30BF\u30FC\u51FA\u73FE\u30C7\u30E2"
                 },
                 {
-                  "key": 28464,
-                  "value": true
+                  "key": 21984,
+                  "value": true,
+                  "#comment": "\u30AF\u30C3\u30D1\u6700\u7D42\u6226\u76F4\u524D\u30C7\u30E2"
                 },
                 {
                   "key": 27285,
-                  "value": true
+                  "value": true,
+                  "#comment": "IsOpenScenarioGoroRockGalaxy3"
                 },
                 {
                   "key": 32308,
-                  "value": true
+                  "value": true,
+                  "#comment": "IsOpenScenarioJungleGliderGalaxy2"
                 },
                 {
                   "key": 5109,
-                  "value": true
+                  "value": true,
+                  "#comment": "IsOpenScenarioThunderFleetGalaxy3"
                 },
                 {
                   "key": 2262,
-                  "value": true
+                  "value": true,
+                  "#comment": "IsOpenScenarioChallengeGliderGalaxy2"
                 },
                 {
                   "key": 897,
-                  "value": true
+                  "value": true,
+                  "#comment": "IsOpenScenarioHoneyBeeVillageGalaxy2"
                 },
                 {
                   "key": 25423,
-                  "value": false
+                  "value": false,
+                  "#comment": "IsOpenScenarioUnderGroundDangeonGalaxy2"
                 },
                 {
                   "key": 28295,
-                  "value": true
+                  "value": true,
+                  "#comment": "IsOpenScenarioMokumokuValleyGalaxy2"
                 },
                 {
-                  "key": 10254,
-                  "value": true
+                  "key": 12032,
+                  "value": true,
+                  "#comment": "\u30AA\u30FC\u30D7\u30CB\u30F3\u30B0\u5B9F\u884C"
                 },
                 {
-                  "key": 18471,
-                  "value": true
+                  "key": 21336,
+                  "value": true,
+                  "#comment": "\u30B3\u30E1\u30C3\u30C8\u89E3\u8AAC"
                 },
                 {
-                  "key": 14093,
-                  "value": true
+                  "key": 20528,
+                  "value": true,
+                  "#comment": "\u9280\u884C\u5C4B\u30AD\u30CE\u30D4\u30AA\u521D\u56DE"
                 },
                 {
-                  "key": 30668,
-                  "value": true
+                  "key": 19565,
+                  "value": true,
+                  "#comment": "\u3067\u3057\u3083\u3070\u308A\u30EB\u30A4\u30FC\u30B8\u51FA\u73FE\u958B\u59CB"
                 },
                 {
-                  "key": 10960,
-                  "value": true
+                  "key": 21437,
+                  "value": true,
+                  "#comment": "\u30CE\u30FC\u30DE\u30EB\u30A8\u30F3\u30C7\u30A3\u30F3\u30B0\u5B9F\u884C"
                 },
                 {
-                  "key": 28689,
-                  "value": true
+                  "key": 24782,
+                  "value": true,
+                  "#comment": "\u30CE\u30FC\u30DE\u30EB\u30A8\u30F3\u30C7\u30A3\u30F3\u30B0\u5F8C\u30C7\u30E2"
                 },
                 {
-                  "key": 21509,
-                  "value": false
+                  "key": 5977,
+                  "value": false,
+                  "#comment": "\u30B9\u30BF\u30FC120\u500B\u30A8\u30F3\u30C7\u30A3\u30F3\u30B0\u5B9F\u884C"
                 },
                 {
-                  "key": 8198,
-                  "value": false
+                  "key": 10162,
+                  "value": false,
+                  "#comment": "\u30B9\u30BF\u30FC120\u500B\u30A8\u30F3\u30C7\u30A3\u30F3\u30B0\u5F8C\u30C7\u30E2"
                 },
                 {
-                  "key": 233,
-                  "value": false
+                  "key": 13735,
+                  "value": false,
+                  "#comment": "\u6700\u7D42\u30AE\u30E3\u30E9\u30AF\u30B7\u30FC\u51FA\u73FE"
                 },
                 {
-                  "key": 26747,
-                  "value": true
+                  "key": 26668,
+                  "value": true,
+                  "#comment": "\u30CE\u30FC\u30DE\u30EB\u30A8\u30F3\u30C7\u30A3\u30F3\u30B0\u30E1\u30FC\u30EB\u9001\u4FE1"
                 },
                 {
-                  "key": 14714,
-                  "value": false
+                  "key": 3182,
+                  "value": false,
+                  "#comment": "\u30B3\u30F3\u30D7\u30EA\u30FC\u30C8\u30E1\u30FC\u30EB\u9001\u4FE1"
                 },
                 {
-                  "key": 27298,
-                  "value": false
+                  "key": 26842,
+                  "value": false,
+                  "#comment": "\u30B9\u30BF\u30FC\u30D4\u30FC\u30B9\u30AB\u30A6\u30F3\u30BF\u30FC\u30B9\u30C8\u30C3\u30D7"
                 },
                 {
-                  "key": 28856,
-                  "value": false
+                  "key": 14836,
+                  "value": false,
+                  "#comment": "\u30B3\u30A4\u30F3\u30AB\u30A6\u30F3\u30BF\u30FC\u30B9\u30C8\u30C3\u30D7"
                 },
                 {
-                  "key": 28468,
-                  "value": true
+                  "key": 21725,
+                  "value": true,
+                  "#comment": "\u30EB\u30A4\u30FC\u30B8\u30D7\u30EC\u30A4\u6E08"
                 },
                 {
-                  "key": 24672,
-                  "value": true
+                  "key": 29431,
+                  "value": true,
+                  "#comment": "\u3067\u3057\u3083\u3070\u308A\u30EB\u30A4\u30FC\u30B8\u51FA\u73FE\u4E2D"
                 },
                 {
-                  "key": 16842,
-                  "value": false
+                  "key": 13585,
+                  "value": false,
+                  "#comment": "\u30B2\u30FC\u30E0\u30AA\u30FC\u30D0\u30FC\u3067\u7D42\u4E86"
                 }
               ]
             }
@@ -7071,148 +7225,184 @@
             "EventValue": {
               "event_value": [
                 {
-                  "key": 61246,
-                  "value": 0
+                  "key": 7684,
+                  "value": 0,
+                  "#comment": "\u30B0\u30E9\u30A4\u30C0\u30FC[\u30B8\u30E3\u30F3\u30B0\u30EB]/hi"
                 },
                 {
-                  "key": 61376,
-                  "value": 3961
+                  "key": 7814,
+                  "value": 3961,
+                  "#comment": "\u30B0\u30E9\u30A4\u30C0\u30FC[\u30B8\u30E3\u30F3\u30B0\u30EB]/lo"
                 },
                 {
-                  "key": 22480,
-                  "value": 0
+                  "key": 47409,
+                  "value": 0,
+                  "#comment": "\u30B0\u30E9\u30A4\u30C0\u30FC[\u30C1\u30E3\u30EC\u30F3\u30B8]/hi"
                 },
                 {
-                  "key": 22610,
-                  "value": 3712
+                  "key": 47539,
+                  "value": 3712,
+                  "#comment": "\u30B0\u30E9\u30A4\u30C0\u30FC[\u30C1\u30E3\u30EC\u30F3\u30B8]/lo"
                 },
                 {
-                  "key": 13863,
-                  "value": 0
+                  "key": 60501,
+                  "value": 0,
+                  "#comment": "\u30D9\u30B9\u30C8\u30B9\u30B3\u30A2[MokumokuValleyGalaxy]/lo"
                 },
                 {
-                  "key": 13733,
-                  "value": 0
+                  "key": 60371,
+                  "value": 0,
+                  "#comment": "\u30D9\u30B9\u30C8\u30B9\u30B3\u30A2[MokumokuValleyGalaxy]/hi"
                 },
                 {
-                  "key": 54143,
-                  "value": 0
+                  "key": 58129,
+                  "value": 0,
+                  "#comment": "\u30D9\u30B9\u30C8\u30B9\u30B3\u30A2[HoneyBeeVillageGalaxy]/lo"
                 },
                 {
-                  "key": 54013,
-                  "value": 0
+                  "key": 57999,
+                  "value": 0,
+                  "#comment": "\u30D9\u30B9\u30C8\u30B9\u30B3\u30A2[HoneyBeeVillageGalaxy]/hi"
                 },
                 {
-                  "key": 49375,
-                  "value": 0
+                  "key": 45069,
+                  "value": 0,
+                  "#comment": "\u30D9\u30B9\u30C8\u30B9\u30B3\u30A2[UnderGroundDangeonGalaxy]/lo"
                 },
                 {
-                  "key": 49245,
-                  "value": 0
+                  "key": 44939,
+                  "value": 0,
+                  "#comment": "\u30D9\u30B9\u30C8\u30B9\u30B3\u30A2[UnderGroundDangeonGalaxy]/hi"
                 },
                 {
-                  "key": 63525,
-                  "value": 5100
+                  "key": 25043,
+                  "value": 5100,
+                  "#comment": "\u30D9\u30B9\u30C8\u30B9\u30B3\u30A2[TwisterTowerGalaxy]/lo"
                 },
                 {
-                  "key": 63395,
-                  "value": 0
+                  "key": 24913,
+                  "value": 0,
+                  "#comment": "\u30D9\u30B9\u30C8\u30B9\u30B3\u30A2[TwisterTowerGalaxy]/hi"
                 },
                 {
-                  "key": 8130,
-                  "value": 620
+                  "key": 54768,
+                  "value": 620,
+                  "#comment": "\u30D9\u30B9\u30C8\u30B9\u30B3\u30A2[KachikochiLavaGalaxy]/lo"
                 },
                 {
-                  "key": 8000,
-                  "value": 0
+                  "key": 54638,
+                  "value": 0,
+                  "#comment": "\u30D9\u30B9\u30C8\u30B9\u30B3\u30A2[KachikochiLavaGalaxy]/hi"
                 },
                 {
-                  "key": 15462,
-                  "value": 520
+                  "key": 57720,
+                  "value": 520,
+                  "#comment": "\u30D9\u30B9\u30C8\u30B9\u30B3\u30A2[WhiteSnowGalaxy]/lo"
                 },
                 {
-                  "key": 15332,
-                  "value": 0
+                  "key": 57590,
+                  "value": 0,
+                  "#comment": "\u30D9\u30B9\u30C8\u30B9\u30B3\u30A2[WhiteSnowGalaxy]/hi"
                 },
                 {
-                  "key": 60887,
-                  "value": 6080
+                  "key": 2543,
+                  "value": 6080,
+                  "#comment": "\u90F5\u4FBF\u5C4B[\u30BF\u30B9\u30AF\u624B\u7D19\u65E2\u8AAD\u30D5\u30E9\u30B0]/0"
                 },
                 {
-                  "key": 60888,
-                  "value": 0
+                  "key": 2544,
+                  "value": 0,
+                  "#comment": "\u90F5\u4FBF\u5C4B[\u30BF\u30B9\u30AF\u624B\u7D19\u65E2\u8AAD\u30D5\u30E9\u30B0]/1"
                 },
                 {
-                  "key": 9630,
-                  "value": 57407
+                  "key": 43833,
+                  "value": 57407,
+                  "#comment": "\u90F5\u4FBF\u5C4B[\u91CD\u8981\u624B\u7D19\u65E2\u8AAD\u30D5\u30E9\u30B0]/0"
                 },
                 {
-                  "key": 9631,
-                  "value": 1
+                  "key": 43834,
+                  "value": 1,
+                  "#comment": "\u90F5\u4FBF\u5C4B[\u91CD\u8981\u624B\u7D19\u65E2\u8AAD\u30D5\u30E9\u30B0]/1"
                 },
                 {
-                  "key": 25301,
-                  "value": 9
+                  "key": 42026,
+                  "value": 9,
+                  "#comment": "\u90F5\u4FBF\u5C4B[\u6700\u5F8C\u306B\u8AAD\u3093\u3060\u30BF\u30B9\u30AF\u624B\u7D19\u30A4\u30F3\u30C7\u30C3\u30AF\u30B9]"
                 },
                 {
-                  "key": 64169,
-                  "value": 1328
+                  "key": 19654,
+                  "value": 1328,
+                  "#comment": "\u90F5\u4FBF\u5C4B[\u30D4\u30FC\u30C1\u624B\u7D19\u3092\u8AAD\u3093\u3060\u6642\u306E\u7D2F\u7A4D\u6B7B\u4EA1\u56DE\u6570]"
                 },
                 {
-                  "key": 35401,
-                  "value": 3
+                  "key": 16173,
+                  "value": 3,
+                  "#comment": "\u30E1\u30C3\u30BB\u30FC\u30B8\u65E2\u8AAD\u30D5\u30E9\u30B0/0"
                 },
                 {
-                  "key": 35402,
-                  "value": 0
+                  "key": 16174,
+                  "value": 0,
+                  "#comment": "\u30E1\u30C3\u30BB\u30FC\u30B8\u65E2\u8AAD\u30D5\u30E9\u30B0/1"
                 },
                 {
-                  "key": 61856,
-                  "value": 1414
+                  "key": 16409,
+                  "value": 1414,
+                  "#comment": "\u7D2F\u7A4D\u6B7B\u4EA1\u56DE\u6570"
                 },
                 {
-                  "key": 6300,
-                  "value": 111
+                  "key": 8484,
+                  "value": 111,
+                  "#comment": "\u7D2F\u7A4D\u30B2\u30FC\u30E0\u30AA\u30FC\u30D0\u30FC\u56DE\u6570"
                 },
                 {
-                  "key": 11767,
-                  "value": 64906
+                  "key": 17492,
+                  "value": 64906,
+                  "#comment": "\u7D2F\u7A4D\u30D7\u30EC\u30A4\u6642\u9593/lo"
                 },
                 {
-                  "key": 11637,
-                  "value": 174
+                  "key": 17362,
+                  "value": 174,
+                  "#comment": "\u7D2F\u7A4D\u30D7\u30EC\u30A4\u6642\u9593/hi"
                 },
                 {
-                  "key": 27360,
-                  "value": 0
+                  "key": 47082,
+                  "value": 0,
+                  "#comment": "\u3067\u3057\u3083\u3070\u308A\u30EB\u30A4\u30FC\u30B8\u51FA\u73FE\u30AB\u30A6\u30F3\u30BF"
                 },
                 {
-                  "key": 31625,
-                  "value": 9
+                  "key": 49378,
+                  "value": 9,
+                  "#comment": "\u9280\u884C\u5C4B\u30AD\u30CE\u30D4\u30AA[\u5229\u5B50]"
                 },
                 {
-                  "key": 52973,
-                  "value": 0
+                  "key": 19248,
+                  "value": 0,
+                  "#comment": "\u9854\u60D1\u661F\u30A4\u30D9\u30F3\u30C8\u756A\u53F7/0"
                 },
                 {
-                  "key": 52974,
-                  "value": 0
+                  "key": 19249,
+                  "value": 0,
+                  "#comment": "\u9854\u60D1\u661F\u30A4\u30D9\u30F3\u30C8\u756A\u53F7/1"
                 },
                 {
-                  "key": 52975,
-                  "value": 0
+                  "key": 19250,
+                  "value": 0,
+                  "#comment": "\u9854\u60D1\u661F\u30A4\u30D9\u30F3\u30C8\u756A\u53F7/2"
                 },
                 {
-                  "key": 52976,
-                  "value": 0
+                  "key": 19251,
+                  "value": 0,
+                  "#comment": "\u9854\u60D1\u661F\u30A4\u30D9\u30F3\u30C8\u756A\u53F7/3"
                 },
                 {
-                  "key": 22141,
-                  "value": 0
+                  "key": 21723,
+                  "value": 0,
+                  "#comment": "\u9854\u60D1\u661F\u30A4\u30D9\u30F3\u30C8\u30B0\u30E9\u30F3\u30C9\u30B9\u30BF\u30FC\u756A\u53F7"
                 },
                 {
-                  "key": 41581,
-                  "value": 3
+                  "key": 32745,
+                  "value": 3,
+                  "#comment": "\u4E00\u5B9A\u6570\u6B7B\u4EA1\u5F8C\u306E\u30B9\u30C6\u30FC\u30B8\u30AF\u30EA\u30A2\u56DE\u6570"
                 }
               ]
             }
@@ -13390,7 +13580,7 @@
           {
             "$type": "MiscChunk",
             "Misc": {
-              "last_modified": 229005778424854029
+              "last_modified": "2119-06-16T02:54:03.2074726Z"
             }
           }
         ]
@@ -13437,240 +13627,299 @@
             "EventFlag": {
               "event_flag": [
                 {
-                  "key": 31418,
-                  "value": true
+                  "key": 23868,
+                  "value": true,
+                  "#comment": "\u30CF\u30C1\u30DE\u30EA\u30AA\u521D\u5909\u8EAB"
                 },
                 {
-                  "key": 3214,
-                  "value": false
+                  "key": 22426,
+                  "value": false,
+                  "#comment": "\u30C6\u30EC\u30B5\u30DE\u30EA\u30AA\u521D\u5909\u8EAB"
                 },
                 {
-                  "key": 6223,
-                  "value": false
+                  "key": 22525,
+                  "value": false,
+                  "#comment": "\u30DB\u30C3\u30D1\u30FC\u30DE\u30EA\u30AA\u521D\u5909\u8EAB"
                 },
                 {
-                  "key": 3678,
-                  "value": true
+                  "key": 23381,
+                  "value": true,
+                  "#comment": "\u30D5\u30A1\u30A4\u30A2\u30DE\u30EA\u30AA\u521D\u5909\u8EAB"
                 },
                 {
-                  "key": 25317,
-                  "value": false
+                  "key": 2402,
+                  "value": false,
+                  "#comment": "\u30A2\u30A4\u30B9\u30DE\u30EA\u30AA\u521D\u5909\u8EAB"
                 },
                 {
-                  "key": 19491,
-                  "value": true
+                  "key": 8076,
+                  "value": true,
+                  "#comment": "\u7121\u6575\u30DE\u30EA\u30AA\u521D\u5909\u8EAB"
                 },
                 {
-                  "key": 30884,
-                  "value": true
+                  "key": 7438,
+                  "value": true,
+                  "#comment": "\u30B4\u30ED\u5CA9\u30DE\u30EA\u30AA\u521D\u5909\u8EAB"
                 },
                 {
-                  "key": 23528,
-                  "value": true
+                  "key": 20810,
+                  "value": true,
+                  "#comment": "\u96F2\u30DE\u30EA\u30AA\u521D\u5909\u8EAB"
                 },
                 {
-                  "key": 29983,
-                  "value": true
+                  "key": 23944,
+                  "value": true,
+                  "#comment": "\u30C9\u30EA\u30EB\u521D\u30B2\u30C3\u30C8"
                 },
                 {
-                  "key": 6272,
-                  "value": true
+                  "key": 30140,
+                  "value": true,
+                  "#comment": "\u30E9\u30A4\u30D5\u30A2\u30C3\u30D7\u30AD\u30CE\u30B3\u89E3\u8AAC"
                 },
                 {
-                  "key": 15718,
-                  "value": true
+                  "key": 18395,
+                  "value": true,
+                  "#comment": "\uFF11\uFF35\uFF30\u30AD\u30CE\u30B3\u89E3\u8AAC"
                 },
                 {
-                  "key": 13879,
-                  "value": true
+                  "key": 30365,
+                  "value": true,
+                  "#comment": "\u30E8\u30C3\u30B7\u30FC\u51FA\u4F1A\u3044"
                 },
                 {
-                  "key": 16169,
-                  "value": true
+                  "key": 16064,
+                  "value": true,
+                  "#comment": "\u30B3\u30E1\u30C3\u30C8\u30E1\u30C0\u30EB\u89E3\u8AAC"
                 },
                 {
-                  "key": 2971,
-                  "value": true
+                  "key": 30583,
+                  "value": true,
+                  "#comment": "\uFF12\uFF30\u30B5\u30DD\u30FC\u30C8\u89E3\u8AAC"
                 },
                 {
-                  "key": 20088,
-                  "value": false
+                  "key": 17131,
+                  "value": false,
+                  "#comment": "\u30BF\u30DE\u30B3\u30ED\u30C1\u30E5\u30FC\u30C8\u30EA\u30A2\u30EB"
                 },
                 {
-                  "key": 11719,
-                  "value": true
+                  "key": 11058,
+                  "value": true,
+                  "#comment": "\u30B0\u30E9\u30A4\u30D0\u30FC\u30C9\u30C1\u30E5\u30FC\u30C8\u30EA\u30A2\u30EB"
                 },
                 {
-                  "key": 27380,
-                  "value": true
+                  "key": 27868,
+                  "value": true,
+                  "#comment": "\u30EF\u30FC\u30EB\u30C91\u521D\u30D7\u30EC\u30A4"
                 },
                 {
-                  "key": 23029,
-                  "value": true
+                  "key": 29533,
+                  "value": true,
+                  "#comment": "\u30EF\u30FC\u30EB\u30C92\u521D\u30D7\u30EC\u30A4"
                 },
                 {
-                  "key": 18678,
-                  "value": true
+                  "key": 31198,
+                  "value": true,
+                  "#comment": "\u30EF\u30FC\u30EB\u30C93\u521D\u30D7\u30EC\u30A4"
                 },
                 {
-                  "key": 14327,
-                  "value": false
+                  "key": 95,
+                  "value": false,
+                  "#comment": "\u30EF\u30FC\u30EB\u30C94\u521D\u30D7\u30EC\u30A4"
                 },
                 {
-                  "key": 9976,
-                  "value": false
+                  "key": 1760,
+                  "value": false,
+                  "#comment": "\u30EF\u30FC\u30EB\u30C95\u521D\u30D7\u30EC\u30A4"
                 },
                 {
-                  "key": 5625,
-                  "value": false
+                  "key": 3425,
+                  "value": false,
+                  "#comment": "\u30EF\u30FC\u30EB\u30C96\u521D\u30D7\u30EC\u30A4"
                 },
                 {
-                  "key": 1274,
-                  "value": false
+                  "key": 5090,
+                  "value": false,
+                  "#comment": "\u30EF\u30FC\u30EB\u30C97\u521D\u30D7\u30EC\u30A4"
                 },
                 {
-                  "key": 30487,
-                  "value": false
+                  "key": 25540,
+                  "value": false,
+                  "#comment": "\u30EF\u30FC\u30EB\u30C92\u4ED6\u306E\u30EF\u30FC\u30EB\u30C9\u3078\u8A98\u5C0E"
                 },
                 {
-                  "key": 22744,
-                  "value": false
+                  "key": 27427,
+                  "value": false,
+                  "#comment": "\u30EF\u30FC\u30EB\u30C93\u4ED6\u306E\u30EF\u30FC\u30EB\u30C9\u3078\u8A98\u5C0E"
                 },
                 {
-                  "key": 15001,
-                  "value": false
+                  "key": 29314,
+                  "value": false,
+                  "#comment": "\u30EF\u30FC\u30EB\u30C94\u4ED6\u306E\u30EF\u30FC\u30EB\u30C9\u3078\u8A98\u5C0E"
                 },
                 {
-                  "key": 7258,
-                  "value": false
+                  "key": 31201,
+                  "value": false,
+                  "#comment": "\u30EF\u30FC\u30EB\u30C95\u4ED6\u306E\u30EF\u30FC\u30EB\u30C9\u3078\u8A98\u5C0E"
                 },
                 {
-                  "key": 32283,
-                  "value": false
+                  "key": 320,
+                  "value": false,
+                  "#comment": "\u30EF\u30FC\u30EB\u30C96\u4ED6\u306E\u30EF\u30FC\u30EB\u30C9\u3078\u8A98\u5C0E"
                 },
                 {
-                  "key": 19352,
-                  "value": false
+                  "key": 4976,
+                  "value": false,
+                  "#comment": "\u30EF\u30FC\u30EB\u30C92\u30B2\u30FC\u30E0\u30AA\u30FC\u30D0\u30FC\u306B\u3088\u308B\u8A98\u5C0E"
                 },
                 {
-                  "key": 6297,
-                  "value": false
+                  "key": 26353,
+                  "value": false,
+                  "#comment": "\u30EF\u30FC\u30EB\u30C93\u30B2\u30FC\u30E0\u30AA\u30FC\u30D0\u30FC\u306B\u3088\u308B\u8A98\u5C0E"
                 },
                 {
-                  "key": 26010,
-                  "value": false
+                  "key": 14962,
+                  "value": false,
+                  "#comment": "\u30EF\u30FC\u30EB\u30C94\u30B2\u30FC\u30E0\u30AA\u30FC\u30D0\u30FC\u306B\u3088\u308B\u8A98\u5C0E"
                 },
                 {
-                  "key": 12955,
-                  "value": false
+                  "key": 3571,
+                  "value": false,
+                  "#comment": "\u30EF\u30FC\u30EB\u30C95\u30B2\u30FC\u30E0\u30AA\u30FC\u30D0\u30FC\u306B\u3088\u308B\u8A98\u5C0E"
                 },
                 {
-                  "key": 32668,
-                  "value": false
+                  "key": 24948,
+                  "value": false,
+                  "#comment": "\u30EF\u30FC\u30EB\u30C96\u30B2\u30FC\u30E0\u30AA\u30FC\u30D0\u30FC\u306B\u3088\u308B\u8A98\u5C0E"
                 },
                 {
-                  "key": 18737,
-                  "value": true
+                  "key": 14043,
+                  "value": true,
+                  "#comment": "\u30B0\u30E9\u30F3\u30C9\u30AE\u30E3\u30E9\u30AF\u30B7\u30FC\u30DE\u30C3\u30D7\u521D\u30D7\u30EC\u30A4"
                 },
                 {
-                  "key": 5944,
-                  "value": false
+                  "key": 29887,
+                  "value": false,
+                  "#comment": "\u30B0\u30EA\u30FC\u30F3\u30B9\u30BF\u30FC\u51FA\u73FE\u30C7\u30E2"
                 },
                 {
-                  "key": 28464,
-                  "value": false
+                  "key": 21984,
+                  "value": false,
+                  "#comment": "\u30AF\u30C3\u30D1\u6700\u7D42\u6226\u76F4\u524D\u30C7\u30E2"
                 },
                 {
                   "key": 27285,
-                  "value": false
+                  "value": false,
+                  "#comment": "IsOpenScenarioGoroRockGalaxy3"
                 },
                 {
                   "key": 32308,
-                  "value": false
+                  "value": false,
+                  "#comment": "IsOpenScenarioJungleGliderGalaxy2"
                 },
                 {
                   "key": 5109,
-                  "value": false
+                  "value": false,
+                  "#comment": "IsOpenScenarioThunderFleetGalaxy3"
                 },
                 {
                   "key": 2262,
-                  "value": false
+                  "value": false,
+                  "#comment": "IsOpenScenarioChallengeGliderGalaxy2"
                 },
                 {
                   "key": 897,
-                  "value": false
+                  "value": false,
+                  "#comment": "IsOpenScenarioHoneyBeeVillageGalaxy2"
                 },
                 {
                   "key": 25423,
-                  "value": false
+                  "value": false,
+                  "#comment": "IsOpenScenarioUnderGroundDangeonGalaxy2"
                 },
                 {
                   "key": 28295,
-                  "value": true
+                  "value": true,
+                  "#comment": "IsOpenScenarioMokumokuValleyGalaxy2"
                 },
                 {
-                  "key": 10254,
-                  "value": true
+                  "key": 12032,
+                  "value": true,
+                  "#comment": "\u30AA\u30FC\u30D7\u30CB\u30F3\u30B0\u5B9F\u884C"
                 },
                 {
-                  "key": 18471,
-                  "value": false
+                  "key": 21336,
+                  "value": false,
+                  "#comment": "\u30B3\u30E1\u30C3\u30C8\u89E3\u8AAC"
                 },
                 {
-                  "key": 14093,
-                  "value": true
+                  "key": 20528,
+                  "value": true,
+                  "#comment": "\u9280\u884C\u5C4B\u30AD\u30CE\u30D4\u30AA\u521D\u56DE"
                 },
                 {
-                  "key": 30668,
-                  "value": false
+                  "key": 19565,
+                  "value": false,
+                  "#comment": "\u3067\u3057\u3083\u3070\u308A\u30EB\u30A4\u30FC\u30B8\u51FA\u73FE\u958B\u59CB"
                 },
                 {
-                  "key": 10960,
-                  "value": false
+                  "key": 21437,
+                  "value": false,
+                  "#comment": "\u30CE\u30FC\u30DE\u30EB\u30A8\u30F3\u30C7\u30A3\u30F3\u30B0\u5B9F\u884C"
                 },
                 {
-                  "key": 28689,
-                  "value": false
+                  "key": 24782,
+                  "value": false,
+                  "#comment": "\u30CE\u30FC\u30DE\u30EB\u30A8\u30F3\u30C7\u30A3\u30F3\u30B0\u5F8C\u30C7\u30E2"
                 },
                 {
-                  "key": 21509,
-                  "value": false
+                  "key": 5977,
+                  "value": false,
+                  "#comment": "\u30B9\u30BF\u30FC120\u500B\u30A8\u30F3\u30C7\u30A3\u30F3\u30B0\u5B9F\u884C"
                 },
                 {
-                  "key": 8198,
-                  "value": false
+                  "key": 10162,
+                  "value": false,
+                  "#comment": "\u30B9\u30BF\u30FC120\u500B\u30A8\u30F3\u30C7\u30A3\u30F3\u30B0\u5F8C\u30C7\u30E2"
                 },
                 {
-                  "key": 233,
-                  "value": false
+                  "key": 13735,
+                  "value": false,
+                  "#comment": "\u6700\u7D42\u30AE\u30E3\u30E9\u30AF\u30B7\u30FC\u51FA\u73FE"
                 },
                 {
-                  "key": 26747,
-                  "value": false
+                  "key": 26668,
+                  "value": false,
+                  "#comment": "\u30CE\u30FC\u30DE\u30EB\u30A8\u30F3\u30C7\u30A3\u30F3\u30B0\u30E1\u30FC\u30EB\u9001\u4FE1"
                 },
                 {
-                  "key": 14714,
-                  "value": false
+                  "key": 3182,
+                  "value": false,
+                  "#comment": "\u30B3\u30F3\u30D7\u30EA\u30FC\u30C8\u30E1\u30FC\u30EB\u9001\u4FE1"
                 },
                 {
-                  "key": 27298,
-                  "value": false
+                  "key": 26842,
+                  "value": false,
+                  "#comment": "\u30B9\u30BF\u30FC\u30D4\u30FC\u30B9\u30AB\u30A6\u30F3\u30BF\u30FC\u30B9\u30C8\u30C3\u30D7"
                 },
                 {
-                  "key": 28856,
-                  "value": false
+                  "key": 14836,
+                  "value": false,
+                  "#comment": "\u30B3\u30A4\u30F3\u30AB\u30A6\u30F3\u30BF\u30FC\u30B9\u30C8\u30C3\u30D7"
                 },
                 {
-                  "key": 28468,
-                  "value": false
+                  "key": 21725,
+                  "value": false,
+                  "#comment": "\u30EB\u30A4\u30FC\u30B8\u30D7\u30EC\u30A4\u6E08"
                 },
                 {
-                  "key": 24672,
-                  "value": false
+                  "key": 29431,
+                  "value": false,
+                  "#comment": "\u3067\u3057\u3083\u3070\u308A\u30EB\u30A4\u30FC\u30B8\u51FA\u73FE\u4E2D"
                 },
                 {
-                  "key": 16842,
-                  "value": false
+                  "key": 13585,
+                  "value": false,
+                  "#comment": "\u30B2\u30FC\u30E0\u30AA\u30FC\u30D0\u30FC\u3067\u7D42\u4E86"
                 }
               ]
             }
@@ -13769,148 +14018,184 @@
             "EventValue": {
               "event_value": [
                 {
-                  "key": 61246,
-                  "value": 0
+                  "key": 7684,
+                  "value": 0,
+                  "#comment": "\u30B0\u30E9\u30A4\u30C0\u30FC[\u30B8\u30E3\u30F3\u30B0\u30EB]/hi"
                 },
                 {
-                  "key": 61376,
-                  "value": 4285
+                  "key": 7814,
+                  "value": 4285,
+                  "#comment": "\u30B0\u30E9\u30A4\u30C0\u30FC[\u30B8\u30E3\u30F3\u30B0\u30EB]/lo"
                 },
                 {
-                  "key": 22480,
-                  "value": 0
+                  "key": 47409,
+                  "value": 0,
+                  "#comment": "\u30B0\u30E9\u30A4\u30C0\u30FC[\u30C1\u30E3\u30EC\u30F3\u30B8]/hi"
                 },
                 {
-                  "key": 22610,
-                  "value": 5400
+                  "key": 47539,
+                  "value": 5400,
+                  "#comment": "\u30B0\u30E9\u30A4\u30C0\u30FC[\u30C1\u30E3\u30EC\u30F3\u30B8]/lo"
                 },
                 {
-                  "key": 13863,
-                  "value": 0
+                  "key": 60501,
+                  "value": 0,
+                  "#comment": "\u30D9\u30B9\u30C8\u30B9\u30B3\u30A2[MokumokuValleyGalaxy]/lo"
                 },
                 {
-                  "key": 13733,
-                  "value": 0
+                  "key": 60371,
+                  "value": 0,
+                  "#comment": "\u30D9\u30B9\u30C8\u30B9\u30B3\u30A2[MokumokuValleyGalaxy]/hi"
                 },
                 {
-                  "key": 54143,
-                  "value": 0
+                  "key": 58129,
+                  "value": 0,
+                  "#comment": "\u30D9\u30B9\u30C8\u30B9\u30B3\u30A2[HoneyBeeVillageGalaxy]/lo"
                 },
                 {
-                  "key": 54013,
-                  "value": 0
+                  "key": 57999,
+                  "value": 0,
+                  "#comment": "\u30D9\u30B9\u30C8\u30B9\u30B3\u30A2[HoneyBeeVillageGalaxy]/hi"
                 },
                 {
-                  "key": 49375,
-                  "value": 0
+                  "key": 45069,
+                  "value": 0,
+                  "#comment": "\u30D9\u30B9\u30C8\u30B9\u30B3\u30A2[UnderGroundDangeonGalaxy]/lo"
                 },
                 {
-                  "key": 49245,
-                  "value": 0
+                  "key": 44939,
+                  "value": 0,
+                  "#comment": "\u30D9\u30B9\u30C8\u30B9\u30B3\u30A2[UnderGroundDangeonGalaxy]/hi"
                 },
                 {
-                  "key": 63525,
-                  "value": 0
+                  "key": 25043,
+                  "value": 0,
+                  "#comment": "\u30D9\u30B9\u30C8\u30B9\u30B3\u30A2[TwisterTowerGalaxy]/lo"
                 },
                 {
-                  "key": 63395,
-                  "value": 0
+                  "key": 24913,
+                  "value": 0,
+                  "#comment": "\u30D9\u30B9\u30C8\u30B9\u30B3\u30A2[TwisterTowerGalaxy]/hi"
                 },
                 {
-                  "key": 8130,
-                  "value": 0
+                  "key": 54768,
+                  "value": 0,
+                  "#comment": "\u30D9\u30B9\u30C8\u30B9\u30B3\u30A2[KachikochiLavaGalaxy]/lo"
                 },
                 {
-                  "key": 8000,
-                  "value": 0
+                  "key": 54638,
+                  "value": 0,
+                  "#comment": "\u30D9\u30B9\u30C8\u30B9\u30B3\u30A2[KachikochiLavaGalaxy]/hi"
                 },
                 {
-                  "key": 15462,
-                  "value": 0
+                  "key": 57720,
+                  "value": 0,
+                  "#comment": "\u30D9\u30B9\u30C8\u30B9\u30B3\u30A2[WhiteSnowGalaxy]/lo"
                 },
                 {
-                  "key": 15332,
-                  "value": 0
+                  "key": 57590,
+                  "value": 0,
+                  "#comment": "\u30D9\u30B9\u30C8\u30B9\u30B3\u30A2[WhiteSnowGalaxy]/hi"
                 },
                 {
-                  "key": 60887,
-                  "value": 4096
+                  "key": 2543,
+                  "value": 4096,
+                  "#comment": "\u90F5\u4FBF\u5C4B[\u30BF\u30B9\u30AF\u624B\u7D19\u65E2\u8AAD\u30D5\u30E9\u30B0]/0"
                 },
                 {
-                  "key": 60888,
-                  "value": 0
+                  "key": 2544,
+                  "value": 0,
+                  "#comment": "\u90F5\u4FBF\u5C4B[\u30BF\u30B9\u30AF\u624B\u7D19\u65E2\u8AAD\u30D5\u30E9\u30B0]/1"
                 },
                 {
-                  "key": 9630,
-                  "value": 16
+                  "key": 43833,
+                  "value": 16,
+                  "#comment": "\u90F5\u4FBF\u5C4B[\u91CD\u8981\u624B\u7D19\u65E2\u8AAD\u30D5\u30E9\u30B0]/0"
                 },
                 {
-                  "key": 9631,
-                  "value": 0
+                  "key": 43834,
+                  "value": 0,
+                  "#comment": "\u90F5\u4FBF\u5C4B[\u91CD\u8981\u624B\u7D19\u65E2\u8AAD\u30D5\u30E9\u30B0]/1"
                 },
                 {
-                  "key": 25301,
-                  "value": 12
+                  "key": 42026,
+                  "value": 12,
+                  "#comment": "\u90F5\u4FBF\u5C4B[\u6700\u5F8C\u306B\u8AAD\u3093\u3060\u30BF\u30B9\u30AF\u624B\u7D19\u30A4\u30F3\u30C7\u30C3\u30AF\u30B9]"
                 },
                 {
-                  "key": 64169,
-                  "value": 0
+                  "key": 19654,
+                  "value": 0,
+                  "#comment": "\u90F5\u4FBF\u5C4B[\u30D4\u30FC\u30C1\u624B\u7D19\u3092\u8AAD\u3093\u3060\u6642\u306E\u7D2F\u7A4D\u6B7B\u4EA1\u56DE\u6570]"
                 },
                 {
-                  "key": 35401,
-                  "value": 0
+                  "key": 16173,
+                  "value": 0,
+                  "#comment": "\u30E1\u30C3\u30BB\u30FC\u30B8\u65E2\u8AAD\u30D5\u30E9\u30B0/0"
                 },
                 {
-                  "key": 35402,
-                  "value": 0
+                  "key": 16174,
+                  "value": 0,
+                  "#comment": "\u30E1\u30C3\u30BB\u30FC\u30B8\u65E2\u8AAD\u30D5\u30E9\u30B0/1"
                 },
                 {
-                  "key": 61856,
-                  "value": 33
+                  "key": 16409,
+                  "value": 33,
+                  "#comment": "\u7D2F\u7A4D\u6B7B\u4EA1\u56DE\u6570"
                 },
                 {
-                  "key": 6300,
-                  "value": 1
+                  "key": 8484,
+                  "value": 1,
+                  "#comment": "\u7D2F\u7A4D\u30B2\u30FC\u30E0\u30AA\u30FC\u30D0\u30FC\u56DE\u6570"
                 },
                 {
-                  "key": 11767,
-                  "value": 46198
+                  "key": 17492,
+                  "value": 46198,
+                  "#comment": "\u7D2F\u7A4D\u30D7\u30EC\u30A4\u6642\u9593/lo"
                 },
                 {
-                  "key": 11637,
-                  "value": 14
+                  "key": 17362,
+                  "value": 14,
+                  "#comment": "\u7D2F\u7A4D\u30D7\u30EC\u30A4\u6642\u9593/hi"
                 },
                 {
-                  "key": 27360,
-                  "value": 0
+                  "key": 47082,
+                  "value": 0,
+                  "#comment": "\u3067\u3057\u3083\u3070\u308A\u30EB\u30A4\u30FC\u30B8\u51FA\u73FE\u30AB\u30A6\u30F3\u30BF"
                 },
                 {
-                  "key": 31625,
-                  "value": 5
+                  "key": 49378,
+                  "value": 5,
+                  "#comment": "\u9280\u884C\u5C4B\u30AD\u30CE\u30D4\u30AA[\u5229\u5B50]"
                 },
                 {
-                  "key": 52973,
-                  "value": 0
+                  "key": 19248,
+                  "value": 0,
+                  "#comment": "\u9854\u60D1\u661F\u30A4\u30D9\u30F3\u30C8\u756A\u53F7/0"
                 },
                 {
-                  "key": 52974,
-                  "value": 0
+                  "key": 19249,
+                  "value": 0,
+                  "#comment": "\u9854\u60D1\u661F\u30A4\u30D9\u30F3\u30C8\u756A\u53F7/1"
                 },
                 {
-                  "key": 52975,
-                  "value": 0
+                  "key": 19250,
+                  "value": 0,
+                  "#comment": "\u9854\u60D1\u661F\u30A4\u30D9\u30F3\u30C8\u756A\u53F7/2"
                 },
                 {
-                  "key": 52976,
-                  "value": 0
+                  "key": 19251,
+                  "value": 0,
+                  "#comment": "\u9854\u60D1\u661F\u30A4\u30D9\u30F3\u30C8\u756A\u53F7/3"
                 },
                 {
-                  "key": 22141,
-                  "value": 0
+                  "key": 21723,
+                  "value": 0,
+                  "#comment": "\u9854\u60D1\u661F\u30A4\u30D9\u30F3\u30C8\u30B0\u30E9\u30F3\u30C9\u30B9\u30BF\u30FC\u756A\u53F7"
                 },
                 {
-                  "key": 41581,
-                  "value": 1
+                  "key": 32745,
+                  "value": 1,
+                  "#comment": "\u4E00\u5B9A\u6570\u6B7B\u4EA1\u5F8C\u306E\u30B9\u30C6\u30FC\u30B8\u30AF\u30EA\u30A2\u56DE\u6570"
                 }
               ]
             }
@@ -20088,7 +20373,7 @@
           {
             "$type": "MiscChunk",
             "Misc": {
-              "last_modified": 31381062361106755
+              "last_modified": "2016-05-14T17:04:57.3021688Z"
             }
           }
         ]
@@ -20100,7 +20385,7 @@
         "SysConfigData": [
           {
             "is_encourage_pal60": false,
-            "time_sent": 26051922710872622,
+            "time_sent": "2013-08-03T09:43:53.9238292Z",
             "sent_bytes": 183047,
             "bank_star_piece_num": 346,
             "bank_star_piece_max": 1795,

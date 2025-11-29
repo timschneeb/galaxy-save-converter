@@ -29,9 +29,9 @@ public class SaveDataStorageTicoFat
     {
         for (var i = 0; i < 8; i++)
         for (var j = 0; j < 6; j++)
-            writer.WriteUInt16(0);// TODO StarPieceNum[i,j]);
+            writer.WriteUInt16(StarPieceNum[i,j]);
         for (var i = 0; i < 16; i++)
-            writer.WriteUInt16(0);// TODO CoinGalaxyName[i]);
+            writer.WriteUInt16(CoinGalaxyName[i]);
         
         if (writer.ConsoleType == ConsoleType.Switch)
         {

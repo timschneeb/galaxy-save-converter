@@ -109,7 +109,7 @@ public class SaveDataUserFile
             return result;
         }
 
-        static ConfigDataChunk? ReadConfigChunk(BinaryReader r)
+        static ConfigDataChunk? ReadConfigChunk(EndianAwareReader r)
         {
             var (magic, hash, size, inner, start) = r.ReadChunkHeader();
             ConfigDataChunk? chunk = null;
@@ -122,7 +122,10 @@ public class SaveDataUserFile
                     chunk = new MiiChunk { Mii = ConfigDataMii.ReadFrom(r, inner) };
                     break;
                 case 0x4D495343: // MISC
-                    var misc = new ConfigDataMisc { LastModified = r.ReadInt64() };
+                    var misc = new ConfigDataMisc
+                    {
+                        LastModified = r.ReadTime()
+                    };
                     chunk = new MiscChunk { Misc = misc };
                     break;
                 default:
@@ -135,7 +138,7 @@ public class SaveDataUserFile
             return chunk;
         }
 
-        static SysConfigData? ReadSysConfigChunk(BinaryReader r)
+        static SysConfigData? ReadSysConfigChunk(EndianAwareReader r)
         {
             var (magic, hash, size, inner, start) = r.ReadChunkHeader();
             SysConfigData? chunk = null;
@@ -274,8 +277,7 @@ public class SaveDataUserFile
                     }
                     case MiscChunk misc:
                     {
-                        // TODO bw.WriteInt64(misc.Misc.LastModified);
-                        bw.WriteInt64(DateTimeOffset.UtcNow.ToUnixTimeSeconds());
+                        bw.WriteTime(misc.Misc.LastModified);
                         if (writer.ConsoleType == ConsoleType.Switch)
                         {
                             bw.WriteAlignmentPadding(alignment: 4);

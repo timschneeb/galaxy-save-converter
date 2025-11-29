@@ -1,5 +1,6 @@
 using System.Text;
 using System.Buffers.Binary;
+using Galaxy2.SaveData.Utils;
 
 namespace Galaxy2.SaveData;
 
@@ -14,6 +15,23 @@ public class EndianAwareWriter(Stream input, ConsoleType consoleType) : BinaryWr
     public EndianAwareWriter NewWriter(Stream stream)
     {
         return new EndianAwareWriter(stream, ConsoleType);
+    }
+    
+    /// <summary>
+    /// Writes a DateTime as either Wii ticks or Unix time seconds, depending on the target console.
+    /// </summary>
+    /// <param name="time">Date time to write. If not in range 2000-2199, the current time will be written as fallback</param>
+    public void WriteTime(DateTime time)
+    {
+        if (time.Year is < 2000 or > 2199)
+        {
+            time = DateTimeOffset.UtcNow.DateTime;
+        }
+        
+        var ticks = ConsoleType == ConsoleType.Wii
+            ? OsTime.UnixToWiiTicks(time)
+            : new DateTimeOffset(time).ToUnixTimeSeconds();
+        this.WriteInt64(ticks);
     }
     
     public override void Write(short value)

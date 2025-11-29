@@ -26,7 +26,7 @@ public static class BinaryCompareExtensions
         long pos = 0;
         while (pos < minLen)
         {
-            if (expected[pos] != actual[pos])
+            if (expected[pos] != actual[pos] && !Exclusions.Addresses.Contains(pos))
             {
                 var start = pos;
                 while (pos < minLen && expected[pos] != actual[pos]) pos++;

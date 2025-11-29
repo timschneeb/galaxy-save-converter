@@ -10,7 +10,7 @@ public class SysConfigData
     [JsonPropertyName("is_encourage_pal60")]
     public bool IsEncouragePal60 { get; set; }
     [JsonPropertyName("time_sent")]
-    public long TimeSent { get; set; }
+    public DateTime TimeSent { get; set; }
     [JsonPropertyName("sent_bytes")]
     public uint SentBytes { get; set; }
     [JsonPropertyName("bank_star_piece_num")]
@@ -22,7 +22,7 @@ public class SysConfigData
     [JsonPropertyName("gifted_file_name_hash")]
     public ushort GiftedFileNameHash { get; set; }
 
-    public static SysConfigData ReadFrom(BinaryReader reader, int dataSize)
+    public static SysConfigData ReadFrom(EndianAwareReader reader, int dataSize)
     {
         var sysConfig = new SysConfigData();
         var dataStartPos = reader.BaseStream.Position;
@@ -34,7 +34,9 @@ public class SysConfigData
             sysConfig.IsEncouragePal60 = pal60 != 0;
 
         if (reader.TryReadI64(fieldsDataStartPos, attributes, "mTimeSent", out var timeSent))
-            sysConfig.TimeSent = timeSent;
+            sysConfig.TimeSent = reader.ConsoleType == ConsoleType.Wii
+                ? OsTime.WiiTicksToUnix(timeSent)
+                : DateTimeOffset.FromUnixTimeSeconds(timeSent).DateTime;
 
         if (reader.TryReadU32(fieldsDataStartPos, attributes, "mSentBytes", out var sentBytes))
             sysConfig.SentBytes = sentBytes;
@@ -62,7 +64,9 @@ public class SysConfigData
         var attrs = new List<(ushort key, ushort offset)>();
 
         AddU8("mIsEncouragePal60", IsEncouragePal60 ? (byte)1 : (byte)0);
-        AddI64("mTimeSent", 0); // TODO: Timestamp
+        AddI64("mTimeSent", writer.ConsoleType == ConsoleType.Wii
+            ? OsTime.UnixToWiiTicks(TimeSent)
+            : new DateTimeOffset(TimeSent).ToUnixTimeSeconds());
         AddU32("mSentBytes", SentBytes);
         AddU16("mBankStarPieceNum", BankStarPieceNum);
         AddU16("mBankStarPieceMax", BankStarPieceMax);

@@ -5,5 +5,5 @@ namespace Galaxy2.SaveData.Chunks.Config;
 public class ConfigDataMisc
 {
     [JsonPropertyName("last_modified")]
-    public long LastModified { get; set; }
+    public DateTime LastModified { get; set; }
 }

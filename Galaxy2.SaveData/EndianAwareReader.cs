@@ -1,5 +1,6 @@
 using System.Text;
 using System.Buffers.Binary;
+using Galaxy2.SaveData.Utils;
 
 namespace Galaxy2.SaveData;
 
@@ -7,6 +8,14 @@ public class EndianAwareReader(Stream input, ConsoleType target) : BinaryReader(
 {
     public bool BigEndian => ConsoleType == ConsoleType.Wii;
     public ConsoleType ConsoleType { get; set; } = target;
+    
+    public DateTime ReadTime()
+    {
+        var ticks = ReadInt64();
+        return ConsoleType == ConsoleType.Wii ?
+            OsTime.WiiTicksToUnix(ticks) : 
+            DateTimeOffset.FromUnixTimeSeconds(ticks).DateTime;
+    }
     
     public override short ReadInt16()
     {
