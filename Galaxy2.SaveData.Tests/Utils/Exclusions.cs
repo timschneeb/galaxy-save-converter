@@ -12,4 +12,10 @@ public static class Exclusions
         // Skip initial checksum
         0x0, 0x1, 0x2, 0x3
     ];
+    
+    public static readonly string[] JsonKeys = 
+    [
+        // Ignore last modified timestamps in config chunks
+        "last_modified"
+    ];
 }

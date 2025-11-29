@@ -45,7 +45,7 @@ public static class JsonCompareExtensions
     
     private static void CompareWithRecursively(this JsonNode? expected, JsonNode? actual, IList<string> diffs, string path, int maxDiffs = 200)
     {
-        if (diffs.Count >= maxDiffs)
+        if (diffs.Count >= maxDiffs || Exclusions.JsonKeys.Any(path.EndsWith))
             return;
 
         expected = SortProperties(expected);

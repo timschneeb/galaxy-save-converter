@@ -50,6 +50,7 @@ public class GameDataEndiannessLERoundtrip(ITestOutputHelper testOutputHelper)
         Json.Program.Main(["be2json", beBin, beJson]);
         Json.Program.Main(["le2json", roundtripBin, roundtripJson]);
         
+        // TODO fix test & add additional reference binary
         Assert.True(diffsBlocks.Count == 0, "Round-tripped binary file does not match original binary file. See test output for differing blocks.");        
 
         AssertJsonFilesEqual(origJson, beJson);

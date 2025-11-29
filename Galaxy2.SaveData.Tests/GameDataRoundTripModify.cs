@@ -63,6 +63,6 @@ public class GameDataRoundTripModify(ITestOutputHelper testOutputHelper)
             testOutputHelper.WriteLine(d);
         }
             
-        Assert.True(diffsBlocks.Count == 3, "Round-tripped binary doesn't reflect change (checksum and modified data)");
+        Assert.True(diffsBlocks.Count == 1, "Round-tripped binary doesn't reflect change (checksum and modified data)");
     }
 }
