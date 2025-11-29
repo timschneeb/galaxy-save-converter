@@ -32,7 +32,7 @@ public class ConfigDataMii
             writer.Write(new byte[8]);
             if (IconId == ConfigDataMiiIcon.Mii)
             {
-                IconId = ConfigDataMiiIcon.Mario;
+                IconId = ConfigDataMiiIcon.Tico;
             }
             writer.Write((byte)IconId);
             writer.WriteAlignmentPadding(alignment: 4);
