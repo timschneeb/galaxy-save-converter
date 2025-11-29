@@ -275,7 +275,7 @@ public class SaveDataUserFile
                     case MiscChunk misc:
                     {
                         // TODO bw.WriteInt64(misc.Misc.LastModified);
-                        bw.WriteInt64(1763941776);
+                        bw.WriteInt64(DateTimeOffset.UtcNow.ToUnixTimeSeconds());
                         if (writer.ConsoleType == ConsoleType.Switch)
                         {
                             bw.WriteAlignmentPadding(alignment: 4);
