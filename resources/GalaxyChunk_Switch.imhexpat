@@ -1,0 +1,61 @@
+#pragma endian little
+
+import std.mem;
+
+struct attr_entry_t {
+    u16 key;
+    u16 offset;
+} [[single_color]];
+
+struct attr_table_t {
+    u16 attr_count; 
+    u16 fields_size;
+    attr_entry_t entries[attr_count];
+};
+
+struct galaxy_headers_t {
+    u16 galaxy_count;     
+
+    attr_table_t stage_attr_header; 
+    attr_table_t scenario_attr_header; 
+};
+
+enum galaxy_state_t : u8 {
+    Closed,
+    New,
+    Opened,
+};
+
+bitfield galaxy_flag_t {
+  TicoCoin : 1;
+  Comet : 1;
+};
+
+bitfield galaxy_scenario_flag_t {
+  PowerStar : 1;
+  BronzeStar : 1;
+  AlreadyVisited : 1;
+  GhostLuigi : 1;
+  IntrusivelyLuigi : 1;
+};
+
+struct galaxy_scenario_t {  
+    u8 missNum;
+    u32 bestTime;
+    galaxy_scenario_flag_t scenarioFlag;
+    u16 clearStageNum;
+    u16 missStageNum;
+    u16 totalPlaySecond;
+} [[single_color]];
+
+struct galaxy_t {
+    u16 galaxyName;
+    u16 dataSize;
+    u8 scenarioNum;
+    galaxy_state_t state;
+    galaxy_flag_t flag;
+    galaxy_scenario_t scenarios[scenarioNum];
+};
+
+galaxy_headers_t galaxy_headers @ 0x2b4;
+galaxy_t galaxies[49] @ 0x2ea;
