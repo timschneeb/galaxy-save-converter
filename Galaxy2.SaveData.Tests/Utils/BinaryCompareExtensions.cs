@@ -26,7 +26,7 @@ public static class BinaryCompareExtensions
     }
     
     // Dump differences between two byte arrays to list
-    public static IList<string> CompareWith(this byte[] expected, byte[] actual, Exclusions.AddressSpan[] excludes, int maxDiffs = 200)
+    public static IList<string> CompareWith(this byte[] expected, byte[] actual, IList<Exclusions.AddressSpan> excludes, int maxDiffs = 200)
     {
         var diffs = new List<string>();
         var diffsBlocks = new List<(long offset, long length)>();

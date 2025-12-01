@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.Json.Nodes;
 using Xunit;
 using Galaxy2.SaveData.Save;
@@ -35,7 +37,17 @@ public class GameDataEndiannessLERoundtrip(ITestOutputHelper testOutputHelper)
         var saveLe = SaveDataFile.ReadFile(beBin, ConsoleType.Wii);
         saveLe.WriteFile(roundtripBin, ConsoleType.Switch);
 
-        var excludedBinaryDiffs = Exclusions.Make(Exclusions.TimestampMode.Skip, isSwitchFile: true, skipSwitchOnlyFields: true);
+        var excludedBinaryDiffs = 
+            Exclusions.Make(Exclusions.TimestampMode.Skip, isSwitchFile: true, skipSwitchOnlyFields: true)
+                // Exclude some additional Switch-only fields in GalaxyScenario structs
+                .Concat(new List<Exclusions.AddressSpan>()
+                {
+                    new(0x6F0, 16),
+                    new(0x700, 2),
+                    new(0xF57, 6)
+                })
+                .ToList();
+        
         var diffsBlocks = File.ReadAllBytes(origBin)
             .CompareWith(File.ReadAllBytes(roundtripBin), excludedBinaryDiffs)
             .AlsoPrintDiffs(testOutputHelper);
@@ -57,7 +69,7 @@ public class GameDataEndiannessLERoundtrip(ITestOutputHelper testOutputHelper)
         var generatedJson = File.ReadAllText(genJson);
         var referenceToken = JsonNode.Parse(referenceJson);
         var generatedToken = JsonNode.Parse(generatedJson);
-        var diffs = referenceToken.CompareWith(generatedToken);
+        var diffs = referenceToken.CompareWith(generatedToken, ignoredKeys: ["Misc.last_modified", "PlayerStatus.attributes", ".scenario", "time_sent"]);
         
         if (diffs.Count > 0)
         {

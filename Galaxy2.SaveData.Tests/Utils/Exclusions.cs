@@ -25,7 +25,7 @@ public static class Exclusions
         Exact
     }
     
-    public static AddressSpan[] Make(
+    public static IList<AddressSpan> Make(
         TimestampMode timestamp = TimestampMode.Exact,
         bool isSwitchFile = false,
         bool skipSwitchOnlyFields = false, 
@@ -86,7 +86,7 @@ public static class Exclusions
                 new(user3Offset + 0xF9E, 9),
             ]);
         }
-        return spans.ToArray();
+        return spans;
     }
     
 
