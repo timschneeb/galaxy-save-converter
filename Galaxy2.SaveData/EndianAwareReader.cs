@@ -1,4 +1,3 @@
-using System.Text;
 using System.Buffers.Binary;
 using Galaxy2.SaveData.Utils;
 

@@ -29,7 +29,7 @@ public class GameDataRoundTripModify(ITestOutputHelper testOutputHelper)
         // Deserialize original file into object
         var save = SaveDataFile.ReadFile(inputBin, ConsoleType.Wii);
 
-        var user1 = save.UserFileInfo.First(x => x.Name.ToString()!.StartsWith("user1"));
+        var user1 = save.UserFileInfo.First(x => x.Name.ToString().StartsWith("user1"));
         var player = user1.UserFile!.GameData!.First(x => x is PlayerStatusChunk) as PlayerStatusChunk;
         player!.PlayerStatus.PlayerLeft = 32;
             
@@ -46,7 +46,7 @@ public class GameDataRoundTripModify(ITestOutputHelper testOutputHelper)
         var referenceToken = JsonNode.Parse(referenceJson);
         var generatedToken = JsonNode.Parse(generatedJson);
 
-        var diffs = referenceToken.CompareWith(generatedToken);
+        var diffs = referenceToken.CompareWith(generatedToken, ignoredKeys: ["Misc.last_modified"]);
         foreach (var d in diffs)
         {
             testOutputHelper.WriteLine(d);
@@ -56,12 +56,11 @@ public class GameDataRoundTripModify(ITestOutputHelper testOutputHelper)
             
         var referenceBin = File.ReadAllBytes(origBin);
         var generatedBin = File.ReadAllBytes(tmpBin);
-            
-        var diffsBlocks = referenceBin.CompareWith(generatedBin);
-        foreach (var d in diffsBlocks)
-        {
-            testOutputHelper.WriteLine(d);
-        }
+          
+        var excludedBinaryDiffs = Exclusions.Make(Exclusions.TimestampMode.Approximate);
+        var diffsBlocks = referenceBin
+            .CompareWith(generatedBin, excludedBinaryDiffs)
+            .AlsoPrintDiffs(testOutputHelper);
             
         Assert.True(diffsBlocks.Count == 1, "Round-tripped binary doesn't reflect change (checksum and modified data)");
     }

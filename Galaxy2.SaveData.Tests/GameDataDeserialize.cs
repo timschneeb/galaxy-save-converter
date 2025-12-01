@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using System.Text.Json.Nodes;
 using Galaxy2.SaveData.Tests.Utils;
@@ -33,7 +32,7 @@ public class GameDataJsonDeserialize(ITestOutputHelper testOutputHelper)
         var referenceToken = JsonNode.Parse(referenceJson);
         var generatedToken = JsonNode.Parse(generatedJson);
             
-        var diffs = referenceToken.CompareWith(generatedToken);
+        var diffs = referenceToken.CompareWith(generatedToken, ignoredKeys: ["Misc.last_modified"]);
         foreach (var d in diffs)
         {
             testOutputHelper.WriteLine(d);

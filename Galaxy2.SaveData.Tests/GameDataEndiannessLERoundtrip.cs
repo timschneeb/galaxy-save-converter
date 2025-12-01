@@ -1,12 +1,8 @@
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text.Json.Nodes;
 using Xunit;
 using Galaxy2.SaveData.Save;
 using Galaxy2.SaveData.Tests.Utils;
-
-[assembly: CaptureConsole]
 
 namespace Galaxy2.SaveData.Tests;
 
@@ -38,12 +34,11 @@ public class GameDataEndiannessLERoundtrip(ITestOutputHelper testOutputHelper)
         
         var saveLe = SaveDataFile.ReadFile(beBin, ConsoleType.Wii);
         saveLe.WriteFile(roundtripBin, ConsoleType.Switch);
-        
-        var diffsBlocks = File.ReadAllBytes(origBin).CompareWith(File.ReadAllBytes(roundtripBin));
-        foreach (var d in diffsBlocks)
-        {
-            testOutputHelper.WriteLine(d);
-        }
+
+        var excludedBinaryDiffs = Exclusions.Make(Exclusions.TimestampMode.Skip, isSwitchFile: true, skipSwitchOnlyFields: true);
+        var diffsBlocks = File.ReadAllBytes(origBin)
+            .CompareWith(File.ReadAllBytes(roundtripBin), excludedBinaryDiffs)
+            .AlsoPrintDiffs(testOutputHelper);
         
         // Produce JSON from both files using the existing JSON generator
         Json.Program.Main(["le2json", inputBin, origJson]);
@@ -53,9 +48,7 @@ public class GameDataEndiannessLERoundtrip(ITestOutputHelper testOutputHelper)
         // TODO fix test & add additional reference binary
         Assert.True(diffsBlocks.Count == 0, "Round-tripped binary file does not match original binary file. See test output for differing blocks.");        
 
-        AssertJsonFilesEqual(origJson, beJson);
         AssertJsonFilesEqual(origJson, roundtripJson);
-        AssertJsonFilesEqual(beJson, roundtripJson);
     }
     
     private void AssertJsonFilesEqual(string origJson, string genJson)

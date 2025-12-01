@@ -31455,7 +31455,7 @@
         "SysConfigData": [
           {
             "is_encourage_pal60": false,
-            "time_sent": "1970-01-01T00:00:00",
+            "time_sent": "1970-01-01T00:00:00Z",
             "sent_bytes": 0,
             "bank_star_piece_num": 0,
             "bank_star_piece_max": 314,

@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using Xunit;
 
 namespace Galaxy2.SaveData.Tests.Utils;
 
@@ -17,8 +19,14 @@ public static class BinaryCompareExtensions
         return BitConverter.ToString(data, (int)offset, expAvail).Replace('-', ' ') + (length > expAvail ? " ..." : "");
     }
     
+    public static IList<string> AlsoPrintDiffs(this IList<string> lines, ITestOutputHelper outputHelper)
+    {
+        foreach (var d in lines) outputHelper.WriteLine(d);
+        return lines;
+    }
+    
     // Dump differences between two byte arrays to list
-    public static IList<string> CompareWith(this byte[] expected, byte[] actual, int maxDiffs = 200)
+    public static IList<string> CompareWith(this byte[] expected, byte[] actual, Exclusions.AddressSpan[] excludes, int maxDiffs = 200)
     {
         var diffs = new List<string>();
         var diffsBlocks = new List<(long offset, long length)>();
@@ -26,10 +34,11 @@ public static class BinaryCompareExtensions
         long pos = 0;
         while (pos < minLen)
         {
-            if (expected[pos] != actual[pos] && !Exclusions.Addresses.Contains(pos))
+            if (expected[pos] != actual[pos] && !excludes.Any(span => span.Contains(pos)))
             {
                 var start = pos;
-                while (pos < minLen && expected[pos] != actual[pos]) pos++;
+                while (pos < minLen && expected[pos] != actual[pos] && !excludes.Any(span => span.Contains(pos)))
+                    pos++;
                 var len = pos - start;
                 diffsBlocks.Add((start, len));
             }
