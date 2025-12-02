@@ -1,5 +1,8 @@
 {
-  "user_file_info": [
+  "Header": {
+    "version": 3
+  },
+  "UserFileInfo": [
     {
       "name": "user1",
       "user_file": {
@@ -13580,7 +13583,7 @@
           {
             "$type": "MiscChunk",
             "Misc": {
-              "last_modified": "2119-06-16T02:54:03.2074726Z"
+              "last_modified": "2119-06-16T02:54:03.2074731Z"
             }
           }
         ]

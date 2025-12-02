@@ -1,5 +1,6 @@
 using System.Text;
 using System.Text.Json.Serialization;
+using Galaxy2.SaveData.Utils.Converters;
 
 namespace Galaxy2.SaveData.String;
 

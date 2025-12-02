@@ -1,7 +1,8 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Galaxy2.SaveData.String;
 
-namespace Galaxy2.SaveData.String;
+namespace Galaxy2.SaveData.Utils.Converters;
 
 public class FixedString12JsonConverter : JsonConverter<FixedString12>
 {

@@ -29,13 +29,13 @@ public class GameDataEndiannessLERoundtrip(ITestOutputHelper testOutputHelper)
         File.Copy(inputBin, origBin, true);
             
         // Deserialize original file into object
-        var save = SaveDataFile.ReadFile(inputBin, ConsoleType.Switch);
+        var save = SaveDataFile.ReadFile(inputBin, FileType.SwitchBin);
 
         // Serialize back out to a temporary file
-        save.WriteFile(beBin, ConsoleType.Wii);
+        save.WriteFile(beBin, FileType.WiiBin);
         
-        var saveLe = SaveDataFile.ReadFile(beBin, ConsoleType.Wii);
-        saveLe.WriteFile(roundtripBin, ConsoleType.Switch);
+        var saveLe = SaveDataFile.ReadFile(beBin, FileType.WiiBin);
+        saveLe.WriteFile(roundtripBin, FileType.SwitchBin);
 
         var excludedBinaryDiffs = 
             Exclusions.Make(Exclusions.TimestampMode.Skip, isSwitchFile: true, skipSwitchOnlyFields: true)
@@ -53,9 +53,9 @@ public class GameDataEndiannessLERoundtrip(ITestOutputHelper testOutputHelper)
             .AlsoPrintDiffs(testOutputHelper);
         
         // Produce JSON from both files using the existing JSON generator
-        Json.Program.Main(["le2json", inputBin, origJson]);
-        Json.Program.Main(["be2json", beBin, beJson]);
-        Json.Program.Main(["le2json", roundtripBin, roundtripJson]);
+        Json.Program.Main(["switch2json", inputBin, "-o", origJson]);
+        Json.Program.Main(["wii2json", beBin, "-o", beJson]);
+        Json.Program.Main(["switch2json", roundtripBin, "-o", roundtripJson]);
         
         Assert.True(diffsBlocks.Count == 0, "Round-tripped binary file does not match original binary file. See test output for differing blocks.");        
 

@@ -1,4 +1,6 @@
 using System.Buffers;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Galaxy2.SaveData.Utils;
 
 namespace Galaxy2.SaveData.Save;
@@ -7,11 +9,21 @@ public class SaveDataFile
 {
     public required SaveDataFileHeader Header { get; set; }
     public required List<SaveDataUserFileInfo> UserFileInfo { get; set; }
-    
-    public static SaveDataFile ReadFile(string path, ConsoleType consoleType)
+
+    public static SaveDataFile ReadFile(string path, FileType from)
     {
+        if (from == FileType.Json)
+        {
+            return ReadJsonString(File.ReadAllText(path));
+        }
+
         using var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
-        using var reader = new EndianAwareReader(fs, consoleType);
+        return ReadBinary(fs, from);
+    }
+    
+    public static SaveDataFile ReadBinary(Stream stream, FileType from)
+    {
+        using var reader = new EndianAwareReader(stream, from == FileType.WiiBin ? ConsoleType.Wii : ConsoleType.Switch);
 
         var header = new SaveDataFileHeader
         {
@@ -47,11 +59,24 @@ public class SaveDataFile
 
         return new SaveDataFile { Header = header, UserFileInfo = userFileInfo };
     }
-
-    public void WriteFile(string path, ConsoleType consoleType)
+    
+    public static SaveDataFile ReadJsonString(string json) => JsonSerializer.Deserialize<SaveDataFile>(json, JsonOptions.SerializerOptions)!;
+    
+    public void WriteFile(string path, FileType from)
     {
+        if (from == FileType.Json)
+        {
+            File.WriteAllText(path, ToJson());
+            return;
+        }
+
         using var fs = new FileStream(path, FileMode.Create, FileAccess.ReadWrite, FileShare.None);
-        using var writer = new EndianAwareWriter(fs, consoleType);
+        WriteBinary(fs, from);
+    }
+    
+    public void WriteBinary(Stream stream, FileType fileType)
+    {
+        using var writer = new EndianAwareWriter(stream, fileType == FileType.WiiBin ? ConsoleType.Wii : ConsoleType.Switch);
 
         // header placeholders (checksum=0, version, count, fileSize=0)
         writer.WriteUInt32(0);
@@ -91,14 +116,15 @@ public class SaveDataFile
 
         // compute checksum from byte 4 to end using streaming buffer
         writer.Flush();
-        fs.Flush();
-        var checksum = ComputeChecksum(stream: fs, endPosition, writer.BigEndian);
+        stream.Flush();
+        var checksum = ComputeChecksum(stream, endPosition, writer.BigEndian);
 
         // write checksum at start
         writer.BaseStream.Position = 0;
         writer.WriteUInt32(checksum);
     }
 
+    public string ToJson() => JsonSerializer.Serialize(this, JsonOptions.SerializerOptions);
 
     /// <summary>
     /// Compute checksum over the stream from offset 4 up to endPosition.

@@ -10,5 +10,9 @@
   <ItemGroup>
     <ProjectReference Include="..\Galaxy2.SaveData\Galaxy2.SaveData.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.CommandLine.NamingConventionBinder" Version="2.0.0-beta5.25306.1" />
+  </ItemGroup>
   
 </Project>

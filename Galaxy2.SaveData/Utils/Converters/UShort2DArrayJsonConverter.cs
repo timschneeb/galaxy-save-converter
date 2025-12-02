@@ -1,7 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Galaxy2.SaveData.Json;
+namespace Galaxy2.SaveData.Utils.Converters;
 
 public class UShort2DArrayJsonConverter : JsonConverter<ushort[,]>
 {

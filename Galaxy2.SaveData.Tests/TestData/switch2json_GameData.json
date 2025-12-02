@@ -1,5 +1,8 @@
 {
-  "user_file_info": [
+  "Header": {
+    "version": 3
+  },
+  "UserFileInfo": [
     {
       "name": "user1",
       "user_file": {
@@ -10477,7 +10480,7 @@
           {
             "$type": "MiscChunk",
             "Misc": {
-              "last_modified": "2025-11-23T23:49:36"
+              "last_modified": "2025-11-23T23:49:36Z"
             }
           }
         ]
@@ -20960,7 +20963,7 @@
           {
             "$type": "MiscChunk",
             "Misc": {
-              "last_modified": "1970-01-01T00:00:00"
+              "last_modified": "1970-01-01T00:00:00Z"
             }
           }
         ]
@@ -31443,7 +31446,7 @@
           {
             "$type": "MiscChunk",
             "Misc": {
-              "last_modified": "1970-01-01T00:00:00"
+              "last_modified": "1970-01-01T00:00:00Z"
             }
           }
         ]
