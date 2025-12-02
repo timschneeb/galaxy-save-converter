@@ -97,7 +97,7 @@ public class SaveDataFile
         {
             var off = (uint)writer.BaseStream.Position;
             offsets.Add(off);
-            u.UserFile.WriteTo(writer, u.Name!.ToString()!);
+            u.UserFile.WriteTo(writer, u.Name.ToString());
         }
 
         // back-fill offsets into table

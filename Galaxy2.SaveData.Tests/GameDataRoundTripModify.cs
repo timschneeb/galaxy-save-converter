@@ -30,7 +30,7 @@ public class GameDataRoundTripModify(ITestOutputHelper testOutputHelper)
         var save = SaveDataFile.ReadFile(inputBin, FileType.WiiBin);
 
         var user1 = save.UserFileInfo.First(x => x.Name.ToString().StartsWith("user1"));
-        var player = user1.UserFile!.GameData!.First(x => x is PlayerStatusChunk) as PlayerStatusChunk;
+        var player = user1.UserFile.GameData!.First(x => x is PlayerStatusChunk) as PlayerStatusChunk;
         player!.PlayerStatus.PlayerLeft = 32;
             
         // Serialize back out to a temporary file
