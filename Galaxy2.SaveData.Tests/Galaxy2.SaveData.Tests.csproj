@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Galaxy2.SaveData.Json\Galaxy2.SaveData.Json.csproj" />
+    <ProjectReference Include="..\Galaxy2.SaveData.CLI\Galaxy2.SaveData.CLI.csproj" />
   </ItemGroup>
   
   <ItemGroup>
