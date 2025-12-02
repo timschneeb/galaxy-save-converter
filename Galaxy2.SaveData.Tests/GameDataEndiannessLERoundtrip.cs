@@ -2,8 +2,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json.Nodes;
+using Galaxy2.SaveData.Model;
 using Xunit;
-using Galaxy2.SaveData.Save;
 using Galaxy2.SaveData.Tests.Utils;
 
 namespace Galaxy2.SaveData.Tests;

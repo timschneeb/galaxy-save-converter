@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace Galaxy2.SaveData.Chunks.Game;
+namespace Galaxy2.SaveData.Model.Chunks.Game;
 
 [JsonPolymorphic(TypeDiscriminatorPropertyName = "$type")]
 [JsonDerivedType(typeof(PlayerStatusChunk), "PlayerStatusChunk")]

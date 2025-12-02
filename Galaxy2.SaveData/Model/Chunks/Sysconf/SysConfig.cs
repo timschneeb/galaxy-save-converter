@@ -1,9 +1,9 @@
 using System.Text.Json.Serialization;
-using Galaxy2.SaveData.Chunks.Game.Attributes;
+using Galaxy2.SaveData.Model.Chunks.Game.Attributes;
 using Galaxy2.SaveData.String;
 using Galaxy2.SaveData.Utils;
 
-namespace Galaxy2.SaveData.Chunks.Sysconf;
+namespace Galaxy2.SaveData.Model.Chunks.Sysconf;
 
 public class SysConfigData
 {

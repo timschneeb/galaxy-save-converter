@@ -1,8 +1,8 @@
 using System.Text.Json.Serialization;
-using Galaxy2.SaveData.Chunks.Game.Attributes;
+using Galaxy2.SaveData.Model.Chunks.Game.Attributes;
 using Galaxy2.SaveData.Utils;
 
-namespace Galaxy2.SaveData.Chunks.Game;
+namespace Galaxy2.SaveData.Model.Chunks.Game;
 
 public class GalaxyScenario
 {

@@ -1,7 +1,7 @@
 using System.Text.Json.Serialization;
 using Galaxy2.SaveData.Utils;
 
-namespace Galaxy2.SaveData.Chunks.Config;
+namespace Galaxy2.SaveData.Model.Chunks.Config;
 
 public class ConfigDataMii
 {

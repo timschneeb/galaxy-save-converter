@@ -1,4 +1,5 @@
 using System.Buffers.Binary;
+using Galaxy2.SaveData.Model;
 using Galaxy2.SaveData.Utils;
 
 namespace Galaxy2.SaveData;

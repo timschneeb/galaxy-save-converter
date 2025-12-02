@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace Galaxy2.SaveData.Save;
+namespace Galaxy2.SaveData.Model;
 
 public class SaveDataFileHeader
 {

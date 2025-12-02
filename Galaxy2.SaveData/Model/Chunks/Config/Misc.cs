@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace Galaxy2.SaveData.Chunks.Config;
+namespace Galaxy2.SaveData.Model.Chunks.Config;
 
 public class ConfigDataMisc
 {

@@ -1,4 +1,4 @@
-using Galaxy2.SaveData.Chunks.Game.Attributes;
+using Galaxy2.SaveData.Model.Chunks.Game.Attributes;
 
 namespace Galaxy2.SaveData.Utils;
 

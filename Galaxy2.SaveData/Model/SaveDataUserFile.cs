@@ -1,12 +1,12 @@
 using System.Buffers.Binary;
 using System.Text.Json.Serialization;
-using Galaxy2.SaveData.Chunks.Game;
-using Galaxy2.SaveData.Chunks.Config;
-using Galaxy2.SaveData.Chunks.Sysconf;
+using Galaxy2.SaveData.Model.Chunks.Config;
+using Galaxy2.SaveData.Model.Chunks.Game;
+using Galaxy2.SaveData.Model.Chunks.Sysconf;
 using Galaxy2.SaveData.String;
 using Galaxy2.SaveData.Utils;
 
-namespace Galaxy2.SaveData.Save;
+namespace Galaxy2.SaveData.Model;
 
 public class SaveDataUserFileInfo
 {
@@ -144,7 +144,7 @@ public class SaveDataUserFile
             SysConfigData? chunk = null;
             if (magic == 0x53595343) // SYSC
             {
-                chunk = Galaxy2.SaveData.Chunks.Sysconf.SysConfigData.ReadFrom(r, inner);
+                chunk = Chunks.Sysconf.SysConfigData.ReadFrom(r, inner);
             }
             else
             {

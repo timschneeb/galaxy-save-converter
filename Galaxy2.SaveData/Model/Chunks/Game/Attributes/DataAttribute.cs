@@ -2,7 +2,7 @@ using System.Runtime.InteropServices;
 using System.Text.Json.Serialization;
 using Galaxy2.SaveData.Utils;
 
-namespace Galaxy2.SaveData.Chunks.Game.Attributes;
+namespace Galaxy2.SaveData.Model.Chunks.Game.Attributes;
 
 [JsonPolymorphic(TypeDiscriminatorPropertyName = "$type")]
 [JsonDerivedType(typeof(DataAttribute<byte>), "u8")]
