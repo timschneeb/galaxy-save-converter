@@ -9,6 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SMGSaveData.CLI", "SMGSaveD
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SMGSaveData.Galaxy2.Tests", "SMGSaveData.Galaxy2.Tests\SMGSaveData.Galaxy2.Tests.csproj", "{485FD57F-AD53-4E1E-9056-6EC373666A1E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SMGSaveData.Web.Server", "SMGSaveData.Web.Server\SMGSaveData.Web.Server.csproj", "{90BFDF3D-A948-4F9E-A991-1CADD5BAF092}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SMGSaveData.Web", "SMGSaveData.Web\SMGSaveData.Web.csproj", "{4CD8E323-234D-439F-9F5F-B850DF4AE6B2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +34,13 @@ Global
 		{485FD57F-AD53-4E1E-9056-6EC373666A1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{485FD57F-AD53-4E1E-9056-6EC373666A1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{485FD57F-AD53-4E1E-9056-6EC373666A1E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{90BFDF3D-A948-4F9E-A991-1CADD5BAF092}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{90BFDF3D-A948-4F9E-A991-1CADD5BAF092}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{90BFDF3D-A948-4F9E-A991-1CADD5BAF092}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{90BFDF3D-A948-4F9E-A991-1CADD5BAF092}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4CD8E323-234D-439F-9F5F-B850DF4AE6B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4CD8E323-234D-439F-9F5F-B850DF4AE6B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4CD8E323-234D-439F-9F5F-B850DF4AE6B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4CD8E323-234D-439F-9F5F-B850DF4AE6B2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+
+        <InvariantGlobalization>true</InvariantGlobalization>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="BlazorDownloadFile" Version="2.4.0.2" />
+        <PackageReference Include="BlazorStrap" Version="5.2.105-Preview-3" />
+        <PackageReference Include="BlazorStrap.V5" Version="5.2.105-Preview-3" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.0"/>
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.0" PrivateAssets="all"/>
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <Folder Include="wwwroot\css\bootstrap-icons\" />
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <ProjectReference Include="..\SMGSaveData.Galaxy2\SMGSaveData.Galaxy2.csproj" />
+    </ItemGroup>
+</Project>

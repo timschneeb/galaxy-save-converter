@@ -197,7 +197,8 @@ public class SaveDataUserFile
                     var body = ms.ToArray();
                     var baseHash = HashKey.FromString("SaveDataStorageTicoFat").Value;
                     var tfHash =
-                        // TODO investigate this. the 'constant' may be some kind of length
+                        // These constants are hard-coded at compile time in the game.
+                        // Probably defined as a preprocessor macro, maybe in relation to the size of some data type?
                         writer.ConsoleType == ConsoleType.Switch
                         ? unchecked(baseHash + 0x1e0u)
                         : unchecked(baseHash + 0x120u);

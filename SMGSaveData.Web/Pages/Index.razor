@@ -1,0 +1,267 @@
+﻿@page "/"
+@using BlazorDownloadFile
+@using SMGSaveData.Galaxy2.Model
+
+<PageTitle>SMG2 Save Data Converter</PageTitle>
+
+<h2>Save data conversion <small><small><small>(Nintendo Switch, Wii, JSON)</small></small></small></h2>
+
+@if (_state is States.Configuration or States.Loading)
+{
+    <div hidden="@(_state == States.Loading)">
+        <div>
+            Convert Super Mario Galaxy 2 save data between the Wii & Switch versions. 
+        </div>
+        <Callout Heading="TIP" Type="Callout.CalloutType.Tip">
+            The save data is stored in the <code>GameData.bin</code> file on your Wii or Switch console. Use Homebrew apps to import and export this file from your console and upload it here.
+            <br/>
+            This tool can also convert your save data into the human-readable JSON format, which allows you to edit your save file in a text editor.
+            <p>
+                <b>Super Mario Galaxy 1 is not supported!</b> (yet)
+            </p>
+        </Callout>
+
+        <BSForm Gutters="Gutters.Medium" IsBasic="true" Class="mt-2">
+            <div class="mb-3">
+                <label for="inputFile" class="form-label"><i class="bi bi-file-earmark-binary"></i> Save data file</label>
+                <BSInputFile id="inputFile" IsRequired="true" ValidWhen="@(() => true)" OnChange="OnInputFileChange" style="max-width: 700px"/>
+            </div>
+    
+            <div class="mb-3">
+                <label for="from" class="form-label">
+                    <i class="bi bi-box-arrow-right"></i> Input file type
+                </label>
+                <BSInput id="from" InputType="InputType.Select" @bind-Value="_from" style="max-width: 700px">
+                    <option value="@FileType.WiiBin">Nintendo Wii save data (GameData.bin)</option>
+                    <option value="@FileType.SwitchBin">Nintendo Switch save data (GameData.bin)</option>
+                    <option value="@FileType.Json">JSON text file (*.json)</option>
+                </BSInput>
+            </div>  
+            
+            <div class="mb-3">
+                <label for="to" class="form-label">
+                    <i class="bi bi-box-arrow-in-right"></i> Output file type
+                </label>
+                <BSInput id="to" InputType="InputType.Select" @bind-Value="_to" style="max-width: 700px">
+                    <option value="@FileType.WiiBin">Nintendo Wii save data (GameData.bin)</option>
+                    <option value="@FileType.SwitchBin">Nintendo Switch save data (GameData.bin)</option>
+                    <option value="@FileType.Json">JSON text file (*.json)</option>
+                </BSInput>
+            </div>
+    
+            <BSButton Color="BSColor.Primary" Class="mb-4" @onclick="OnConvert">
+                <i class="bi bi-chevron-double-right"></i> Convert save data
+            </BSButton>
+        </BSForm>
+    </div>
+}
+@if (_state == States.Loading)
+{
+    <div class="container-fluid">
+        <div style="height: 70vh !important" class="row justify-content-center align-items-center flex-column">
+            <div role="status" class="spinner-border text-secondary mb-2"></div>
+            <p class="text-center ms-1 me-1">
+                Processing data...
+            </p>
+        </div>
+    </div>
+}
+else if(_state == States.Results)
+{
+    <Callout Heading="DONE" Type="Callout.CalloutType.Success">
+        Conversion finished.
+    </Callout>
+    
+    <p>
+        The download of the modified save data file has started automatically. Please click <BSLink href="javascript:void(0)" OnClick="Redownload">here</BSLink> to retry if the download failed.
+    </p>
+    <p>
+        @if (_to == FileType.Json)
+        {
+            <span>You can edit the JSON file in a text editor and use this tool to convert it back.</span>
+        }
+        else
+        {
+            <span>Continue on your @(_to == FileType.WiiBin ? "Nintendo Wii" : "Nintendo Switch"): Backup your original save file <code>GameData.bin</code> and overwrite it with the new save file.</span>
+        }
+    </p>
+    
+    <Callout Heading="WARNING" Type="Callout.CalloutType.Danger">
+        Always keep backups of your original save data. This app cannot guarantee compatibility and may generate invalid data.
+    </Callout>
+
+    <BSButton Color="BSColor.Primary" IsOutlined="true" Class="mb-4" @onclick="@(_ => _state = States.Configuration)">
+        <i class="bi bi-chevron-double-left"></i> Go back
+    </BSButton>           
+}
+
+<BSModal @ref="ErrorModal" IsCentered="true" IsScrollable="true">
+    <Header>@_errorTitle</Header>
+    <Content>
+        <p>
+            @((MarkupString)_errorMessage)
+        </p>
+        <pre>
+            @_errorDescription
+        </pre>
+    </Content>
+    <Footer Context="modal">
+        <BSButton MarginStart="Margins.Auto" Color="BSColor.Danger" @onclick="modal.HideAsync">Close</BSButton>
+    </Footer>
+</BSModal>
+
+@code
+{
+    [Inject] IBlazorDownloadFileService DownloadService { get; set; } = null!;
+
+    private FileType _from = FileType.WiiBin;
+    private FileType _to = FileType.SwitchBin;
+    private IBrowserFile? _inputFile;
+
+    private BSModal ErrorModal { set; get; } = null!;
+
+    private States State
+    {
+        get => _state;
+        set
+        {
+            // Free memory
+            if (value != States.Results)
+            {
+                _modifiedSave = null;
+                _lastSaveFileName = null;
+            }
+            // Reset internal file select cache
+            if (value == States.Configuration)
+            {
+                _inputFile = null;
+            }
+            _state = value;
+        }
+    }
+
+    private string _errorDescription = "";
+    private string _errorMessage = "";
+    private string _errorTitle = "";
+
+    private States _state = States.Configuration;
+    
+    private byte[]? _modifiedSave;
+    private string? _lastSaveFileName;
+    
+    private enum States
+    {
+        Configuration,
+        Loading,
+        Results
+    }
+    
+    private void OnInputFileChange(InputFileChangeEventArgs args)
+    {
+        if(args.FileCount > 0)
+            _inputFile = args.File;
+    }
+
+    private void OnValidationFailed(string message)
+    {
+        _errorTitle = "Invalid request";
+        _errorMessage = $"{message}";
+        _errorDescription = "";
+        ErrorModal.ShowAsync();
+    }
+    
+    private async Task OnConvert()
+    {
+        if (_inputFile == null)
+        {
+            OnValidationFailed("No input file selected.");
+            return;
+        }
+
+        if (_from == _to)
+        {
+            OnValidationFailed("The selected input and output file types are the same.");
+            return;
+        }
+        
+        _state = States.Loading;
+        
+        SaveDataFile data;
+        try
+        {
+            var inStream = _inputFile.OpenReadStream(1048576 /* 1MB max */);
+            switch (_from)
+            {
+                case FileType.WiiBin or FileType.SwitchBin:
+                {
+                    using var stream = new MemoryStream();
+                    await inStream.CopyToAsync(stream);
+                    stream.Seek(0, SeekOrigin.Begin);
+                    data = SaveDataFile.ReadBinary(stream, _from);
+                    break;
+                }
+                case FileType.Json:
+                {
+                    using TextReader tr = new StreamReader(inStream);
+                    data = SaveDataFile.ReadJsonString(await tr.ReadToEndAsync());
+                    break;
+                }
+                default: 
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine(ex);
+            _errorTitle = "Decoding of input file failed";
+            _errorMessage = "<p>Did you select the correct save file? Double-check if you selected the corresponding save file format in the drop-down box</p>";
+            _errorDescription = ex.ToString();
+            await ErrorModal.ShowAsync();
+            _state = States.Configuration;
+            return;
+        }
+        
+        try {
+            using var stream = new MemoryStream();
+            switch (_to)
+            {
+                case FileType.WiiBin or FileType.SwitchBin:
+                {
+                    _lastSaveFileName = _to == FileType.WiiBin ? "GameData_wii.bin" : "GameData_switch.bin";
+                    data.WriteBinary(stream, _to);
+                    break;
+                }
+                case FileType.Json:
+                {
+                    _lastSaveFileName = "GameData.json";
+                    await using TextWriter tw = new StreamWriter(stream);
+                    await tw.WriteAsync(data.ToJson());
+                    break;
+                }
+                default: 
+                    throw new ArgumentOutOfRangeException();
+            }
+
+            _modifiedSave = stream.ToArray();
+            stream.Close();
+            
+            _state = States.Results;
+            await DownloadService.DownloadFile(_lastSaveFileName, _modifiedSave, "application/octet-stream");
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine(ex);
+            _errorTitle = "Conversion failed";
+            _errorMessage = "<p>Did you select the correct save file?</p>";
+            _errorDescription = ex.ToString();
+            await ErrorModal.ShowAsync();
+            _state = States.Configuration;
+        }
+    }
+
+    private async Task Redownload()
+    {
+        if(_modifiedSave != null)
+            await DownloadService.DownloadFile(_lastSaveFileName ?? "GameData.bin", _modifiedSave, "application/octet-stream");
+    }
+}
