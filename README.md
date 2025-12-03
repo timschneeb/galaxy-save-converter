@@ -44,3 +44,7 @@ To convert saves from the Wii to Switch version:
 ```bash
 dotnet run --project SMGSaveData.CLI wii2switch GameData.bin --output GameData_switch.bin
 ```
+
+## Acknowledgements
+
+* @ThatNintendoNerd for documenting the structure of the Wii save data format: https://github.com/ThatNintendoNerd/galaxy_save_data
