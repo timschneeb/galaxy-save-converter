@@ -212,7 +212,7 @@ else if(_state == States.Results)
         }
         catch (Exception ex)
         {
-            Console.Error.WriteLine(ex);
+            Console.WriteLine(ex);
             _errorTitle = "Decoding of input file failed";
             _errorMessage = "<p>Did you select the correct save file? Double-check if you selected the corresponding save file format in the drop-down box</p>";
             _errorDescription = ex.ToString();
@@ -250,7 +250,7 @@ else if(_state == States.Results)
         }
         catch (Exception ex)
         {
-            Console.Error.WriteLine(ex);
+            Console.WriteLine(ex);
             _errorTitle = "Conversion failed";
             _errorMessage = "<p>Did you select the correct save file?</p>";
             _errorDescription = ex.ToString();
