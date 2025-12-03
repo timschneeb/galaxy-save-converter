@@ -53,6 +53,8 @@ public enum ConfigDataMiiIcon : byte
     Yoshi = 3,
     Kinopio = 4,
     Peach = 5,
+    // Only on SMG2
     Rosetta = 6,
+    // Only on SMG2
     Tico = 7,
 }
